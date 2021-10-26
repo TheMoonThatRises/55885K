@@ -3,4 +3,5 @@ class util {
         static void testWheels();
         static void testFourbar();
         static void testAll();
+        static void calibrateFourbar();
 };
