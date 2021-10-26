@@ -1,6 +1,7 @@
 #include "main.h"
 #include "util.h"
 #include "robot.h"
+#include "controller.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -62,6 +63,12 @@ void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
 	while (true) {
+		controller::moveChassis();
+		controller::moveFourbar();
+
+		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::changeChassisBrake();
+		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeFourbarBrake();
+
 		pros::delay(20);
 	}
 }
