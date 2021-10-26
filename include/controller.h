@@ -3,8 +3,8 @@
 class controller {
     public:
         static pros::Controller master;
-        void moveChassis();
-        void moveFourbar();
-        void setChassisBrake();
-        void setFourbarBrake();
+        static void moveChassis();
+        static void moveFourbar();
+        static void changeChassisBrake();
+        static void changeFourbarBrake();
 };
