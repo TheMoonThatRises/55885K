@@ -2,20 +2,19 @@
 #include "robot.h"
 
 void util::testWheels() {
-    robot::tankRelative(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000);
+    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000);
 
     pros::delay(2000);
 
-    robot::tankRelative(robot::wheelNormalVelocity, robot::wheelNormalVelocity, -5000, -5000);
-
+    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, -5000, -5000);
 }
 
 void util::testFourbar() {
-    robot::moveFourbar(robot::fourbarMaxVelocity, robot::fourbarMaxDistance);
+    robot::moveFourbar(robot::fourbarVelocity, robot::fourbarMaxDistance);
 
     pros::delay(2000);
 
-    robot::moveFourbar(robot::fourbarMaxVelocity, -robot::fourbarMaxDistance);
+    robot::moveFourbar(robot::fourbarVelocity, -robot::fourbarMaxDistance);
 
 
 }
@@ -28,4 +27,8 @@ void util::testAll() {
     }
 
     util::testFourbar();
+}
+
+void util::calibrateFourbar() {
+
 }

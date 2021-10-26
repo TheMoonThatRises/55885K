@@ -9,22 +9,10 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::wheelMaxVelocity = 100,
-        robot::fourbarMaxVelocity = 80,
+        robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 50;
 
 double robot::fourbarMaxDistance = 800;
-
-void robot::tankRelative(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) {
-    robot::RB.move_relative(rightDistance, rightVelocity);
-    robot::RF.move_relative(rightDistance, rightVelocity);
-    robot::LB.move_relative(leftDistance, leftVelocity);
-    robot::LF.move_relative(leftDistance, leftVelocity);
-}
-
-void robot::moveFourbarRelative(int32_t velocity, double distance) {
-    robot::fourbarL.move_relative(distance, velocity);
-    robot::fourbarR.move_relative(distance, velocity);
-}
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity) {
     robot::RB.move_velocity(rightVelocity);
@@ -33,9 +21,21 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity) {
     robot::LF.move_velocity(leftVelocity);
 }
 
+void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) {
+    robot::RB.move_relative(rightDistance, rightVelocity);
+    robot::RF.move_relative(rightDistance, rightVelocity);
+    robot::LB.move_relative(leftDistance, leftVelocity);
+    robot::LF.move_relative(leftDistance, leftVelocity);
+}
+
 void robot::moveFourbar(int32_t velocity) {
     robot::fourbarL.move_velocity(velocity);
     robot::fourbarR.move_velocity(velocity);
+}
+
+void robot::moveFourbar(int32_t velocity, double distance) {
+    robot::fourbarL.move_relative(distance, velocity);
+    robot::fourbarR.move_relative(distance, velocity);
 }
 
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
