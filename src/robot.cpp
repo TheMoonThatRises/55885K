@@ -8,17 +8,26 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES);
 
-int32_t robot::wheelMaxVelocity = 100,
+int32_t robot::wheelMaxVelocity = 200,
         robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 50;
+        robot::wheelNormalVelocity = 100;
 
-double robot::fourbarMaxDistance = 800;
+double robot::fourbarMaxDistance = 800,
+       robot::wheelAdditionalParallelSpeed = 0,
+       robot::wheelAditionTurnSpeed = 0;
 
-void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity) {
-    robot::RB.move_velocity(rightVelocity);
-    robot::RF.move_velocity(rightVelocity);
-    robot::LB.move_velocity(leftVelocity);
-    robot::LF.move_velocity(leftVelocity);
+pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
+                         robot::chassisBrake = pros::E_MOTOR_BRAKE_COAST;
+
+void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
+    leftVelocity += robot::wheelAdditionalParallelSpeed,
+    rightVelocity += robot::wheelAdditionalParallelSpeed,
+    turn += robot::wheelAditionTurnSpeed;
+
+    robot::RB.move_velocity(rightVelocity - turn);
+    robot::RF.move_velocity(rightVelocity + turn);
+    robot::LB.move_velocity(leftVelocity - turn);
+    robot::LF.move_velocity(leftVelocity + turn);
 }
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) {
@@ -28,9 +37,20 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double left
     robot::LF.move_relative(leftDistance, leftVelocity);
 }
 
-void robot::moveFourbar(int32_t velocity) {
-    robot::fourbarL.move_velocity(velocity);
-    robot::fourbarR.move_velocity(velocity);
+void robot::moveFourbar(int32_t velocity, bool override) {
+    if (velocity > 0) {
+        if (robot::fourbarL.get_position() < robot::fourbarMaxDistance || override) robot::fourbarL.move_velocity(velocity);
+        if (robot::fourbarR.get_position() < robot::fourbarMaxDistance || override) robot::fourbarR.move_velocity(velocity);
+    } else if (velocity < 0) {
+        velocity = -robot::fourbarVelocity;
+
+        if (robot::fourbarL.get_position() > 0 || override) robot::fourbarL.move_velocity(velocity);
+        if (robot::fourbarR.get_position() > 0 || override) robot::fourbarR.move_velocity(velocity);
+    }
+    else {
+        robot::fourbarL.move_velocity(0);
+        robot::fourbarR.move_velocity(0);
+    }
 }
 
 void robot::moveFourbar(int32_t velocity, double distance) {
@@ -43,7 +63,7 @@ void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
     robot::RF.set_brake_mode(brakeMode);
     robot::LB.set_brake_mode(brakeMode);
     robot::LF.set_brake_mode(brakeMode);
-
+    
     robot::chassisBrake = brakeMode;
 }
 
@@ -53,6 +73,11 @@ void robot::setFourbarBrake(pros::motor_brake_mode_e brakeMode) {
 
     robot::fourbarBrake = brakeMode;
 }
+
+bool robot::isFourbarMoving() {
+    if (robot::fourbarL.get_target_velocity() - robot::fourbarL.get_actual_velocity() < robot::fourbarL.get_target_velocity() / 2 && robot::fourbarR.get_target_velocity() - robot::fourbarR.get_actual_velocity() < robot::fourbarR.get_target_velocity() / 2) return true;
+    else return false;
+} // NOT WORKING
 
 bool robot::didWheelsStop() {
     if (robot::RB.is_stopped() && robot::RF.is_stopped() && robot::LB.is_stopped() && robot::LF.is_stopped()) return true;
@@ -65,9 +90,6 @@ bool robot::didFourbarStop() {
 }
 
 void robot::initialize() {
-    pros::motor_brake_mode_e chassisBrake = pros::E_MOTOR_BRAKE_COAST,
-                             fourbarBrake = pros::E_MOTOR_BRAKE_COAST;
-
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
 }
