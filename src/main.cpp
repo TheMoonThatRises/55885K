@@ -2,6 +2,7 @@
 #include "util.h"
 #include "robot.h"
 #include "controller.h"
+#include <iostream>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
