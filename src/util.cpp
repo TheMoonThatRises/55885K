@@ -15,8 +15,6 @@ void util::testFourbar() {
     pros::delay(2000);
 
     robot::moveFourbar(robot::fourbarVelocity, -robot::fourbarMaxDistance);
-
-
 }
 
 void util::testAll() {
