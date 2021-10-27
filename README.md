@@ -5,6 +5,18 @@ Code for vex robotics team 55885K-21-22
 
   
 
+## Motor Mapping
+
+* Right back chassis motor: 6
+* Right front chassis motor: 7
+* Left back chassis motor: 5
+* Left front chassis motor: 8
+
+* Fourbar right motor: 9
+* Fourbar left motor: 10
+
+
+
 ##  Using the controller
 
 * Button B
@@ -22,3 +34,9 @@ Code for vex robotics team 55885K-21-22
 * Left Button 1/2
 
 	* Move fourbar up and down.
+
+
+
+## TO-DO List
+
+- [ ] Do ring moving motors
