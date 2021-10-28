@@ -10,20 +10,18 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
 
 int32_t robot::wheelMaxVelocity = 200,
         robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 100;
+        robot::wheelNormalVelocity = 0;
 
-double robot::fourbarMaxDistance = 800,
-       robot::wheelAdditionalParallelSpeed = 0,
-       robot::wheelAditionTurnSpeed = 0;
+double robot::fourbarMaxDistance = 800;
 
 pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
                          robot::chassisBrake = pros::E_MOTOR_BRAKE_COAST;
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
     if (leftVelocity || rightVelocity || turn) {
-        leftVelocity += robot::wheelAdditionalParallelSpeed,
-        rightVelocity += robot::wheelAdditionalParallelSpeed;
-        if (turn) turn += robot::wheelAditionTurnSpeed;
+        leftVelocity += (leftVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
+        rightVelocity += (rightVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
+        turn += (turn > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
 
         robot::RB.move_velocity(rightVelocity - turn);
         robot::RF.move_velocity(-rightVelocity + turn);

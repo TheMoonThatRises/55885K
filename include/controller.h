@@ -7,4 +7,5 @@ class controller {
         static void moveFourbar();
         static void changeChassisBrake();
         static void changeFourbarBrake();
+        static void changeChassisSpeed();
 };

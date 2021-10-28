@@ -24,13 +24,13 @@ Code for vex robotics team 55885K-21-22
 	* Changes the brakes on the chassis. Rotates through hold, brake, and coast, in that order, with the default as coast.
 * Button A
 
-	* Chances the brakes on the fourbar. Same as the chassis brake system. Default as hold.
+	* Changes the brakes on the fourbar. Same as the chassis brake system. Default as hold.
+* Button X
+
+	* Changes the speed of the robot, cycling by adding 50 with max as ±100 extra speed
 * Left Joystick
 
 	* Controls the forward/backward/turning of the robot. 
-* Right Joystick
-
-	* Controls how much faster the moving of the chassis should be.
 * Left Button 1/2
 
 	* Move fourbar up and down.
@@ -40,3 +40,5 @@ Code for vex robotics team 55885K-21-22
 ## TO-DO List
 
 - [ ] Do ring moving motors
+- [ ] Have right joystick control left/right direct movement
+- [ ] Make the robot respond smoother

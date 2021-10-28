@@ -69,6 +69,7 @@ void opcontrol() {
 
 		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::changeChassisBrake();
 		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeFourbarBrake();
+		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
 
 		pros::delay(20);
 	}
