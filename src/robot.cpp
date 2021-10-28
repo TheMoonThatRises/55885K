@@ -20,14 +20,21 @@ pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
                          robot::chassisBrake = pros::E_MOTOR_BRAKE_COAST;
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
-    leftVelocity += robot::wheelAdditionalParallelSpeed,
-    rightVelocity += robot::wheelAdditionalParallelSpeed,
-    turn += robot::wheelAditionTurnSpeed;
+    if (leftVelocity || rightVelocity || turn) {
+        leftVelocity += robot::wheelAdditionalParallelSpeed,
+        rightVelocity += robot::wheelAdditionalParallelSpeed;
+        if (turn) turn += robot::wheelAditionTurnSpeed;
 
-    robot::RB.move_velocity(rightVelocity - turn);
-    robot::RF.move_velocity(rightVelocity + turn);
-    robot::LB.move_velocity(leftVelocity - turn);
-    robot::LF.move_velocity(leftVelocity + turn);
+        robot::RB.move_velocity(rightVelocity - turn);
+        robot::RF.move_velocity(-rightVelocity + turn);
+        robot::LB.move_velocity(-leftVelocity - turn);
+        robot::LF.move_velocity(leftVelocity + turn);
+    } else {
+        robot::RB.move_velocity(0);
+        robot::RF.move_velocity(0);
+        robot::LB.move_velocity(0);
+        robot::LF.move_velocity(0);
+    }
 }
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) {

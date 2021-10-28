@@ -7,11 +7,12 @@ pros::Controller controller::master(pros::E_CONTROLLER_MASTER);
 void controller::moveChassis() {
     double fbJoystick = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     double stsJoystick = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    if (fbJoystick != 0) {
+        robot::wheelAdditionalParallelSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        robot::wheelAditionTurnSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-    robot::wheelAdditionalParallelSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-    robot::wheelAditionTurnSpeed = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
-    robot::moveChassis(fbJoystick, fbJoystick, stsJoystick);
+        robot::moveChassis(fbJoystick, fbJoystick, stsJoystick);
+    } else robot::moveChassis(0, 0, 0);
 }
 
 void controller::moveFourbar() {
@@ -21,6 +22,8 @@ void controller::moveFourbar() {
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) velocity = -robot::fourbarVelocity;
     
     robot::moveFourbar(velocity, false);
+
+    std::cout << robot::fourbarL.is_stopped() << robot::fourbarR.is_stopped() << std::endl;
 }
 
 void controller::changeChassisBrake() {
