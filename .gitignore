@@ -17,3 +17,4 @@ temp.errors
 
 # Custom Ignores
 .DS_Store
+.idea
