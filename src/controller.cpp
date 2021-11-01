@@ -18,8 +18,6 @@ void controller::moveFourbar() {
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) velocity = -robot::fourbarVelocity;
     
     robot::moveFourbar(velocity, false);
-
-    std::cout << robot::fourbarL.is_stopped() << robot::fourbarR.is_stopped() << std::endl;
 }
 
 void controller::changeChassisBrake() {
@@ -36,6 +34,8 @@ void controller::changeChassisBrake() {
     }
 
     std::cout << "Switch chassis brake mode to " << robot::chassisBrake << std::endl;
+
+    pros::delay(200);
 }
 
 void controller::changeFourbarBrake() {
@@ -52,8 +52,14 @@ void controller::changeFourbarBrake() {
     }
 
     std::cout << "Switch fourbar brake mode to " << robot::fourbarBrake << std::endl;
+
+    pros::delay(200);
 }
 
 void controller::changeChassisSpeed() {
-    robot::wheelNormalVelocity = (robot::wheelNormalVelocity + 50) % 150;
+    robot::wheelNormalVelocity = (robot::wheelNormalVelocity + 50) % 250;
+
+    std::cout << "Switch chassis speed to " << robot::wheelNormalVelocity << std::endl;
+
+    pros::delay(200);
 }
