@@ -1,5 +1,8 @@
 #include "util.h"
 #include "robot.h"
+#include <string>
+
+std::string util::brakeToString[] = {"Coast", "Brake", "Hold"};
 
 void util::testWheels() {
     robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000);
@@ -28,5 +31,9 @@ void util::testAll() {
 }
 
 void util::calibrateFourbar() {
+
+}
+
+void util::autonomous() {
 
 }
