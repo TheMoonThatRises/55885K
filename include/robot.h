@@ -8,7 +8,7 @@ class robot {
         static int32_t wheelMaxVelocity, fourbarVelocity, wheelNormalVelocity;
         static double fourbarMaxDistance;
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn);
-        static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance);
+        static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn);
         static void moveFourbar(int32_t velocity, bool override);
         static void moveFourbar(int32_t velocity, double distance);
         static void setChassisBrake(pros::motor_brake_mode_e brakeMode);

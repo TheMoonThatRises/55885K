@@ -35,11 +35,11 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn
     }
 }
 
-void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) {
-    robot::RB.move_relative(rightDistance, rightVelocity);
-    robot::RF.move_relative(rightDistance, rightVelocity);
-    robot::LB.move_relative(leftDistance, leftVelocity);
-    robot::LF.move_relative(leftDistance, leftVelocity);
+void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn) {
+    robot::RB.move_relative(rightDistance - turn, rightVelocity);
+    robot::RF.move_relative(rightDistance - turn, rightVelocity);
+    robot::LB.move_relative(leftDistance + turn, leftVelocity);
+    robot::LF.move_relative(leftDistance + turn, leftVelocity);
 }
 
 void robot::moveFourbar(int32_t velocity, bool override) {
