@@ -1,4 +1,5 @@
 #include "main.h"
+#include <string>
 
 class controller {
     public:
@@ -8,4 +9,5 @@ class controller {
         static void changeChassisBrake();
         static void changeFourbarBrake();
         static void changeChassisSpeed();
+        static void setControllerText(std::string text);
 };

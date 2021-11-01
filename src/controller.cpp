@@ -1,8 +1,16 @@
 #include "controller.h"
 #include "robot.h"
+#include "util.h"
 #include <iostream>
+#include <string>
 
 pros::Controller controller::master(pros::E_CONTROLLER_MASTER);
+
+void controller::setControllerText(std::string text) {
+    controller::master.set_text(0, 0, text + "      ");
+
+    std::cout << text << std::endl;
+}
 
 void controller::moveChassis() {
     double fbJoystick = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -33,7 +41,7 @@ void controller::changeChassisBrake() {
             break;
     }
 
-    std::cout << "Switch chassis brake mode to " << robot::chassisBrake << std::endl;
+    controller::setControllerText("Chassis < " + util::brakeToString[robot::chassisBrake]);
 
     pros::delay(200);
 }
@@ -51,15 +59,15 @@ void controller::changeFourbarBrake() {
             break;
     }
 
-    std::cout << "Switch fourbar brake mode to " << robot::fourbarBrake << std::endl;
+    controller::setControllerText("Fourbar < " + util::brakeToString[robot::fourbarBrake]);
 
     pros::delay(200);
 }
 
 void controller::changeChassisSpeed() {
-    robot::wheelNormalVelocity = (robot::wheelNormalVelocity + 50) % 250;
+    robot::wheelNormalVelocity = (robot::wheelNormalVelocity >= 100) ? -100 : robot::wheelNormalVelocity + 50 ;
 
-    std::cout << "Switch chassis speed to " << robot::wheelNormalVelocity << std::endl;
+    controller::setControllerText("Wheel < " + std::to_string(robot::wheelNormalVelocity));
 
     pros::delay(200);
 }
