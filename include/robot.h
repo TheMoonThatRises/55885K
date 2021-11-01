@@ -15,6 +15,6 @@ class robot {
         static void setFourbarBrake(pros::motor_brake_mode_e brakeMode);
         static bool isFourbarMoving();
         static bool didWheelsStop();
-        static bool didFourbarStop();
+        static bool checkFourbar();
         static void initialize();
 };

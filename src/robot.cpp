@@ -1,14 +1,14 @@
 #include "robot.h"
 
 pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            robot::RF(7, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            robot::LB(5, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
+            robot::RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
+            robot::LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
             robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
 
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES);
 
-int32_t robot::wheelMaxVelocity = 200,
+int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0;
 
@@ -24,8 +24,8 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn
         turn += (turn > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
 
         robot::RB.move_velocity(rightVelocity - turn);
-        robot::RF.move_velocity(-rightVelocity + turn);
-        robot::LB.move_velocity(-leftVelocity - turn);
+        robot::RF.move_velocity(rightVelocity - turn);
+        robot::LB.move_velocity(leftVelocity + turn);
         robot::LF.move_velocity(leftVelocity + turn);
     } else {
         robot::RB.move_velocity(0);
@@ -89,9 +89,8 @@ bool robot::didWheelsStop() {
     else return false;
 }
 
-bool robot::didFourbarStop() {
-    if (robot::fourbarL.is_stopped() && robot::fourbarR.is_stopped()) return true;
-    else return false;
+bool robot::checkFourbar() {
+    return robot::fourbarL.get_position() == robot::fourbarR.get_position();
 }
 
 void robot::initialize() {
