@@ -5,11 +5,11 @@
 std::string util::brakeToString[] = {"Coast", "Brake", "Hold"};
 
 void util::testWheels() {
-    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000);
+    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000, 0);
 
     pros::delay(2000);
 
-    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, -5000, -5000);
+    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, -5000, -5000, 0);
 }
 
 void util::testFourbar() {
