@@ -6,11 +6,14 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
 
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
-            robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES);
+            robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
+
+            robot::ringMotor(NULL, MOTOR_GEARSET_06, 1, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 0;
+        robot::wheelNormalVelocity = 0,
+        robot::ringSystemVelocity = 100;
 
 double robot::fourbarMaxDistance = 800;
 
@@ -63,6 +66,10 @@ void robot::moveFourbar(int32_t velocity, double distance) {
     robot::fourbarR.move_relative(distance, velocity);
 }
 
+void robot::moveRingSystem(int32_t velocity) {
+    robot::ringMotor.move_velocity(velocity);
+}
+
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
     robot::RB.set_brake_mode(brakeMode);
     robot::RF.set_brake_mode(brakeMode);
@@ -96,4 +103,6 @@ bool robot::checkFourbar() {
 void robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
+
+    robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 }

@@ -17,6 +17,9 @@ Code for vex robotics team 55885K-21-22
 * Fourbar right motor: 9
 * Fourbar left motor: 10
 
+### Miscellaneous
+* Ring System motor: Unknown
+
 
 ##  The Controller
 
@@ -36,6 +39,10 @@ Code for vex robotics team 55885K-21-22
 * Left Button 1/2
 
     * Move fourbar up and down.
+
+* Right Button 1/2
+
+  * Move ring system forward/backward
 
 ### Controller Screen
 The section beneath the table shows what value is being set to what using the less than (<) sign.
