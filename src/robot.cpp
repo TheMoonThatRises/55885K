@@ -13,7 +13,6 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
 int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0,
-        robot::ringSystemVelocity = 100;
 
 double robot::fourbarMaxDistance = 800;
 
@@ -98,6 +97,19 @@ bool robot::didWheelsStop() {
 
 bool robot::checkFourbar() {
     return robot::fourbarL.get_position() == robot::fourbarR.get_position();
+}
+
+void robot::moveIntake(int32_t velocity){
+    if (velocity){
+        robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+        robot::ringMotor.move_velocity(velocity);
+    }
+    else robot::stopIntake();
+}
+
+void robot::stopIntake(){
+    robot::ringMotor.move_velocity(0);
+	robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
 void robot::initialize() {

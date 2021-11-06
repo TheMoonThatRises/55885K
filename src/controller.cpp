@@ -80,3 +80,13 @@ void controller::changeChassisSpeed() {
 
     pros::delay(200);
 }
+
+void controller::moveRingSystem() {
+    int velocity = 0; 
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = 100; 
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -100; 
+
+    robot::moveIntake(velocity); 
+
+
+}

@@ -18,4 +18,6 @@ class robot {
         static bool didWheelsStop();
         static bool checkFourbar();
         static void initialize();
+        static void moveIntake(int32_t velocity); 
+        static void stopIntake(); 
 };
