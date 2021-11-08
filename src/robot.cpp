@@ -6,11 +6,14 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
 
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
-            robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES);
+            robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
+
+            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 0;
+        robot::wheelNormalVelocity = 0,
+        robot::intakeVelocity = 100;
 
 double robot::fourbarMaxDistance = 800;
 
@@ -44,13 +47,13 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double left
 
 void robot::moveFourbar(int32_t velocity, bool override) {
     if (velocity > 0) {
-        if (robot::fourbarL.get_position() < robot::fourbarMaxDistance || override) robot::fourbarL.move_velocity(velocity);
-        if (robot::fourbarR.get_position() < robot::fourbarMaxDistance || override) robot::fourbarR.move_velocity(velocity);
+        robot::fourbarL.move_velocity(velocity);
+        robot::fourbarR.move_velocity(velocity);
     } else if (velocity < 0) {
         velocity = -robot::fourbarVelocity;
 
-        if (robot::fourbarL.get_position() > 0 || override) robot::fourbarL.move_velocity(velocity);
-        if (robot::fourbarR.get_position() > 0 || override) robot::fourbarR.move_velocity(velocity);
+        robot::fourbarL.move_velocity(velocity);
+         robot::fourbarR.move_velocity(velocity);
     }
     else {
         robot::fourbarL.move_velocity(0);
@@ -61,6 +64,11 @@ void robot::moveFourbar(int32_t velocity, bool override) {
 void robot::moveFourbar(int32_t velocity, double distance) {
     robot::fourbarL.move_relative(distance, velocity);
     robot::fourbarR.move_relative(distance, velocity);
+}
+
+void robot::moveIntake(int32_t velocity){
+    if (velocity != 0) robot::ringMotor.move_velocity(velocity);
+    else robot::ringMotor.move_velocity(0);
 }
 
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
@@ -96,4 +104,6 @@ bool robot::checkFourbar() {
 void robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
+
+    robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }

@@ -28,6 +28,15 @@ void controller::moveFourbar() {
     robot::moveFourbar(velocity, false);
 }
 
+void controller::moveIntake() {
+    double velocity = 0;
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot::intakeVelocity;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot::intakeVelocity;
+
+    robot::moveIntake(velocity);
+}
+
 void controller::changeChassisBrake() {
     switch (robot::chassisBrake) {
         case pros::E_MOTOR_BRAKE_COAST:
