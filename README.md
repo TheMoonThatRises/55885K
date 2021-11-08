@@ -51,7 +51,7 @@ The section beneath the table shows what value is being set to what using the le
 
 ## TO-DO List
 
-- [ ] Do ring moving motors
+- [x] Do ring moving motors
 - [ ] Have right joystick control left/right direct movement
 - [ ] Make the robot respond smoother
 - [ ] Add autonomous
