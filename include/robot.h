@@ -11,13 +11,11 @@ class robot {
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn);
         static void moveFourbar(int32_t velocity, bool override);
         static void moveFourbar(int32_t velocity, double distance);
-        static void moveRingSystem(int32_t velocity);
+        static void moveIntake(int32_t velocity);
         static void setChassisBrake(pros::motor_brake_mode_e brakeMode);
         static void setFourbarBrake(pros::motor_brake_mode_e brakeMode);
         static bool isFourbarMoving();
         static bool didWheelsStop();
         static bool checkFourbar();
         static void initialize();
-        static void moveIntake(int32_t velocity); 
-        static void stopIntake(); 
 };

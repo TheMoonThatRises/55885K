@@ -6,11 +6,9 @@ class controller {
         static pros::Controller master;
         static void moveChassis();
         static void moveFourbar();
-        static void moveRingSystem();
         static void moveIntake(); 
         static void changeChassisBrake();
         static void changeFourbarBrake();
         static void changeChassisSpeed();
         static void setControllerText(std::string text);
-        static void moveRingSystem(); 
 };

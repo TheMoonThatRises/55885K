@@ -65,8 +65,9 @@ void robot::moveFourbar(int32_t velocity, double distance) {
     robot::fourbarR.move_relative(distance, velocity);
 }
 
-void robot::moveRingSystem(int32_t velocity) {
-    robot::ringMotor.move_velocity(velocity);
+void robot::moveIntake(int32_t velocity){
+    if (velocity) robot::ringMotor.move_velocity(velocity);
+    else robot::ringMotor.move_velocity(0);
 }
 
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
@@ -99,22 +100,9 @@ bool robot::checkFourbar() {
     return robot::fourbarL.get_position() == robot::fourbarR.get_position();
 }
 
-void robot::moveIntake(int32_t velocity){
-    if (velocity){
-        robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-        robot::ringMotor.move_velocity(velocity);
-    }
-    else robot::stopIntake();
-}
-
-void robot::stopIntake(){
-    robot::ringMotor.move_velocity(0);
-	robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-}
-
 void robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
 
-    robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    robot::ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }

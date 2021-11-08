@@ -28,13 +28,13 @@ void controller::moveFourbar() {
     robot::moveFourbar(velocity, false);
 }
 
-void controller::moveRingSystem() {
+void controller::moveIntake() {
     double velocity = 0;
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot::ringSystemVelocity;
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot::ringSystemVelocity;
 
-    robot::moveRingSystem(velocity);
+    robot::moveIntake(velocity);
 }
 
 void controller::changeChassisBrake() {
@@ -79,14 +79,4 @@ void controller::changeChassisSpeed() {
     controller::setControllerText("Wheel < " + std::to_string(robot::wheelNormalVelocity));
 
     pros::delay(200);
-}
-
-void controller::moveRingSystem() {
-    int velocity = 0; 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = 100; 
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -100; 
-
-    robot::moveIntake(velocity); 
-
-
 }
