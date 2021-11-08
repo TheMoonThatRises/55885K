@@ -1,5 +1,6 @@
 #include "util.h"
 #include "robot.h"
+#include "controller.h"
 #include <string>
 
 std::string util::brakeToString[] = {"Coast", "Brake", "Hold"};
@@ -29,6 +30,11 @@ void util::testAll() {
     }
 
     util::testFourbar();
+}
+
+bool util::checkOverheat() {
+    if (robot::RB.is_over_temp() || robot::RB.is_over_temp() || robot::LF.is_over_temp() || robot::LB.is_over_temp() || robot::fourbarL.is_over_temp() || robot::fourbarR.is_over_temp() || robot::ringMotor.is_over_temp()) return true;
+    else return false;
 }
 
 void util::calibrateFourbar() {

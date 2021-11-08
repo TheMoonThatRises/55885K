@@ -7,6 +7,7 @@ class util {
         static void testWheels();
         static void testFourbar();
         static void testAll();
+        static bool checkOverheat();
         static void calibrateFourbar();
         static void autonomous();
 };

@@ -66,14 +66,20 @@ void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
 	while (true) {
-		controller::moveChassis();
-		controller::moveFourbar();
-        controller::moveIntake();
+        if (util::checkOverheat()) {
+            controller::setControllerText("Motors overheat!");
 
-		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::changeChassisBrake();
-		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
-		if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
-        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
+            pros::delay(5000);
+        } else {
+            controller::moveChassis();
+            controller::moveFourbar();
+            controller::moveIntake();
+
+            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::changeChassisBrake();
+            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
+            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
+            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
+        }
 
 		pros::delay(20);
 	}
