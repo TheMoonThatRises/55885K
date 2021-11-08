@@ -47,13 +47,13 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double left
 
 void robot::moveFourbar(int32_t velocity, bool override) {
     if (velocity > 0) {
-        if (robot::fourbarL.get_position() < robot::fourbarMaxDistance || override) robot::fourbarL.move_velocity(velocity);
-        if (robot::fourbarR.get_position() < robot::fourbarMaxDistance || override) robot::fourbarR.move_velocity(velocity);
+        robot::fourbarL.move_velocity(velocity);
+        robot::fourbarR.move_velocity(velocity);
     } else if (velocity < 0) {
         velocity = -robot::fourbarVelocity;
 
-        if (robot::fourbarL.get_position() > 0 || override) robot::fourbarL.move_velocity(velocity);
-        if (robot::fourbarR.get_position() > 0 || override) robot::fourbarR.move_velocity(velocity);
+        robot::fourbarL.move_velocity(velocity);
+         robot::fourbarR.move_velocity(velocity);
     }
     else {
         robot::fourbarL.move_velocity(0);
