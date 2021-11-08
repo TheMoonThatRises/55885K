@@ -26,10 +26,6 @@ void controller::moveChassis() {
     }
     
     robot::moveChassis(lVelocity / robot::chassisSensitivity, rVelocity / robot::chassisSensitivity, turn / robot::chassisSensitivity);
-
-    controller::setControllerText("Chassis < " + util::modeToString[robot::chassisMode]);
-
-    pros::delay(200);
 }
 
 void controller::moveFourbar() {
@@ -85,6 +81,10 @@ void controller::changeChassisMode() {
             robot::chassisMode = robot::CHASSIS_TANK;
             break;
     }
+
+    controller::setControllerText("Chassis < " + util::modeToString[robot::chassisMode]);
+
+    pros::delay(200);
 }
 
 void controller::changeChassisSpeed() {
