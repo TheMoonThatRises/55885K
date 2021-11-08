@@ -13,9 +13,14 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
 int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0,
-        robot::intakeVelocity = 100;
+        robot::intakeVelocity = 75;
 
 double robot::fourbarMaxDistance = 800;
+
+int robot::CHASSIS_TANK = 0,
+    robot::CHASSIS_SINGLE = 1,
+
+    robot::chassisMode = robot::CHASSIS_TANK;
 
 pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
                          robot::chassisBrake = pros::E_MOTOR_BRAKE_COAST;

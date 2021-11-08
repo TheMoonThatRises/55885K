@@ -10,5 +10,6 @@ class controller {
         static void changeChassisBrake();
         static void changeFourbarBrake();
         static void changeChassisSpeed();
+        static void changeChassisMode();
         static void setControllerText(std::string text);
 };

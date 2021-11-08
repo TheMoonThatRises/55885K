@@ -33,6 +33,10 @@ Code for vex robotics team 55885K-21-22
 * Button X
 
     * Changes the speed of the robot, cycling by adding 50 with max as ±100 extra speed
+* Button Y
+
+    * Changes the mode of the chassis. Change toggle between using a single controller and using tank.
+    
 * Left Joystick
 
     * Controls the forward/backward/turning of the robot. 

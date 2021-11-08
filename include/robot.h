@@ -3,10 +3,14 @@
 
 class robot {
     public:
+        static const int CHASSIS_TANK = 0,
+                         CHASSIS_SINGLE = 1;
+
         static pros::Motor RB, RF, LB, LF, fourbarR, fourbarL, ringMotor;
         static pros::motor_brake_mode_e chassisBrake, fourbarBrake;
         static int32_t wheelMaxVelocity, fourbarVelocity, wheelNormalVelocity, intakeVelocity;
         static double fourbarMaxDistance;
+        static int chassisMode;
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn);
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn);
         static void moveFourbar(int32_t velocity, bool override);

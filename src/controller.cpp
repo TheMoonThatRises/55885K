@@ -13,10 +13,19 @@ void controller::setControllerText(std::string text) {
 }
 
 void controller::moveChassis() {
-    double fbJoystick = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    double stsJoystick = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    double lVelocity = 0,
+           rVelocity = 0,
+           turn = 0;
+    if (robot::chassisMode == robot::CHASSIS_SINGLE) {
+        lVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),
+        rVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        turn = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    } else if (robot::chassisMode == robot::CHASSIS_TANK) {
+        lVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        rVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)
+    }
     
-    robot::moveChassis(fbJoystick, fbJoystick, stsJoystick);
+    robot::moveChassis(lVelocity, rVelocity, turn);
 }
 
 void controller::moveFourbar() {
@@ -71,6 +80,17 @@ void controller::changeFourbarBrake() {
     controller::setControllerText("Fourbar < " + util::brakeToString[robot::fourbarBrake]);
 
     pros::delay(200);
+}
+
+void controller::changeChassisMode() {
+    switch (robot::chassisMode) {
+        case robot::CHASSIS_TANK:
+            robot::chassisMode = robot::CHASSIS_SINGLE;
+            break;
+        case robot::CHASSIS_SINGLE:
+            robot::chassisMode = robot::CHASSIS_TANK;
+            break;
+    }
 }
 
 void controller::changeChassisSpeed() {
