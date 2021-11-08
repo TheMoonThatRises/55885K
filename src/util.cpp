@@ -3,6 +3,7 @@
 #include <string>
 
 std::string util::brakeToString[] = {"Coast", "Brake", "Hold"};
+std::string util::modeToString[] = {"Tank", "Single"};
 
 void util::testWheels() {
     robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000, 0);

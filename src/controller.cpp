@@ -22,10 +22,14 @@ void controller::moveChassis() {
         turn = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     } else if (robot::chassisMode == robot::CHASSIS_TANK) {
         lVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        rVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)
+        rVelocity = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
     }
     
     robot::moveChassis(lVelocity, rVelocity, turn);
+
+    controller::setControllerText("Chassis < " + util::modeToString[robot::chassisMode]);
+
+    pros::delay(200);
 }
 
 void controller::moveFourbar() {
