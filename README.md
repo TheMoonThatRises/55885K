@@ -29,7 +29,7 @@ Code for vex robotics team 55885K-21-22
     * Changes the brakes on the chassis. Rotates through hold, brake, and coast, in that order, with the default as coast.
 * Button A
 
-    * Changes the brakes on the fourbar. Same as the chassis brake system. Default as hold.
+    * Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.
 * Button X
 
     * Changes the speed of the robot, cycling by adding 50 with max as ±100 extra speed

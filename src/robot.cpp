@@ -10,7 +10,7 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
 
             robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
-int32_t robot::wheelMaxVelocity = 0,
+int32_t robot::chassisSensitivity = 1,
         robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0,
         robot::intakeVelocity = 75;
@@ -85,8 +85,6 @@ void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
 void robot::setFourbarBrake(pros::motor_brake_mode_e brakeMode) {
     robot::fourbarL.set_brake_mode(brakeMode);
     robot::fourbarR.set_brake_mode(brakeMode);
-
-    robot::fourbarBrake = brakeMode;
 }
 
 bool robot::isFourbarMoving() {
