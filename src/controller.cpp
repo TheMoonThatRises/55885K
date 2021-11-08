@@ -31,8 +31,8 @@ void controller::moveFourbar() {
 void controller::moveIntake() {
     double velocity = 0;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot::ringSystemVelocity;
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot::ringSystemVelocity;
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot::intakeVelocity;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot::intakeVelocity;
 
     robot::moveIntake(velocity);
 }

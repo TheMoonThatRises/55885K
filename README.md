@@ -18,7 +18,7 @@ Code for vex robotics team 55885K-21-22
 * Fourbar left motor: 10
 
 ### Miscellaneous
-* Ring System motor: Unknown
+* Ring System motor: 12
 
 
 ##  The Controller

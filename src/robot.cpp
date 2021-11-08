@@ -8,11 +8,12 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
-            robot::ringMotor(NULL, MOTOR_GEARSET_06, 1, MOTOR_ENCODER_DEGREES);
+            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::wheelMaxVelocity = 0,
         robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0,
+        robot::intakeVelocity = 100;
 
 double robot::fourbarMaxDistance = 800;
 
@@ -66,7 +67,7 @@ void robot::moveFourbar(int32_t velocity, double distance) {
 }
 
 void robot::moveIntake(int32_t velocity){
-    if (velocity) robot::ringMotor.move_velocity(velocity);
+    if (velocity != 0) robot::ringMotor.move_velocity(velocity);
     else robot::ringMotor.move_velocity(0);
 }
 
