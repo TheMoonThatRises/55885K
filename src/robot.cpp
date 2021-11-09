@@ -10,17 +10,17 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
 
             robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
-int32_t robot::chassisSensitivity = 1,
-        robot::fourbarVelocity = 80,
+int32_t robot::fourbarVelocity = 80,
         robot::wheelNormalVelocity = 0,
-        robot::intakeVelocity = 75;
+        robot::intakeVelocity = 85;
 
-double robot::fourbarMaxDistance = 800;
+double robot::chassisSensitivity = 1,
+       robot::fourbarMaxDistance = 800;
 
 int robot::chassisMode = robot::CHASSIS_TANK;
 
 pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
-                         robot::chassisBrake = pros::E_MOTOR_BRAKE_COAST;
+                         robot::chassisBrake = pros::E_MOTOR_BRAKE_BRAKE;
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
     if (leftVelocity || rightVelocity || turn) {

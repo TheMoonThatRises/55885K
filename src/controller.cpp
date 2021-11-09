@@ -46,30 +46,19 @@ void controller::moveIntake() {
     robot::moveIntake(velocity);
 }
 
-void controller::changeChassisBrake() {
-    switch (robot::chassisBrake) {
-        case pros::E_MOTOR_BRAKE_COAST:
-            robot::setChassisBrake(pros::E_MOTOR_BRAKE_HOLD);
-            break;
-        case pros::E_MOTOR_BRAKE_HOLD:
-            robot::setChassisBrake(pros::E_MOTOR_BRAKE_BRAKE);
-            break;
-        case pros::E_MOTOR_BRAKE_BRAKE:
-            robot::setChassisBrake(pros::E_MOTOR_BRAKE_COAST);
-            break;
-    }
+void controller::resetFourbar() {
+    robot::fourbarL.move_relative(-robot::fourbarL.get_position(), 100);
+    robot::fourbarR.move_relative(-robot::fourbarR.get_position(), 100);
 
-    controller::setControllerText("Chassis < " + util::brakeToString[robot::chassisBrake]);
-
-    pros::delay(200);
+    controller::setControllerText("Resetting Fourbar");
 }
 
 void controller::changeChassisSensitivity() {
-    robot::chassisSensitivity = (robot::chassisSensitivity > 3) ? 1 : robot::chassisSensitivity + 1;
+    robot::chassisSensitivity = (robot::chassisSensitivity > 3) ? 1 : robot::chassisSensitivity + 0.5;
 
     controller::setControllerText("Sensitivity < " + std::to_string(robot::chassisSensitivity));
 
-    pros::delay(200);
+    pros::delay(100);
 }
 
 void controller::changeChassisMode() {

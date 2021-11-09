@@ -26,7 +26,7 @@ Code for vex robotics team 55885K-21-22
 ### Controlling the Robot
 * Button B
 
-    * Changes the brakes on the chassis. Rotates through hold, brake, and coast, in that order, with the default as coast.
+    * Holding the button will reset the fourbar.
 * Button A
 
     * Changes the sensitivy of the controller. Default is / 1. Can go up to / 4.
@@ -36,14 +36,12 @@ Code for vex robotics team 55885K-21-22
 * Button Y
 
     * Changes the mode of the chassis. Change toggle between using a single controller and using tank.
-    
 * Left Joystick
 
     * Controls the forward/backward/turning of the robot. 
 * Left Button 1/2
 
     * Move fourbar up and down.
-
 * Right Button 1/2
 
   * Move ring system forward/backward
