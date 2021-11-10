@@ -7,9 +7,9 @@ class controller {
         static void moveChassis();
         static void moveFourbar();
         static void moveIntake(); 
-        static void changeChassisBrake();
-        static void changeFourbarBrake();
+        static void resetFourbar();
         static void changeChassisSpeed();
         static void changeChassisMode();
+        static void changeChassisSensitivity();
         static void setControllerText(std::string text);
 };

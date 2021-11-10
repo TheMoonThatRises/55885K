@@ -8,8 +8,8 @@ class robot {
 
         static pros::Motor RB, RF, LB, LF, fourbarR, fourbarL, ringMotor;
         static pros::motor_brake_mode_e chassisBrake, fourbarBrake;
-        static int32_t wheelMaxVelocity, fourbarVelocity, wheelNormalVelocity, intakeVelocity;
-        static double fourbarMaxDistance;
+        static int32_t fourbarVelocity, wheelNormalVelocity, intakeVelocity;
+        static double fourbarMaxDistance, chassisSensitivity;
         static int chassisMode;
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn);
         static void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn);
