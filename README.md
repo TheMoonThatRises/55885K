@@ -19,6 +19,7 @@ Code for vex robotics team 55885K-21-22
 
 ### Miscellaneous
 * Ring System motor: 12
+* Radio: 11
 
 
 ##  The Controller
@@ -26,20 +27,22 @@ Code for vex robotics team 55885K-21-22
 ### Controlling the Robot
 * Button B
 
-    * Changes the brakes on the chassis. Rotates through hold, brake, and coast, in that order, with the default as coast.
+    * Holding the button will reset the fourbar.
 * Button A
 
-    * Changes the brakes on the fourbar. Same as the chassis brake system. Default as hold.
+    * Changes the sensitivy of the controller. Default is / 1. Can go up to / 4.
 * Button X
 
     * Changes the speed of the robot, cycling by adding 50 with max as ±100 extra speed
+* Button Y
+
+    * Changes the mode of the chassis. Change toggle between using a single controller and using tank.
 * Left Joystick
 
     * Controls the forward/backward/turning of the robot. 
 * Left Button 1/2
 
     * Move fourbar up and down.
-
 * Right Button 1/2
 
   * Move ring system forward/backward
