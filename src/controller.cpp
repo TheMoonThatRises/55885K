@@ -34,7 +34,7 @@ void controller::moveFourbar() {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) velocity = robot::fourbarVelocity;
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) velocity = -robot::fourbarVelocity;
     
-    robot::moveFourbar(velocity, false);
+    robot::moveFourbar(velocity);
 }
 
 void controller::moveIntake() {
@@ -77,9 +77,9 @@ void controller::changeChassisMode() {
 }
 
 void controller::changeChassisSpeed() {
-    robot::wheelNormalVelocity = (robot::wheelNormalVelocity >= 100) ? -100 : robot::wheelNormalVelocity + 50 ;
+    robot::wheelAddedVelocity = (robot::wheelAddedVelocity >= 100) ? -100 : robot::wheelAddedVelocity + 50 ;
 
-    controller::setControllerText("Wheel < " + std::to_string(robot::wheelNormalVelocity));
+    controller::setControllerText("Wheel < " + std::to_string(robot::wheelAddedVelocity));
 
     pros::delay(200);
 }

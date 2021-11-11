@@ -1,9 +1,9 @@
 #include "robot.h"
 
-pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            robot::RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            robot::LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+            robot::RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+            robot::LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+            robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
@@ -11,8 +11,9 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
             robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 0,
-        robot::intakeVelocity = 85;
+        robot::wheelAddedVelocity = 0,
+        robot::intakeVelocity = 85,
+        robot::chassisVelocity = 90;
 
 double robot::chassisSensitivity = 1,
        robot::fourbarMaxDistance = 800;
@@ -24,9 +25,9 @@ pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
     if (leftVelocity || rightVelocity || turn) {
-        leftVelocity += (leftVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
-        rightVelocity += (rightVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
-        turn += (turn > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
+        leftVelocity += (leftVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
+        rightVelocity += (rightVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
+        turn += (turn > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
 
         robot::RB.move_velocity(rightVelocity - turn);
         robot::RF.move_velocity(rightVelocity - turn);
@@ -47,7 +48,7 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double left
     robot::LF.move_relative(leftDistance + turn, leftVelocity);
 }
 
-void robot::moveFourbar(int32_t velocity, bool override) {
+void robot::moveFourbar(int32_t velocity) {
     if (velocity > 0) {
         robot::fourbarL.move_velocity(velocity);
         robot::fourbarR.move_velocity(velocity);
@@ -71,6 +72,10 @@ void robot::moveFourbar(int32_t velocity, double distance) {
 void robot::moveIntake(int32_t velocity){
     if (velocity != 0) robot::ringMotor.move_velocity(velocity);
     else robot::ringMotor.move_velocity(0);
+}
+
+void robot::moveIntake(int32_t velocity, double distance) {
+    robot::ringMotor.move_relative(distance, velocity);
 }
 
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
