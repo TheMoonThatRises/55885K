@@ -47,7 +47,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    autonomous::loadRunFile("./include/assets/autonv1.txt");
+    autonomous::loadRunFile(util::auton);
 }
 
 /**
@@ -65,6 +65,8 @@ void autonomous() {
  */
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
+    
+    autonomous::loadRunFile(util::auton);
 
 	while (true) {
 //        if (util::checkOverheat()) {

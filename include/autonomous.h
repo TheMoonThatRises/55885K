@@ -2,5 +2,5 @@
 
 class autonomous {
     public:
-        static void loadRunFile(std::string inputFile);
+        static void loadRunFile(std::string auton);
 };
