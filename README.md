@@ -20,6 +20,7 @@ Code for vex robotics team 55885K-21-22
 ### Miscellaneous
 * Ring System motor: 12
 * Radio: 11
+* Button: A
 
 
 ##  The Controller
