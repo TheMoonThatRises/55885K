@@ -7,7 +7,7 @@
 pros::Controller controller::master(pros::E_CONTROLLER_MASTER);
 
 void controller::setControllerText(std::string text) {
-    controller::master.set_text(0, 0, text + "      ");
+    controller::master.set_text(0, 0, text + "         ");
 
     std::cout << text << std::endl;
 }

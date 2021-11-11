@@ -33,7 +33,11 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+
+
+void competition_initialize() {
+    if (autonomous::selectAutonButton.get_value()) autonomous::selectAuton();
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -47,7 +51,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    autonomous::loadRunFile(util::auton);
+    autonomous::loadRunFile(util::Auton[util::auton]);
 }
 
 /**
@@ -66,7 +70,7 @@ void autonomous() {
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
     
-    autonomous::loadRunFile(util::auton);
+    // autonomous::loadRunFile(util::Auton[util::auton]);
 
 	while (true) {
 //        if (util::checkOverheat()) {

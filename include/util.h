@@ -1,11 +1,14 @@
 #include <string>
 #include <vector>
+#include <map>
 
 class util {
     public:
         static std::string brakeToString[],
                            modeToString[],
-                           auton;
+                           autonToString[],
+                           Auton[];
+        static int auton;
         static void testWheels();
         static void testFourbar();
         static void testAll();

@@ -5,9 +5,17 @@
 #include <vector>
 #include <fstream>
 
+
+std::string util::Auton[] = {
+    "ls100_rs100_cT200\nls100_rs-100_cT1500\nls-50_rs-50_cT1750\nrm-75_rT2000", 
+    "fb100_fT500\nfb-100_fT1000\nls100_rs100_cT3000\nfb180_fT1000\nls-50_rs-50_cT3000"
+};
+
 std::string util::brakeToString[] = {"Coast", "Brake", "Hold"},
             util::modeToString[] = {"Tank", "Single"},
-            util::auton = "ls100_rs100_cT200\nls100_rs-100_cT1000";
+            util::autonToString[] = {"duoGoals", "midGoals"};
+
+int util::auton = 1;
 
 void util::testWheels() {
     robot::moveChassis(robot::wheelAddedVelocity, robot::wheelAddedVelocity, 5000, 5000, 0);
