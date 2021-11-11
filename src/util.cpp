@@ -40,7 +40,3 @@ bool util::checkOverheat() {
 void util::calibrateFourbar() {
 
 }
-
-void util::autonomous() {
-
-}

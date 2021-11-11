@@ -9,5 +9,4 @@ class util {
         static void testAll();
         static bool checkOverheat();
         static void calibrateFourbar();
-        static void autonomous();
 };

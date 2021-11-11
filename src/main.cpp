@@ -2,6 +2,7 @@
 #include "util.h"
 #include "robot.h"
 #include "controller.h"
+#include "autonomous.h"
 #include <iostream>
 
 /**
@@ -46,7 +47,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    util::autonomous();
+    autonomous::loadRunFile("./include/assets/autonv1.txt");
 }
 
 /**

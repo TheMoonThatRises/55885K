@@ -1,12 +1,7 @@
 #include "autonomous.h"
-#include "robot.h"
-#include "controller.h"
 #include <fstream>
+#include <string>
 
-void autonomous::loadRunFile(std::ofstream inputFile) {
+void autonomous::loadRunFile(std::string inputFile) {
 
-}
-
-void autonomous::createRunFile() {
-    
 }

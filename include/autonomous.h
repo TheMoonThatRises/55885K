@@ -1,7 +1,6 @@
-#include <fstream>
+#include <string>
 
 class autonomous {
     public:
-        static void loadRunFile(std::ofstream inputFile);
-        static void createRunFile();
-}
+        static void loadRunFile(std::string inputFile);
+};
