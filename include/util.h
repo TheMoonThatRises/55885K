@@ -6,8 +6,8 @@ class util {
     public:
         static std::string brakeToString[],
                            modeToString[],
-                           autonToString[],
-                           Auton[];
+                           autonToString[];
+        static const std::string Auton[];
         static int auton;
         static void testWheels();
         static void testFourbar();
