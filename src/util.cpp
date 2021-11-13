@@ -8,7 +8,7 @@
 
 const std::vector<std::string> util::Auton = {
     "ls100_rs100_cT200\nls100_rs-100_cT1500\nls-50_rs-50_cT1750\nrm-75_rT2000", 
-    "fb100_fT500\nfb-100_fT1000\nls100_rs100_cT3000\nfb180_fT800\nls-50_rs-50_cT3000",
+    "fb150_fT500_fT500\nfb-150_fT500\nls200_rs200_cT1500\nfb180_fT800\nls-100_rs-100_cT4000",
     ""
 },
                                util::modeToString = {"Tank", "Single"},
