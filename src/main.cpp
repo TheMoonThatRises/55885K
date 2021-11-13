@@ -69,24 +69,16 @@ void autonomous() {
  */
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
-    
-    // autonomous::loadRunFile(util::Auton[util::auton]);
 
-	while (true) {
-//        if (util::checkOverheat()) {
-//            controller::setControllerText("Motors overheat!");
-//
-//            pros::delay(5000);
-//        } else {
-            controller::moveChassis();
-            controller::moveFourbar();
-            controller::moveIntake();
+    while (true) {
+        controller::moveChassis();
+        controller::moveFourbar();
+        controller::moveIntake();
 
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
-//        }
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
 
 		pros::delay(20);
 	}

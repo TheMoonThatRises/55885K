@@ -24,7 +24,7 @@ pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
                          robot::chassisBrake = pros::E_MOTOR_BRAKE_BRAKE;
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
-    if (leftVelocity || rightVelocity || turn) {
+    if (leftVelocity || rightVelocity || turn != 0) {
         leftVelocity += (leftVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
         rightVelocity += (rightVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
         turn += (turn > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
@@ -91,11 +91,6 @@ void robot::setFourbarBrake(pros::motor_brake_mode_e brakeMode) {
     robot::fourbarL.set_brake_mode(brakeMode);
     robot::fourbarR.set_brake_mode(brakeMode);
 }
-
-bool robot::isFourbarMoving() {
-    if (robot::fourbarL.get_target_velocity() - robot::fourbarL.get_actual_velocity() < robot::fourbarL.get_target_velocity() / 2 && robot::fourbarR.get_target_velocity() - robot::fourbarR.get_actual_velocity() < robot::fourbarR.get_target_velocity() / 2) return true;
-    else return false;
-} // NOT WORKING
 
 bool robot::didWheelsStop() {
     if (robot::RB.is_stopped() && robot::RF.is_stopped() && robot::LB.is_stopped() && robot::LF.is_stopped()) return true;
