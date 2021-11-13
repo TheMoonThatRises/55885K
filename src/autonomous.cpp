@@ -17,7 +17,7 @@ void autonomous::selectAuton() {
 
     while (isSelecting) {
         if (autonomous::selectAutonButton.get_value()) {
-            util::auton = (util::auton + 1) % util::Auton.size();
+            util::auton = (util::auton >= util::Auton.size() - 1) ? 0 : util::auton + 1;
 
             std::cout << util::Auton.size() << std::endl;
 
