@@ -8,12 +8,13 @@
 
 const std::vector<std::string> util::Auton = {
     "ls100_rs100_cT200\nls100_rs-100_cT1500\nls-50_rs-50_cT1750\nrm-75_rT2000", 
-    "fb100_fT500\nfb-100_fT1000\nls100_rs100_cT3000\nfb180_fT800\nls-50_rs-50_cT3000"
+    "fb100_fT500\nfb-100_fT1000\nls100_rs100_cT3000\nfb180_fT800\nls-50_rs-50_cT3000",
+    ""
 };
 
 std::vector<std::string> util::brakeToString = {"Coast", "Brake", "Hold"},
             util::modeToString = {"Tank", "Single"},
-            util::autonToString = {"duoGoals", "midGoals"};
+            util::autonToString = {"duoGoals", "midGoals", "None"};
 
 int util::auton = 1;
 
