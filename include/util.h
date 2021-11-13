@@ -6,10 +6,10 @@
 
 class util {
     public:
-        static std::vector<std::string> brakeToString,
-                           modeToString,
-                           autonToString;
-        static const std::vector<std::string> Auton;
+        static const std::vector<std::string> modeToString,
+                                        autonToString,
+
+                                        Auton;
         static int auton;
         static void testWheels();
         static void testFourbar();
