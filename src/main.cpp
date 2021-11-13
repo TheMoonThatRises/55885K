@@ -36,7 +36,7 @@ void disabled() {}
 
 
 void competition_initialize() {
-    if (autonomous::selectAutonButton.get_value()) autonomous::selectAuton();
+    autonomous::selectAuton();
 }
 
 /**

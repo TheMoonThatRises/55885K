@@ -7,7 +7,7 @@
 
 class autonomous {
     public:
-        static pros::ADIDigitalIn selectAutonButton;
+        static pros::ADIDigitalIn selectAutonButton, lockinAutonButton;
         static void loadRunFile(const std::string& auton);
         static void selectAuton();
 };

@@ -9,16 +9,25 @@
 #include <vector>
 
 
-pros::ADIDigitalIn autonomous::selectAutonButton('A');
+pros::ADIDigitalIn autonomous::selectAutonButton('A'),
+                   autonomous::lockinAutonButton('B');
 
 void autonomous::selectAuton() {
-    util::auton = (util::auton + 1) % util::Auton.size();
+    bool isSelecting = true;
 
-    std::cout << util::Auton.size() << std::endl;
+    while (isSelecting) {
+        if (autonomous::selectAutonButton.get_value()) {
+            util::auton = (util::auton + 1) % util::Auton.size();
 
-    controller::setControllerText("Set auton to " + util::autonToString.at(util::auton));
+            std::cout << util::Auton.size() << std::endl;
 
-    pros::delay(200);
+            controller::setControllerText("Auton < " + util::autonToString.at(util::auton));
+
+            pros::delay(200);
+        } else if (autonomous::lockinAutonButton.get_value()) isSelecting = false;
+    }
+
+    controller::setControllerText("Locked < " + util::autonToString.at(util::auton));
 }
 
 
