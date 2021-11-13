@@ -47,10 +47,14 @@ void controller::moveIntake() {
 }
 
 void controller::resetFourbar() {
+    controller::setControllerText("Resetting Fourbar");
+
     robot::fourbarL.move_relative(-robot::fourbarL.get_position(), 100);
     robot::fourbarR.move_relative(-robot::fourbarR.get_position(), 100);
 
-    controller::setControllerText("Resetting Fourbar");
+    pros::delay(2000);
+
+    controller::setControllerText("Fourbar Resetted");
 }
 
 void controller::changeChassisSensitivity() {
