@@ -1,6 +1,10 @@
 #include "main.h"
 #include <string>
 
+
+#ifndef _ROBOT_H_
+#define _ROBOT_H_
+
 class robot {
     public:
         static const int CHASSIS_TANK = 0,
@@ -24,3 +28,5 @@ class robot {
         static bool checkFourbar();
         static void initialize();
 };
+
+#endif

@@ -1,6 +1,10 @@
 #include "main.h"
 #include <string>
 
+
+#ifndef _CONTROLLER_H_
+#define _CONTROLLER_H_
+
 class controller {
     public:
         static pros::Controller master;
@@ -13,3 +17,5 @@ class controller {
         static void changeChassisSensitivity();
         static void setControllerText(std::string text);
 };
+
+#endif
