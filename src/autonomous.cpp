@@ -12,9 +12,13 @@
 pros::ADIDigitalIn autonomous::selectAutonButton('A');
 
 void autonomous::selectAuton() {
-    util::auton = (util::auton + 1) % util::Auton->size();
+    util::auton = (util::auton + 1) % util::Auton.size();
 
-    controller::setControllerText("Set auton to " + util::autonToString[util::auton]);
+    std::cout << util::Auton.size() << std::endl;
+
+    controller::setControllerText("Set auton to " + util::autonToString.at(util::auton));
+
+    pros::delay(200);
 }
 
 
@@ -29,7 +33,7 @@ void autonomous::selectAuton() {
  *      rT = Ring motor move length - Required if rm is used
  **/
 
-void autonomous::loadRunFile(std::string auton) {
+void autonomous::loadRunFile(const std::string& auton) {
     std::string commands;
     std::istringstream Commands(auton);
 
@@ -37,7 +41,7 @@ void autonomous::loadRunFile(std::string auton) {
         std::vector<std::string> commandAr = util::splitString(commands, "_");
         int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, rmM = 0, rmT = 0;
 
-        for (std::string command : commandAr) {
+        for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
             int dist = std::stoi(command.substr(2));
             std::string commandSt = command.substr(0, 2);
