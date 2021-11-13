@@ -46,6 +46,15 @@ void controller::moveIntake() {
     robot::moveIntake(velocity);
 }
 
+void controller::moveBackGoal() {
+    double velocity = 0;
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) velocity = robot::backGoalVelocity;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) velocity = -robot::backGoalVelocity;
+
+    robot::moveBackGoal(velocity);
+};
+
 void controller::resetFourbar() {
     controller::setControllerText("Resetting Fourbar");
 

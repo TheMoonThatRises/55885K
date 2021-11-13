@@ -10,7 +10,8 @@ class controller {
         static pros::Controller master;
         static void moveChassis();
         static void moveFourbar();
-        static void moveIntake(); 
+        static void moveIntake();
+        static void moveBackGoal();
         static void resetFourbar();
         static void changeChassisSpeed();
         static void changeChassisMode();

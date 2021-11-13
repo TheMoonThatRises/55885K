@@ -74,6 +74,7 @@ void opcontrol() {
         controller::moveChassis();
         controller::moveFourbar();
         controller::moveIntake();
+        controller::moveBackGoal();
 
         if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
         if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();

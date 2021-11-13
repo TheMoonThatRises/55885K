@@ -8,12 +8,15 @@ pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
-            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
+            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+
+            robot::backGoalMotor(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::fourbarVelocity = 80,
         robot::wheelAddedVelocity = 0,
         robot::intakeVelocity = 85,
-        robot::chassisVelocity = 90;
+        robot::chassisVelocity = 90,
+        robot::backGoalVelocity = 80;
 
 double robot::chassisSensitivity = 1,
        robot::fourbarMaxDistance = 800;
@@ -76,6 +79,10 @@ void robot::moveIntake(int32_t velocity){
 
 void robot::moveIntake(int32_t velocity, double distance) {
     robot::ringMotor.move_relative(distance, velocity);
+}
+
+void robot::moveBackGoal(int32_t velocity) {
+    robot::backGoalMotor.move_velocity(velocity);
 }
 
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
