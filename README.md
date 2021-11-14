@@ -20,7 +20,8 @@ Code for vex robotics team 55885K-21-22
 ### Miscellaneous
 * Ring System motor: 12
 * Radio: 11
-* Button: A
+* Select Auton Button: A
+* Lock-in Auton Button: B
 
 
 ##  The Controller
@@ -31,7 +32,7 @@ Code for vex robotics team 55885K-21-22
     * Holding the button will reset the fourbar.
 * Button A
 
-    * Changes the sensitivy of the controller. Default is / 1. Can go up to / 4.
+    * Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.5.
 * Button X
 
     * Changes the speed of the robot, cycling by adding 50 with max as ±100 extra speed
