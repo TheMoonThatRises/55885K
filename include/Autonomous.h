@@ -5,11 +5,14 @@
 #ifndef _AUTONOMOUS_H_
 #define _AUTONOMOUS_H_
 
-class autonomous {
+class Autonomous {
+    private:
+        const pros::ADIDigitalIn selectAutonButton, lockinAutonButton;
     public:
-        static pros::ADIDigitalIn selectAutonButton, lockinAutonButton;
+        Autonomous();
+
         static void loadRunFile(const std::string& auton);
-        static void selectAuton();
+        void selectAuton();
 };
 
 #endif

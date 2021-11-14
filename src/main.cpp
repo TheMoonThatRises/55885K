@@ -1,8 +1,5 @@
 #include "main.h"
-#include "util.h"
-#include "robot.h"
-#include "controller.h"
-#include "autonomous.h"
+#include "ClassHolders.h"
 #include <iostream>
 
 /**
@@ -12,74 +9,73 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	// pros::lcd::initialize();
 	std::cout << "Initializing..." << std::endl;
-	robot::initialize();
+	robot.initialize();
 }
 
 /**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
+ * Runs while the Robot is in the disabled state of Field Management System or
+ * the VEX Competition Switch, following either Autonomous or opcontrol. When
+ * the Robot is enabled, this task will exit.
  */
 void disabled() {}
 
 /**
- * Runs after initialize(), and before autonomous when connected to the Field
+ * Runs after initialize(), and before Autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
+ * competition-specific initialization routines, such as an Autonomous selector
  * on the LCD.
  *
- * This task will exit when the robot is enabled and autonomous or opcontrol
+ * This task will exit when the Robot is enabled and Autonomous or opcontrol
  * starts.
  */
 
 
 void competition_initialize() {
-    autonomous::selectAuton();
+    auton.selectAuton();
 }
 
 /**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
+ * Runs the user Autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the Robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the Autonomous
  * mode. Alternatively, this function may be called in initialize or opcontrol
  * for non-competition testing purposes.
  *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * If the Robot is disabled or communications is lost, the Autonomous task
+ * will be stopped. Re-enabling the Robot will restart the task, not re-start it
  * from where it left off.
  */
 void autonomous() {
-    autonomous::loadRunFile(util::Auton[util::auton]);
+    Autonomous::loadRunFile(util.Auton[util.auton]);
 }
 
 /**
  * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
+ * with the default priority and stack size whenever the Robot is enabled via
  * the Field Management System or the VEX Competition Switch in the operator
  * control mode.
  *
  * If no competition control is connected, this function will run immediately
  * following initialize().
  *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
+ * If the Robot is disabled or communications is lost, the
+ * operator control task will be stopped. Re-enabling the Robot will restart the
  * task, not resume it from where it left off.
  */
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
     while (true) {
-        controller::moveChassis();
-        controller::moveFourbar();
-        controller::moveIntake();
-        controller::moveBackGoal();
+        controller.moveChassis();
+        controller.moveFourbar();
+        controller.moveIntake();
+        controller.moveBackGoal();
 
-        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
-        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
-        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
-        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller.changeChassisSensitivity();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller.changeChassisSpeed();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.changeChassisMode();
 
 		pros::delay(20);
 	}
