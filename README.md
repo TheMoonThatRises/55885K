@@ -51,12 +51,3 @@ Code for vex robotics team 55885K-21-22
 
 ### Controller Screen
 The section beneath the table shows what value is being set to what using the less than (<) sign.
-
-
-
-## TO-DO List
-
-- [x] Do ring moving motors
-- [ ] Have right joystick control left/right direct movement
-- [ ] Make the robot respond smoother
-- [ ] Add autonomous
