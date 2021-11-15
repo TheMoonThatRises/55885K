@@ -2,16 +2,26 @@
 #include "robot.h"
 #include "controller.h"
 #include <string>
+#include <vector>
+#include <fstream>
 
-std::string util::brakeToString[] = {"Coast", "Brake", "Hold"};
-std::string util::modeToString[] = {"Tank", "Single"};
+
+const std::vector<std::string> util::Auton = {
+    "ls100_rs100_cT200\nls100_rs-100_cT1500\nls-50_rs-50_cT1750\nrm-75_rT2000", 
+    "fb150_fT500_fT500\nfb-150_fT500\nls200_rs200_cT1500\nfb180_fT800\nls-100_rs-100_cT4000",
+    ""
+},
+                               util::modeToString = {"Tank", "Single"},
+                               util::autonToString = {"duoGoals", "midGoals", "None"};
+
+int util::auton = 1;
 
 void util::testWheels() {
-    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, 5000, 5000, 0);
+    robot::moveChassis(robot::wheelAddedVelocity, robot::wheelAddedVelocity, 5000, 5000, 0);
 
     pros::delay(2000);
 
-    robot::moveChassis(robot::wheelNormalVelocity, robot::wheelNormalVelocity, -5000, -5000, 0);
+    robot::moveChassis(robot::wheelAddedVelocity, robot::wheelAddedVelocity, -5000, -5000, 0);
 }
 
 void util::testFourbar() {
@@ -41,6 +51,28 @@ void util::calibrateFourbar() {
 
 }
 
-void util::autonomous() {
+std::string util::fileToAuton(const std::string& inputFile) {
+    std::string commands;
+    std::string inputCommands;
 
+    std::ifstream CommandFile(inputFile);
+
+    while (std::getline(CommandFile, commands)) {
+        inputCommands += commands + "\n";
+    }
+
+    return inputCommands;
+}
+
+// Code from stack answer https://stackoverflow.com/a/16286297
+std::vector<std::string> util::splitString(const std::string& str,const std::string& sep){
+    char* cstr=const_cast<char*>(str.c_str());
+    char* current;
+    std::vector<std::string> arr;
+    current=strtok(cstr,sep.c_str());
+    while(current!=nullptr){
+        arr.emplace_back(current);
+        current=strtok(nullptr,sep.c_str());
+    }
+    return arr;
 }

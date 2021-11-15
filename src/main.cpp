@@ -2,6 +2,7 @@
 #include "util.h"
 #include "robot.h"
 #include "controller.h"
+#include "autonomous.h"
 #include <iostream>
 
 /**
@@ -32,7 +33,11 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+
+
+void competition_initialize() {
+    autonomous::selectAuton();
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -46,7 +51,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    util::autonomous();
+    autonomous::loadRunFile(util::Auton[util::auton]);
 }
 
 /**
@@ -65,21 +70,16 @@ void autonomous() {
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
-	while (true) {
-//        if (util::checkOverheat()) {
-//            controller::setControllerText("Motors overheat!");
-//
-//            pros::delay(5000);
-//        } else {
-            controller::moveChassis();
-            controller::moveFourbar();
-            controller::moveIntake();
+    while (true) {
+        controller::moveChassis();
+        controller::moveFourbar();
+        controller::moveIntake();
+        controller::moveBackGoal();
 
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
-            if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
-//        }
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller::resetFourbar();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller::changeChassisSensitivity();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller::changeChassisSpeed();
+        if (controller::master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller::changeChassisMode();
 
 		pros::delay(20);
 	}

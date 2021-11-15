@@ -7,7 +7,7 @@
 pros::Controller controller::master(pros::E_CONTROLLER_MASTER);
 
 void controller::setControllerText(std::string text) {
-    controller::master.set_text(0, 0, text + "      ");
+    controller::master.set_text(0, 0, text + "         ");
 
     std::cout << text << std::endl;
 }
@@ -34,7 +34,7 @@ void controller::moveFourbar() {
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) velocity = robot::fourbarVelocity;
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) velocity = -robot::fourbarVelocity;
     
-    robot::moveFourbar(velocity, false);
+    robot::moveFourbar(velocity);
 }
 
 void controller::moveIntake() {
@@ -46,11 +46,24 @@ void controller::moveIntake() {
     robot::moveIntake(velocity);
 }
 
+void controller::moveBackGoal() {
+    double velocity = 0;
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) velocity = robot::backGoalVelocity;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) velocity = -robot::backGoalVelocity;
+
+    robot::moveBackGoal(velocity);
+};
+
 void controller::resetFourbar() {
+    controller::setControllerText("Resetting Fourbar");
+
     robot::fourbarL.move_relative(-robot::fourbarL.get_position(), 100);
     robot::fourbarR.move_relative(-robot::fourbarR.get_position(), 100);
 
-    controller::setControllerText("Resetting Fourbar");
+    pros::delay(2000);
+
+    controller::setControllerText("Fourbar Resetted");
 }
 
 void controller::changeChassisSensitivity() {
@@ -77,9 +90,9 @@ void controller::changeChassisMode() {
 }
 
 void controller::changeChassisSpeed() {
-    robot::wheelNormalVelocity = (robot::wheelNormalVelocity >= 100) ? -100 : robot::wheelNormalVelocity + 50 ;
+    robot::wheelAddedVelocity = (robot::wheelAddedVelocity >= 100) ? -100 : robot::wheelAddedVelocity + 50 ;
 
-    controller::setControllerText("Wheel < " + std::to_string(robot::wheelNormalVelocity));
+    controller::setControllerText("Wheel < " + std::to_string(robot::wheelAddedVelocity));
 
     pros::delay(200);
 }

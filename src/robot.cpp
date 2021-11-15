@@ -1,18 +1,22 @@
 #include "robot.h"
 
-pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            robot::RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_COUNTS),
-            robot::LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
-            robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_COUNTS),
+pros::Motor robot::RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+            robot::RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+            robot::LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+            robot::LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
             robot::fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
             robot::fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
-            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
+            robot::ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+
+            robot::backGoalMotor(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES);
 
 int32_t robot::fourbarVelocity = 80,
-        robot::wheelNormalVelocity = 0,
-        robot::intakeVelocity = 85;
+        robot::wheelAddedVelocity = 0,
+        robot::intakeVelocity = 85,
+        robot::chassisVelocity = 90,
+        robot::backGoalVelocity = 80;
 
 double robot::chassisSensitivity = 1,
        robot::fourbarMaxDistance = 800;
@@ -23,10 +27,10 @@ pros::motor_brake_mode_e robot::fourbarBrake = pros::E_MOTOR_BRAKE_HOLD,
                          robot::chassisBrake = pros::E_MOTOR_BRAKE_BRAKE;
 
 void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) {
-    if (leftVelocity || rightVelocity || turn) {
-        leftVelocity += (leftVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
-        rightVelocity += (rightVelocity > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
-        turn += (turn > 0) ? robot::wheelNormalVelocity : -robot::wheelNormalVelocity;
+    if (leftVelocity || rightVelocity || turn != 0) {
+        leftVelocity += (leftVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
+        rightVelocity += (rightVelocity > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
+        turn += (turn > 0) ? robot::wheelAddedVelocity : -robot::wheelAddedVelocity;
 
         robot::RB.move_velocity(rightVelocity - turn);
         robot::RF.move_velocity(rightVelocity - turn);
@@ -47,7 +51,7 @@ void robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double left
     robot::LF.move_relative(leftDistance + turn, leftVelocity);
 }
 
-void robot::moveFourbar(int32_t velocity, bool override) {
+void robot::moveFourbar(int32_t velocity) {
     if (velocity > 0) {
         robot::fourbarL.move_velocity(velocity);
         robot::fourbarR.move_velocity(velocity);
@@ -73,6 +77,14 @@ void robot::moveIntake(int32_t velocity){
     else robot::ringMotor.move_velocity(0);
 }
 
+void robot::moveIntake(int32_t velocity, double distance) {
+    robot::ringMotor.move_relative(distance, velocity);
+}
+
+void robot::moveBackGoal(int32_t velocity) {
+    robot::backGoalMotor.move_velocity(velocity);
+}
+
 void robot::setChassisBrake(pros::motor_brake_mode_e brakeMode) {
     robot::RB.set_brake_mode(brakeMode);
     robot::RF.set_brake_mode(brakeMode);
@@ -86,11 +98,6 @@ void robot::setFourbarBrake(pros::motor_brake_mode_e brakeMode) {
     robot::fourbarL.set_brake_mode(brakeMode);
     robot::fourbarR.set_brake_mode(brakeMode);
 }
-
-bool robot::isFourbarMoving() {
-    if (robot::fourbarL.get_target_velocity() - robot::fourbarL.get_actual_velocity() < robot::fourbarL.get_target_velocity() / 2 && robot::fourbarR.get_target_velocity() - robot::fourbarR.get_actual_velocity() < robot::fourbarR.get_target_velocity() / 2) return true;
-    else return false;
-} // NOT WORKING
 
 bool robot::didWheelsStop() {
     if (robot::RB.is_stopped() && robot::RF.is_stopped() && robot::LB.is_stopped() && robot::LF.is_stopped()) return true;
