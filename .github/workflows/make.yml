@@ -8,17 +8,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checks out repository
+    - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Install python3.9
+
+    - name: Install python3.10
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.10'
         cache: 'pip'
         architecture: 'x64'
+
     - name: Install prosv5
-      run: pip install --user pros-cli --no-warn-script-location
-    - name: Check prosv5 version
-      run: pros --version
-    - name: make
+      run: pip install pros-cli --no-warn-script-location --no-use-pep517
+
+    - name: Install arm-none-eabi-gcc
+      uses: fiam/arm-none-eabi-gcc@v1
+      with:
+        release: '9-2019-q4'
+      
+    - name: Make code
       run: make
