@@ -15,11 +15,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.10'
-        cache: 'pip'
+        # cache: 'pip'
         architecture: 'x64'
 
     - name: Install prosv5
-      run: pip install pros-cli --no-warn-script-location --no-use-pep517
+      run: pip install -r requirements.txt pros-cli --no-warn-script-location --no-use-pep517
 
     - name: Install arm-none-eabi-gcc
       uses: fiam/arm-none-eabi-gcc@v1
