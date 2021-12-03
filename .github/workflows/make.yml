@@ -8,6 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checks out repository
+      uses: actions/checkout@v2
+    - name: Install python3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+        architecture: 'x64'
+    - name: Install prosv5
+      run: pip install --user pros-cli --no-warn-script-location
+    - name: Check prosv5 version
+      run: pros --version
     - name: make
       run: make
