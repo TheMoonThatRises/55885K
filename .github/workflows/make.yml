@@ -3,7 +3,7 @@ name: Make
 on: 
   push:
     branches-ignore:
-      - 'main'
+      - 'stable'
     paths-ignore:
       - '.github/**'
 
