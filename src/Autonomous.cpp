@@ -79,18 +79,18 @@ void Autonomous::loadRunFile(const std::string& autonString) {
 
         // Move fourbar
 
-        robot.moveFourbar(fbM);
+        robot.moveFourbar(robot.fourbarL, robot.fourbarR, fbM);
 
         pros::delay(fbT);
 
-        robot.moveFourbar(0);
+        robot.moveFourbar(robot.fourbarL, robot.fourbarR, 0);
 
         // Move back fourbar
 
-        robot.moveBackFourbar(bfb);
+        robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, bfb);
 
         pros::delay(bfbT);
 
-        robot.moveBackFourbar(0);
+        robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, 0);
     }
 }

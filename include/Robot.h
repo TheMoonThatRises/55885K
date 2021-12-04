@@ -19,10 +19,8 @@ class Robot {
         int chassisMode;
         void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) const;
         void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn) const;
-        void moveFourbar(int32_t velocity) const;
-        void moveFourbar(int32_t velocity, double distance) const;
-        void moveBackFourbar(int32_t velocity) const;
-        void moveBackFourbar(int32_t velocity, double distance) const;
+        void moveFourbar(pros::Motor wfourbarL, pros::Motor wfourbarR, int32_t velocity) const;
+        void moveFourbar(pros::Motor wfourbarL, pros::Motor wfourbarR, int32_t velocity, double distance) const;
         void setChassisBrake(pros::motor_brake_mode_e brakeMode);
         void setFourbarBrake(pros::motor_brake_mode_e brakeMode) const;
         bool didWheelsStop() const;

@@ -69,12 +69,11 @@ void opcontrol() {
     while (true) {
         controller.moveChassis();
         controller.moveFourbar();
-        controller.moveBackFourbar();
 
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar(robot.fourbarL, robot.fourbarR);
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.resetFourbar(robot.backFourbarL, robot.backFourbarR);
         if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller.changeChassisSensitivity();
         if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller.changeChassisSpeed();
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.changeChassisMode();
 
 		pros::delay(20);
 	}

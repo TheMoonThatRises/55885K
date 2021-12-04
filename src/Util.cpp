@@ -27,19 +27,19 @@ void Util::testWheels() {
 }
 
 void Util::testFourbar() {
-    robot.moveFourbar(robot.fourbarVelocity, robot.fourbarMaxDistance);
+    robot.moveFourbar(robot.fourbarL, robot.fourbarR, robot.fourbarVelocity, robot.fourbarMaxDistance);
 
     pros::delay(2000);
 
-    robot.moveFourbar(robot.fourbarVelocity, -robot.fourbarMaxDistance);
+    robot.moveFourbar(robot.fourbarL, robot.fourbarR, robot.fourbarVelocity, -robot.fourbarMaxDistance);
 
     pros::delay(2000);
 
-    robot.moveBackFourbar(robot.fourbarVelocity, robot.fourbarMaxDistance);
+    robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, robot.fourbarVelocity, robot.fourbarMaxDistance);
 
     pros::delay(2000);
 
-    robot.moveBackFourbar(robot.fourbarVelocity, -robot.fourbarMaxDistance);
+    robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, robot.fourbarVelocity, -robot.fourbarMaxDistance);
 }
 
 void Util::testAll() {

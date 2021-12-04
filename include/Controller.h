@@ -12,8 +12,7 @@ class Controller {
         pros::Controller master;
         void moveChassis();
         void moveFourbar();
-        void moveBackFourbar();
-        void resetFourbar();
+        void resetFourbar(pros::Motor fourbarL, pros::Motor fourbarR);
         void changeChassisSpeed();
         void changeChassisMode();
         void changeChassisSensitivity();
