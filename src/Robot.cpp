@@ -30,8 +30,8 @@ Robot::Robot():
 
 void Robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double turn) const {
     if (leftVelocity || rightVelocity || turn != 0) {
-        leftVelocity += (leftVelocity > 0) ? wheelAddedVelocity : -wheelAddedVelocity;
-        rightVelocity += (rightVelocity > 0) ? wheelAddedVelocity : -wheelAddedVelocity;
+        leftVelocity += (leftVelocity != 0) ? ((leftVelocity > 0) ? wheelAddedVelocity : -wheelAddedVelocity) : 0;
+        rightVelocity += (rightVelocity != 0) ? ((rightVelocity > 0) ? wheelAddedVelocity : -wheelAddedVelocity) : 0;
         turn += (turn > 0) ? wheelAddedVelocity : -wheelAddedVelocity;
 
         RB.move_velocity(rightVelocity - turn);
