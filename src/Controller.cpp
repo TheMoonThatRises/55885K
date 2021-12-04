@@ -75,13 +75,13 @@ void Controller::changeChassisMode() {
 
     Controller::setControllerText("Chassis < " + util.modeToString[robot.chassisMode]);
 
-    pros::delay(200);
+    pros::delay(100);
 }
 
 void Controller::changeChassisSpeed() {
-    robot.wheelAddedVelocity = (robot.wheelAddedVelocity >= 100) ? -100 : robot.wheelAddedVelocity + 50 ;
+    robot.wheelAddedVelocity = (robot.wheelAddedVelocity >= 100) ? 0 : robot.wheelAddedVelocity + 50 ;
 
     Controller::setControllerText("Wheel < " + std::to_string(robot.wheelAddedVelocity));
 
-    pros::delay(200);
+    pros::delay(100);
 }
