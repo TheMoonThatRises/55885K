@@ -12,7 +12,7 @@ class Controller {
         pros::Controller master;
         void moveChassis();
         void moveFourbar();
-        void moveBackGoal();
+        void moveBackFourbar();
         void resetFourbar();
         void changeChassisSpeed();
         void changeChassisMode();

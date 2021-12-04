@@ -41,6 +41,8 @@ void Autonomous::selectAuton() {
  *      cT = Chassis move length - Required if ls or rs is used
  *      fb = Fourbar
  *      fT = Fourbar move length - Required if fb is used
+ *      bf = Back fourbar
+ *      bT = Back fourbar move length - Required if bf is used
  **/
 
 void Autonomous::loadRunFile(const std::string& autonString) {
@@ -49,7 +51,7 @@ void Autonomous::loadRunFile(const std::string& autonString) {
 
     while (std::getline(Commands, commands)) {
         std::vector<std::string> commandAr = util.splitString(commands, "_");
-        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0;
+        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, bfb = 0, bfbT = 0;
 
         for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
@@ -61,10 +63,12 @@ void Autonomous::loadRunFile(const std::string& autonString) {
             else if (commandSt == "cT") lrT = dist;
             else if (commandSt == "fb") fbM = dist;
             else if (commandSt == "fT") fbT = dist;
+            else if (commandSt == "bf") bfb = dist;
+            else if (commandSt == "bT") bfbT = dist;
         }
 
 
-        // Moving chassis
+        // Move chassis
 
         robot.moveChassis(lsM, rsM, 0);
 
@@ -73,12 +77,20 @@ void Autonomous::loadRunFile(const std::string& autonString) {
         robot.moveChassis(0, 0, 0);
 
 
-        // Moving fourbar
+        // Move fourbar
 
         robot.moveFourbar(fbM);
 
         pros::delay(fbT);
 
         robot.moveFourbar(0);
+
+        // Move back fourbar
+
+        robot.moveBackFourbar(bfb);
+
+        pros::delay(bfbT);
+
+        robot.moveBackFourbar(0);
     }
 }

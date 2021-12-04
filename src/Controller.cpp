@@ -41,13 +41,13 @@ void Controller::moveFourbar() {
     robot.moveFourbar(velocity);
 }
 
-void Controller::moveBackGoal() {
+void Controller::moveBackFourbar() {
     double velocity = 0;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) velocity = robot.backGoalVelocity;
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) velocity = -robot.backGoalVelocity;
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot.fourbarVelocity;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot.fourbarVelocity;
 
-    robot.moveBackGoal(velocity);
+    robot.moveBackFourbar(velocity);
 }
 
 void Controller::resetFourbar() {

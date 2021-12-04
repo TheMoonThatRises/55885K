@@ -14,8 +14,11 @@ Code for vex robotics team 55885K-21-22
 * Left front chassis motor: 8
 
 ### Fourbar Motors
-* Fourbar right motor: 9
-* Fourbar left motor: 10
+* Front fourbar right motor: 9
+* Front fourbar left motor: 10
+
+* Back fourbar right motor: 12
+* Back fourbar left motor: 13
 
 ### Miscellaneous
 * Radio: 11
@@ -43,7 +46,10 @@ Code for vex robotics team 55885K-21-22
     * Controls the forward/backward/turning of the robot. 
 * Left Button 1/2
 
-    * Move fourbar up and down.
+    * Move front fourbar up and down.
+* Right Button 1/2
+
+    * Move back fourbar up and down.
 
 ### Controller Screen
 The section beneath the table shows what value is being set to what using the less than (<) sign.

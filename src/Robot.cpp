@@ -9,11 +9,11 @@ Robot::Robot():
     fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
     fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
-    backGoalMotor(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+    backFourbarR(12, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+    backFourbarL(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
     fourbarVelocity(80),
     wheelAddedVelocity(0),
-    intakeVelocity(85),
     chassisVelocity(90),
     backGoalVelocity(80),
 
@@ -74,8 +74,25 @@ void Robot::moveFourbar(const int32_t velocity, const double distance) const {
     fourbarR.move_relative(distance, velocity);
 }
 
-void Robot::moveBackGoal(const int32_t velocity) const {
-    backGoalMotor.move_velocity(velocity);
+void Robot::moveBackFourbar(int32_t velocity) const {
+    if (velocity > 0) {
+        backFourbarL.move_velocity(velocity);
+        backFourbarR.move_velocity(velocity);
+    } else if (velocity < 0) {
+        velocity = -fourbarVelocity;
+
+        backFourbarL.move_velocity(velocity);
+        backFourbarR.move_velocity(velocity);
+    }
+    else {
+        backFourbarL.move_velocity(0);
+        backFourbarR.move_velocity(0);
+    }
+}
+
+void Robot::moveBackFourbar(const int32_t velocity, const double distance) const {
+    backFourbarL.move_relative(distance, velocity);
+    backFourbarR.move_relative(distance, velocity);
 }
 
 void Robot::setChassisBrake(const pros::motor_brake_mode_e brakeMode) {
