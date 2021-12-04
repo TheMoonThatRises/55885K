@@ -3,7 +3,7 @@ name: Pros Make
 on:
   pull_request:
     branches:
-     - 'stable'
+      - 'stable'
     paths-ignore:
       - '.github/**'
 
