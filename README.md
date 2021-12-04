@@ -31,7 +31,7 @@ Code for vex robotics team 55885K-21-22
 ### Controlling the Robot
 * Button B
 
-    * Holding the button will reset the fourbar.
+    * Resets the front fourbar. While resetting, the robot will be unable to perform any other actions for 1 second.
 * Button A
 
     * Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.5.
@@ -40,7 +40,7 @@ Code for vex robotics team 55885K-21-22
     * Changes the speed of the robot, cycling by adding 50 with a max of 100 extra speed and a default of 0
 * Button Y
 
-    * Changes the mode of the chassis. Change toggle between using a single controller and using tank.
+    * Resets the back fourbar. While resetting, the robot will be unable to perform any other actions for 1 second.
 * Left Joystick (Single Joystick Mode)
 
     * Controls the forward/backward/turning of the robot. 
