@@ -1,7 +1,7 @@
 name: Pros Make
 
 on:
-  pull-request:
+  pull_request:
     branches:
      - 'stable'
     paths-ignore:
