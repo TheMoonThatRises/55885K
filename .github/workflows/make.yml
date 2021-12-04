@@ -1,6 +1,9 @@
 name: Make
 
-on: [push, pull_request]
+on: 
+  push:
+    paths-ignore:
+      - '.github/'
 
 jobs:
   build:
