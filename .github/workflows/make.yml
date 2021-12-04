@@ -3,7 +3,7 @@ name: Make
 on: 
   push:
     paths-ignore:
-      - '.github/'
+      - '.github/**'
 
 jobs:
   build:

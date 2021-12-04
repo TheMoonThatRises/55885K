@@ -3,7 +3,7 @@ name: Pros Make
 on:
   pull-request:
     paths-ignore:
-      - '.github/'
+      - '.github/**'
 
 jobs:
   buildPros:
