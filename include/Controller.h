@@ -12,7 +12,6 @@ class Controller {
         pros::Controller master;
         void moveChassis();
         void moveFourbar();
-        void moveIntake();
         void moveBackGoal();
         void resetFourbar();
         void changeChassisSpeed();

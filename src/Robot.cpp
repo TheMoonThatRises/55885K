@@ -9,8 +9,6 @@ Robot::Robot():
     fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
     fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
-    ringMotor(12, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
-
     backGoalMotor(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
     fourbarVelocity(80),
@@ -76,15 +74,6 @@ void Robot::moveFourbar(const int32_t velocity, const double distance) const {
     fourbarR.move_relative(distance, velocity);
 }
 
-void Robot::moveIntake(const int32_t velocity) const{
-    if (velocity != 0) ringMotor.move_velocity(velocity);
-    else ringMotor.move_velocity(0);
-}
-
-void Robot::moveIntake(const int32_t velocity, const double distance) const {
-    ringMotor.move_relative(distance, velocity);
-}
-
 void Robot::moveBackGoal(const int32_t velocity) const {
     backGoalMotor.move_velocity(velocity);
 }
@@ -115,6 +104,4 @@ bool Robot::checkFourbar() const {
 void Robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
-
-    ringMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }

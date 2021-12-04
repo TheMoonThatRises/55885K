@@ -12,7 +12,7 @@ class Robot {
         const int CHASSIS_TANK = 0,
                   CHASSIS_SINGLE = 1;
 
-        const pros::Motor RB, RF, LB, LF, fourbarR, fourbarL, ringMotor, backGoalMotor;
+        const pros::Motor RB, RF, LB, LF, fourbarR, fourbarL, backGoalMotor;
         pros::motor_brake_mode_e chassisBrake, fourbarBrake;
         int32_t fourbarVelocity, wheelAddedVelocity, intakeVelocity, chassisVelocity, backGoalVelocity;
         double fourbarMaxDistance, chassisSensitivity;
@@ -21,8 +21,6 @@ class Robot {
         void moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance, double turn) const;
         void moveFourbar(int32_t velocity) const;
         void moveFourbar(int32_t velocity, double distance) const;
-        void moveIntake(int32_t velocity) const;
-        void moveIntake(int32_t velocity, double distance) const;
         void moveBackGoal(int32_t velocity) const;
         void setChassisBrake(pros::motor_brake_mode_e brakeMode);
         void setFourbarBrake(pros::motor_brake_mode_e brakeMode) const;

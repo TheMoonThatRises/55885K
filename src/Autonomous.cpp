@@ -41,8 +41,6 @@ void Autonomous::selectAuton() {
  *      cT = Chassis move length - Required if ls or rs is used
  *      fb = Fourbar
  *      fT = Fourbar move length - Required if fb is used
- *      rm = Ring motor
- *      rT = Ring motor move length - Required if rm is used
  **/
 
 void Autonomous::loadRunFile(const std::string& autonString) {
@@ -51,7 +49,7 @@ void Autonomous::loadRunFile(const std::string& autonString) {
 
     while (std::getline(Commands, commands)) {
         std::vector<std::string> commandAr = util.splitString(commands, "_");
-        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, rmM = 0, rmT = 0;
+        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0;
 
         for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
@@ -62,8 +60,6 @@ void Autonomous::loadRunFile(const std::string& autonString) {
             else if (commandSt == "rs") rsM = dist;
             else if (commandSt == "cT") lrT = dist;
             else if (commandSt == "fb") fbM = dist;
-            else if (commandSt == "rm") rmM = dist;
-            else if (commandSt == "rT") rmT = dist;
             else if (commandSt == "fT") fbT = dist;
         }
 
@@ -84,14 +80,5 @@ void Autonomous::loadRunFile(const std::string& autonString) {
         pros::delay(fbT);
 
         robot.moveFourbar(0);
-
-
-        // Moving intake
-
-        robot.moveIntake(rmM);
-
-        pros::delay(rmT);
-
-        robot.moveIntake(0);
     }
 }

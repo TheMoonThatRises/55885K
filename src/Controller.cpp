@@ -41,15 +41,6 @@ void Controller::moveFourbar() {
     robot.moveFourbar(velocity);
 }
 
-void Controller::moveIntake() {
-    double velocity = 0;
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = robot.intakeVelocity;
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = -robot.intakeVelocity;
-
-    robot.moveIntake(velocity);
-}
-
 void Controller::moveBackGoal() {
     double velocity = 0;
 
