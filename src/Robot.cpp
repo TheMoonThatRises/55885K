@@ -6,11 +6,11 @@ Robot::Robot():
     LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
     LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
-    fourbarR(9, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
-    fourbarL(10, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
+    fourbarR(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
+    fourbarL(10, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
-    backFourbarR(12, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
-    backFourbarL(13, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+    backFourbarR(12, MOTOR_GEARSET_36, 1, MOTOR_ENCODER_DEGREES),
+    backFourbarL(13, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
 
     fourbarVelocity(80),
     wheelAddedVelocity(0),
@@ -86,6 +86,8 @@ void Robot::setChassisBrake(const pros::motor_brake_mode_e brakeMode) {
 void Robot::setFourbarBrake(const pros::motor_brake_mode_e brakeMode) const {
     fourbarL.set_brake_mode(brakeMode);
     fourbarR.set_brake_mode(brakeMode);
+    backFourbarL.set_brake_mode(brakeMode);
+    backFourbarR.set_brake_mode(brakeMode);
 }
 
 bool Robot::didWheelsStop() const {
