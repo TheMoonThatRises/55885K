@@ -58,8 +58,8 @@ void Controller::resetFourbar(pros::Motor fourbarL, pros::Motor fourbarR) {
     Controller::setControllerText("Resetting Fourbar");
     
     
-    fourbarL.move_relative(-robot.fourbarL.get_position(), 100);
-    fourbarR.move_relative(-robot.fourbarR.get_position(), 100);
+    fourbarL.move_relative(-fourbarL.get_position(), 100);
+    fourbarR.move_relative(-fourbarR.get_position(), 100);
 
     pros::delay(1000);
 
