@@ -33,26 +33,30 @@ void Controller::moveChassis() {
 }
 
 void Controller::moveFourbar() {
-    double velocity = 0;
+    double lVelocity = 0,
+           rVelocity = 0;
 
     int32_t L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1),
             L2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2),
             R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1),
             R2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
 
-    if (L1 || R1) velocity = robot.fourbarVelocity;
-    else if (L2 || R2) velocity = -robot.fourbarVelocity;
+    if (L1) lVelocity = robot.fourbarVelocity;
+    else lVelocity = -robot.fourbarVelocity;
+
+    if (R1) rVelocity = robot.fourbarVelocity;
+    else rVelocity = -robot.fourbarVelocity;
     
-    if (L1 || L2)  robot.moveFourbar(robot.fourbarL, robot.fourbarR, velocity);
-    else if (R1 || R2) robot.moveFourbar(robot.backFourbarL, robot.backFourbarL, velocity);
-    else {
-        robot.moveFourbar(robot.fourbarL, robot.fourbarR, 0);
-        robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, 0);
-    }
+    if (L1 || L2)  robot.moveFourbar(robot.fourbarL, robot.fourbarR, lVelocity);
+    else robot.moveFourbar(robot.fourbarL, robot.fourbarR, 0);
+
+    if (R1 || R2) robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, rVelocity);
+    else robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, 0);
 }
 
 void Controller::resetFourbar(pros::Motor fourbarL, pros::Motor fourbarR) {
     Controller::setControllerText("Resetting Fourbar");
+    
     
     fourbarL.move_relative(-robot.fourbarL.get_position(), 100);
     fourbarR.move_relative(-robot.fourbarR.get_position(), 100);
