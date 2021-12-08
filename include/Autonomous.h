@@ -7,11 +7,12 @@
 
 class Autonomous {
     private:
-        const pros::ADIDigitalIn selectAutonButton, lockinAutonButton;
+        const pros::ADIDigitalIn selectAutonB,
+                                 lockAutonB;
     public:
         Autonomous();
 
-        static void loadRunFile(const std::string& auton);
+        static void loadRunString(const std::string& auton);
         void selectAuton();
 };
 

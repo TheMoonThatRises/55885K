@@ -8,18 +8,10 @@ class Util {
     public:
         Util();
 
-        const std::vector<std::string> modeToString,
-                                       autonToString,
-
+        const std::vector<std::string> autonToString,
                                        Auton;
         int auton;
-        void testWheels();
-        void testFourbar();
-        void testAll();
-        bool checkOverheat();
-        void calibrateFourbar();
-        std::string fileToAuton(const std::string& inputFile);
-        std::vector<std::string> splitString(const std::string& str,const std::string& sep);
+        static std::vector<std::string> splitString(const std::string& str,const std::string& sep);
 };
 
 #endif

@@ -12,11 +12,11 @@ class Controller {
         pros::Controller master;
         void moveChassis();
         void moveFourbar();
-        void resetFourbar(pros::Motor fourbarL, pros::Motor fourbarR);
+        void resetFourbar();
         void changeChassisSpeed();
-        void changeChassisMode();
         void changeChassisSensitivity();
-        void setControllerText(std::string text);
+        void moveClaw();
+        void setControllerText(const std::string& text);
 };
 
 #endif

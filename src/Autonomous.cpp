@@ -8,31 +8,28 @@
 
 
 Autonomous::Autonomous():
-    selectAutonButton('A'),
-    lockinAutonButton('B')
-
+    selectAutonB('B'),
+    lockAutonB('C')
 {
     std::cout << "Successfully initialized Autonomous" << std::endl;
 }
 
 void Autonomous::selectAuton() {
-    bool isSelecting = true;
+    bool isSelected = false;
 
-    while (isSelecting) {
-        if (selectAutonButton.get_value()) {
+    while (!isSelected) {
+        if (selectAutonB.get_value()) {
             util.auton = (util.auton >= util.Auton.size() - 1) ? 0 : util.auton + 1;
 
             std::cout << util.Auton.size() << std::endl;
 
             controller.setControllerText("Auton < " + util.autonToString.at(util.auton));
-
             pros::delay(200);
-        } else if (lockinAutonButton.get_value()) isSelecting = false;
+        } else if (lockAutonB.get_value()) isSelected = true;
     }
 
     controller.setControllerText("Locked < " + util.autonToString.at(util.auton));
 }
-
 
 /**
  * The commands are:
@@ -41,17 +38,17 @@ void Autonomous::selectAuton() {
  *      cT = Chassis move length - Required if ls or rs is used
  *      fb = Fourbar
  *      fT = Fourbar move length - Required if fb is used
- *      bf = Back fourbar
- *      bT = Back fourbar move length - Required if bf is used
+ *      cl = Open / Close the claw
  **/
 
-void Autonomous::loadRunFile(const std::string& autonString) {
+void Autonomous::loadRunString(const std::string& autonString) {
     std::string commands;
     std::istringstream Commands(autonString);
 
     while (std::getline(Commands, commands)) {
-        std::vector<std::string> commandAr = util.splitString(commands, "_");
-        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, bfb = 0, bfbT = 0;
+        std::vector<std::string> commandAr = Util::splitString(commands, "_");
+        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0;
+        bool moveClaw = false;
 
         for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
@@ -63,34 +60,29 @@ void Autonomous::loadRunFile(const std::string& autonString) {
             else if (commandSt == "cT") lrT = dist;
             else if (commandSt == "fb") fbM = dist;
             else if (commandSt == "fT") fbT = dist;
-            else if (commandSt == "bf") bfb = dist;
-            else if (commandSt == "bT") bfbT = dist;
+            else if (commandSt == "cl") moveClaw = true;
         }
 
 
         // Move chassis
 
-        robot.moveChassis(lsM, rsM, 0);
+        robot.moveChassis(lsM, rsM);
 
         pros::delay(lrT);
 
-        robot.moveChassis(0, 0, 0);
+        robot.moveChassis(0, 0);
 
 
         // Move fourbar
 
-        robot.moveFourbar(robot.fourbarL, robot.fourbarR, fbM);
+        robot.moveFourbar(fbM);
 
         pros::delay(fbT);
 
-        robot.moveFourbar(robot.fourbarL, robot.fourbarR, 0);
+        robot.moveFourbar(0);
 
-        // Move back fourbar
+        // Open / Close claw
 
-        robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, bfb);
-
-        pros::delay(bfbT);
-
-        robot.moveFourbar(robot.backFourbarL, robot.backFourbarR, 0);
+        if (moveClaw) controller.moveClaw();
     }
 }

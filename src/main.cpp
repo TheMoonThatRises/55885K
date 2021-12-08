@@ -47,7 +47,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-    Autonomous::loadRunFile(util.Auton[util.auton]);
+    Autonomous::loadRunString(util.Auton[util.auton]);
 }
 
 /**
@@ -70,8 +70,8 @@ void opcontrol() {
         controller.moveChassis();
         controller.moveFourbar();
 
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar(robot.fourbarL, robot.fourbarR);
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.resetFourbar(robot.backFourbarL, robot.backFourbarR);
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar();
+        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.moveClaw();
         if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller.changeChassisSensitivity();
         if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller.changeChassisSpeed();
 
