@@ -70,4 +70,6 @@ void Controller::moveClaw() {
     robot.clawPiston.set_value(robot.clawPistonValue);
 
     setControllerText("Front Claw < " + std::string(robot.clawPistonValue ? "on" : "off"));
+
+    pros::delay(200);
 }
