@@ -7,7 +7,7 @@
 
 Util::Util():
         Auton{
-            "fb150_fT500_fT500\nfb-150_fT500\nls200_rs200_cT1500\nfb180_fT800\nls-100_rs-100_cT4000",
+            "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",
             ""
         },
         autonToString{"midGoals", "None"},
