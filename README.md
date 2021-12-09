@@ -17,13 +17,11 @@ Code for vex robotics team 55885K-21-22
 * Front fourbar right motor: 9
 * Front fourbar left motor: 10
 
-* Back fourbar right motor: 12
-* Back fourbar left motor: 13
 
 ### Miscellaneous
 * Radio: 11
-* Select Auton Button: A
-* Lock-in Auton Button: B
+* Select Auton Button: B
+* Lock-in Auton Button: C
 
 
 ##  The Controller
