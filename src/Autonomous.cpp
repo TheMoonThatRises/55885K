@@ -39,6 +39,7 @@ void Autonomous::selectAuton() {
  *      fb = Fourbar
  *      fT = Fourbar move length - Required if fb is used
  *      cl = Open / Close the claw
+ *      cP = Wait time after claw - Not required
  **/
 
 void Autonomous::loadRunString(const std::string& autonString) {
@@ -47,12 +48,12 @@ void Autonomous::loadRunString(const std::string& autonString) {
 
     while (std::getline(Commands, commands)) {
         std::vector<std::string> commandAr = Util::splitString(commands, "_");
-        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0;
+        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, cP = 0;
         bool moveClaw = false;
 
         for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
-            int dist = std::stoi(command.substr(2));
+            int dist = (command.substr(2) != "") ? std::stoi(command.substr(2)) : 0;
             std::string commandSt = command.substr(0, 2);
             
             if (commandSt == "ls") lsM = dist;
@@ -61,6 +62,7 @@ void Autonomous::loadRunString(const std::string& autonString) {
             else if (commandSt == "fb") fbM = dist;
             else if (commandSt == "fT") fbT = dist;
             else if (commandSt == "cl") moveClaw = true;
+            else if (commandSt == "cP") cP = dist;
         }
 
 
@@ -83,6 +85,11 @@ void Autonomous::loadRunString(const std::string& autonString) {
 
         // Open / Close claw
 
-        if (moveClaw) controller.moveClaw();
+        if (moveClaw) {
+            robot.clawPistonValue = !robot.clawPistonValue;
+            robot.clawPiston.set_value(robot.clawPistonValue);
+
+            pros::delay(cP);
+        }
     }
 }
