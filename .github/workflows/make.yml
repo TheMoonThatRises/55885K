@@ -6,6 +6,9 @@ on:
       - 'stable'
     paths-ignore:
       - '.github/**'
+      - '**.md'
+      - '**.gitignore'
+
 
 jobs:
   build:
