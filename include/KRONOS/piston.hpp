@@ -9,8 +9,8 @@ namespace KRONOS {
         protected:
             bool value;
         public:
-            Piston(const char port);
-            bool set_value(const bool value);
+            explicit Piston(char port);
+            bool set_value(bool value);
             bool get_value();
     };
 }

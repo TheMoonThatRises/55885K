@@ -24,7 +24,7 @@ void Controller::moveChassis() {
 }
 
 void Controller::moveFourbar() {
-    double lVelocity = 0;
+    double lVelocity;
 
     int32_t L1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1),
             L2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
@@ -73,10 +73,15 @@ void Controller::moveClaw() {
 }
 
 void Controller::moveBackLift() {
-    double velocity = 0;
+    double velocity;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = -40;
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = 40;
+    bool R1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1),
+        R2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
 
-    robot.moveBackLift(velocity);
+    if (R1 || R2) {
+        if (R1) velocity = -80;
+        else velocity = 80;
+
+        robot.moveBackLift(velocity);
+    } else robot.backLift.move_velocity(0);
 }

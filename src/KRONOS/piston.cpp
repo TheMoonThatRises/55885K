@@ -6,7 +6,7 @@ Piston::Piston(const char port):pros::ADIDigitalOut(port) {
 
 }
 
-bool Piston::set_value(const bool setValue) {
+bool Piston::set_value(bool setValue) {
     pros::ADIDigitalOut::set_value(setValue);
     value = setValue;
 

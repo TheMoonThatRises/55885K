@@ -1,15 +1,15 @@
 #include "Robot.h"
 
 Robot::Robot():
-    RB(6, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
-    RF(7, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
-    LB(5, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
-    LF(8, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+    RB(6, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES),
+    RF(7, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES),
+    LB(5, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES),
+    LF(8, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES),
 
-    fourbarR(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
-    fourbarL(10, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
+    fourbarR(9, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES),
+    fourbarL(10, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES),
 
-    backLift(12, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
+    backLift(12, MOTOR_GEARSET_36, false, MOTOR_ENCODER_DEGREES),
 
     clawPiston('A'),
 
@@ -17,7 +17,6 @@ Robot::Robot():
     wheelAddedVelocity(0),
 
     chassisSensitivity(1),
-    fourbarMaxDistance(800),
 
     fourbarBrake(pros::E_MOTOR_BRAKE_HOLD),
     chassisBrake(pros::E_MOTOR_BRAKE_BRAKE)
@@ -42,13 +41,6 @@ void Robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity) const {
     }
 }
 
-void Robot::moveChassis(int32_t leftVelocity, int32_t rightVelocity, double leftDistance, double rightDistance) const {
-    RB.move_relative(rightDistance, rightVelocity);
-    RF.move_relative(rightDistance, rightVelocity);
-    LB.move_relative(leftDistance, leftVelocity);
-    LF.move_relative(leftDistance, leftVelocity);
-}
-
 void Robot::moveFourbar(int32_t velocity) const {
     if (velocity > 0) {
         fourbarL.move_velocity(velocity);
@@ -69,15 +61,6 @@ void Robot::moveBackLift(const int32_t velocity) {
     backLift.move_velocity(velocity);
 }
 
-void Robot::moveBackLift(const int32_t velocity, const double distance) {
-    backLift.move_relative(distance, velocity);
-}
-
-void Robot::moveFourbar(const int32_t velocity, const double distance) const {
-    fourbarL.move_relative(distance, velocity);
-    fourbarR.move_relative(distance, velocity);
-}
-
 void Robot::setChassisBrake(const pros::motor_brake_mode_e brakeMode) {
     RB.set_brake_mode(brakeMode);
     RF.set_brake_mode(brakeMode);
@@ -90,11 +73,6 @@ void Robot::setChassisBrake(const pros::motor_brake_mode_e brakeMode) {
 void Robot::setFourbarBrake(const pros::motor_brake_mode_e brakeMode) const {
     fourbarL.set_brake_mode(brakeMode);
     fourbarR.set_brake_mode(brakeMode);
-}
-
-bool Robot::didWheelsStop() const {
-    if (RB.is_stopped() && RF.is_stopped() && LB.is_stopped() && LF.is_stopped()) return true;
-    else return false;
 }
 
 void Robot::initialize() {

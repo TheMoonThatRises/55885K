@@ -55,7 +55,7 @@ void Autonomous::loadRunString(const std::string& autonString) {
 
         for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
-            int dist = (command.substr(2) != "") ? std::stoi(command.substr(2)) : 0;
+            int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
             std::string commandSt = command.substr(0, 2);
             
             if (commandSt == "ls") lsM = dist;
@@ -97,10 +97,10 @@ void Autonomous::loadRunString(const std::string& autonString) {
 
         // Move backlift
 
-        robot.moveBackLift(bk);
+        robot.backLift.move_velocity(bk);
 
         pros::delay(bkT);
 
-        robot.moveBackLift(0);
+        robot.backLift.move_velocity(0);
     }
 }
