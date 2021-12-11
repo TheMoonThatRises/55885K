@@ -16,6 +16,7 @@ class Controller {
         void changeChassisSpeed();
         void changeChassisSensitivity();
         void moveClaw();
+        void moveBackLift();
         void setControllerText(const std::string& text);
 };
 

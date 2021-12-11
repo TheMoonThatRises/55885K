@@ -9,8 +9,9 @@ Robot::Robot():
     fourbarR(9, MOTOR_GEARSET_18, 1, MOTOR_ENCODER_DEGREES),
     fourbarL(10, MOTOR_GEARSET_18, 0, MOTOR_ENCODER_DEGREES),
 
+    backLift(12, MOTOR_GEARSET_36, 0, MOTOR_ENCODER_DEGREES),
+
     clawPiston('A'),
-    clawPistonValue(false),
 
     fourbarVelocity(80),
     wheelAddedVelocity(0),
@@ -64,6 +65,14 @@ void Robot::moveFourbar(int32_t velocity) const {
     }
 }
 
+void Robot::moveBackLift(const int32_t velocity) {
+    backLift.move_velocity(velocity);
+}
+
+void Robot::moveBackLift(const int32_t velocity, const double distance) {
+    backLift.move_relative(distance, velocity);
+}
+
 void Robot::moveFourbar(const int32_t velocity, const double distance) const {
     fourbarL.move_relative(distance, velocity);
     fourbarR.move_relative(distance, velocity);
@@ -91,5 +100,6 @@ bool Robot::didWheelsStop() const {
 void Robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
-    clawPiston.set_value(clawPistonValue);
+    backLift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    clawPiston.set_value(false);
 }

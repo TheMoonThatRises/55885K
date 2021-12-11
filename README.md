@@ -20,6 +20,7 @@ Code for vex robotics team 55885K-21-22
 
 ### Miscellaneous
 * Radio: 11
+* Back lift: 12
 * Piston Claw: A
 * Select Auton Button: B
 * Lock-in Auton Button: C
@@ -51,7 +52,7 @@ Code for vex robotics team 55885K-21-22
     * Move front fourbar up and down.
 * Right Button 1/2
 
-    * Move back fourbar up and down.
+    * Move back lift up and down.
 
 ### Controller Screen
 The section beneath the table shows what value is being set to what using the less than (<) sign.

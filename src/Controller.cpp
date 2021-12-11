@@ -65,11 +65,18 @@ void Controller::changeChassisSpeed() {
 }
 
 void Controller::moveClaw() {
-    robot.clawPistonValue = !robot.clawPistonValue;
+    robot.clawPiston.set_value(!robot.clawPiston.get_value());
 
-    robot.clawPiston.set_value(robot.clawPistonValue);
-
-    setControllerText("Front Claw < " + std::string(robot.clawPistonValue ? "on" : "off"));
+    setControllerText("Front Claw < " + std::string(robot.clawPiston.get_value() ? "on" : "off"));
 
     pros::delay(200);
+}
+
+void Controller::moveBackLift() {
+    double velocity = 0;
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) velocity = -40;
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) velocity = 40;
+
+    robot.moveBackLift(velocity);
 }

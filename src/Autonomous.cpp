@@ -40,6 +40,8 @@ void Autonomous::selectAuton() {
  *      fT = Fourbar move length - Required if fb is used
  *      cl = Open / Close the claw
  *      cP = Wait time after claw - Not required
+ *      bk = Backlift
+ *      bT = Backlift move length - Required if bT is used
  **/
 
 void Autonomous::loadRunString(const std::string& autonString) {
@@ -48,7 +50,7 @@ void Autonomous::loadRunString(const std::string& autonString) {
 
     while (std::getline(Commands, commands)) {
         std::vector<std::string> commandAr = Util::splitString(commands, "_");
-        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, cP = 0;
+        int lsM = 0, rsM = 0, lrT = 0, fbM = 0, fbT = 0, cP = 0, bk = 0, bkT = 0;
         bool moveClaw = false;
 
         for (const std::string& command : commandAr) {
@@ -63,6 +65,8 @@ void Autonomous::loadRunString(const std::string& autonString) {
             else if (commandSt == "fT") fbT = dist;
             else if (commandSt == "cl") moveClaw = true;
             else if (commandSt == "cP") cP = dist;
+            else if (commandSt == "bk") bk = dist;
+            else if (commandSt == "bT") bkT = dist;
         }
 
 
@@ -86,10 +90,17 @@ void Autonomous::loadRunString(const std::string& autonString) {
         // Open / Close claw
 
         if (moveClaw) {
-            robot.clawPistonValue = !robot.clawPistonValue;
-            robot.clawPiston.set_value(robot.clawPistonValue);
+            robot.clawPiston.set_value(!robot.clawPiston.get_value());
 
             pros::delay(cP);
         }
+
+        // Move backlift
+
+        robot.moveBackLift(bk);
+
+        pros::delay(bkT);
+
+        robot.moveBackLift(0);
     }
 }
