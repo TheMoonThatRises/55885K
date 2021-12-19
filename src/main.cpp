@@ -1,6 +1,5 @@
 #include "main.h"
 #include "ClassHolders.h"
-#include <iostream>
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
