@@ -9,7 +9,8 @@ Robot::Robot():
     fourbarR(9, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES),
     fourbarL(10, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES),
 
-    backLift(12, MOTOR_GEARSET_36, false, MOTOR_ENCODER_DEGREES),
+    backLiftTop(12, MOTOR_GEARSET_36, false, MOTOR_ENCODER_DEGREES),
+    backLiftBottom(13, MOTOR_GEARSET_36, false, MOTOR_ENCODER_DEGREES),
 
     clawPiston('A'),
 
@@ -78,6 +79,7 @@ void Robot::setFourbarBrake(const pros::motor_brake_mode_e brakeMode) const {
 void Robot::initialize() {
     setChassisBrake(chassisBrake);
     setFourbarBrake(fourbarBrake);
-    backLift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    backLiftBottom.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    backLiftTop.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     clawPiston.set_value(false);
 }

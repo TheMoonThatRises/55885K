@@ -6,11 +6,11 @@
 
 
 Util::Util():
-        Auton{
+        Auton {
             "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",
             ""
         },
-        autonToString{"midGoals", "None"},
+        autonToString {"midGoals", "None"},
         auton(0)
 {
     std::cout << "Successfully initialized Util" << std::endl;

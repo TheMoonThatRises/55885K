@@ -24,11 +24,17 @@ Code for vex robotics team 55885K-21-22
 
     Front fourbar left motor: 10
 
+
+### Backlift Motors
+
+    Backlift top motor: 12
+
+    Backlift bottom motor: 13
+
+
 ### Miscellaneous
     
     Radio: 11
-
-    Back lift: 12
 
     Piston Claw: A
 
@@ -46,48 +52,40 @@ Code for vex robotics team 55885K-21-22
 
 * **Button B**
 
-
     Resets the front fourbar. While resetting, the robot will be unable to perform any other actions for 1 second.
 
 
 * **Button A**
-
 
     Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.5.
 
 
 * **Button X**
 
-
 	Changes the speed of the robot, cycling by adding 50 with a max of 100 extra speed and a default of 0
 
 
 * **Button Y**
-
 
 	Opens / Closes the claw for the fourbar
 
 
 * **Left Joystick**
 
-
 	Controls the left-side of the chassis
 
 
 * **Right Joystick**
-
 
 	Controls the right-side of the chassis
 
 
 * **Left Button 1/2**
 
-
 	Move front fourbar up and down.
 
 
 * **Right Button 1/2**
-
 
 	Move back lift up and down.
 

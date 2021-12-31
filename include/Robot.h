@@ -10,7 +10,7 @@ class Robot {
     public:
         Robot();
 
-        const KRONOS::Motor RB, RF, LB, LF, fourbarR, fourbarL, backLift;
+        const KRONOS::Motor RB, RF, LB, LF, fourbarR, fourbarL, backLiftTop, backLiftBottom;
         KRONOS::Piston clawPiston;
         pros::motor_brake_mode_e chassisBrake, fourbarBrake;
         int32_t fourbarVelocity, wheelAddedVelocity;
