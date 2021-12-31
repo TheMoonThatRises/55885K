@@ -3,5 +3,6 @@
 
 #include "piston.hpp"
 #include "motor.hpp"
+#include "robot.hpp"
 
 #endif

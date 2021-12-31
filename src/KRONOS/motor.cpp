@@ -1,4 +1,6 @@
 #include "motor.hpp"
+#include <string>
+#include <stdexcept>
 
 using namespace KRONOS;
 
