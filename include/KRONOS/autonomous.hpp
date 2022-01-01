@@ -10,14 +10,14 @@
 namespace KRONOS {
     class Autonomous {
         private:
-            Robot robot;
+            Robot &robot;
             const std::vector<std::string> autons,
                                            autonToString;
             int auton;
         public:
-            Autonomous(Robot robot);
+            Autonomous(Robot &robot);
 
-            void loadRunString();
+            void runAuton();
             void selectAuton();
     };
 }

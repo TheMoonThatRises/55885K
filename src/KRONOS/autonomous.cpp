@@ -7,7 +7,7 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot robot):
+Autonomous::Autonomous(Robot &robot):
     robot(robot),
     autons {
             "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",
@@ -36,7 +36,7 @@ void Autonomous::selectAuton() {
     robot.getController().setControllerText("Locked < " + autonToString.at(auton));
 }
 
-void Autonomous::loadRunString() {
+void Autonomous::runAuton() {
     std::string commands;
     std::istringstream Commands(autons.at(auton));
 
