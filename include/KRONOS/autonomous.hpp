@@ -10,9 +10,7 @@
 namespace KRONOS {
     class Autonomous {
         private:
-            const pros::ADIDigitalIn selectAutonB,
-                                     lockAutonB;
-            const Robot robot;
+            Robot robot;
             const std::vector<std::string> autons,
                                            autonToString;
             int auton;

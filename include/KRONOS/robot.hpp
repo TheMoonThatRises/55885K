@@ -1,6 +1,7 @@
 #include "main.h"
 #include "motor.hpp"
 #include "piston.hpp"
+#include "controller.hpp"
 #include "device.hpp"
 #include <vector>
 #include <string>
@@ -19,13 +20,13 @@ namespace KRONOS {
             std::vector<Device<Motor>> motors;
             std::vector<Device<Piston>> pistons;
             std::map<std::string, pros::ADIDigitalIn> buttons;
-            const pros::Controller master;
+            const Controller master;
         public:
-            Robot(std::vector<Device<Motor>> motorObject);
+            Robot(std::vector<Device<Motor>> motorObject, std::vector<Device<Piston>> pistonObject, std::map<std::string, pros::ADIDigitalIn> buttonMap);
             Motor getMotor(std::string name);
             Piston getPiston(std::string name);
             pros::ADIDigitalIn getButton(std::string name);
-            pros::Controller getController();
+            Controller getController();
     };
 }
 
