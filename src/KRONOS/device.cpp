@@ -1,6 +1,6 @@
 #include "device.hpp"
-#include <string>
 #include <stdexcept>
+#include <algorithm>
 
 using namespace KRONOS;
 
@@ -16,5 +16,5 @@ Device<D>::Device(D device, std::string name, std::string callsign):
     if (callsign.length() != 2) throw std::runtime_error("Callsign must be length 2. " + __FILE__ + " (" + __LINE__ + ")");
     else if (name.length() < 3) throw std::runtime_error("Name must be length 3 or longer. " + __FILE__ + " (" + __LINE__ + ")");
     
-    for (std::string reserve : reserved) if (callsign == reserve) throw std::runtime_err(callsign + " is a reserved sign. " + __FILE__ + " (" + __LINE__ + ")")
+    if (std::find(reserved.begin(), reserved.end(), callsign) != reserved.end()) throw std::runtime_err(callsign + " is a reserved sign. " + __FILE__ + " (" + __LINE__ + ")")
 }

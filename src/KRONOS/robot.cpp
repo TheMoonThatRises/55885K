@@ -1,10 +1,4 @@
-#include "main.h"
-#include "device.hpp"
-#include "motor.hpp"
-#include "piston.hpp"
 #include "robot.hpp"
-#include <vector>
-#include <string>
 #include <stdexcept>
 
 using namespace KRONOS;

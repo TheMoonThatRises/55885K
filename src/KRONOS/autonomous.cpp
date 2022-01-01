@@ -1,13 +1,7 @@
-#include "main.h"
 #include "autonomous.hpp"
-#include "robot.hpp"
-#include "motor.hpp"
-#include "piston.hpp"
 #include "util.hpp"
-#include <string>
 #include <sstream>
 #include <iostream>
-#include <vector>
 #include <stdexcept>
 
 
