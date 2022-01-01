@@ -1,5 +1,8 @@
 #include "main.h"
-#include "ClassHolders.h"
+#include "KRONOS/kronos.h"
+
+KRONOS::Robot robot;
+KRONOS::Autonomous auton(robot);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -9,7 +12,7 @@
  */
 void initialize() {
 	std::cout << "Initializing..." << std::endl;
-	robot.initialize();
+
 }
 
 /**
@@ -46,7 +49,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-    Autonomous::loadRunString(util.Auton[util.auton]);
+    auton.runAuton();
 }
 
 /**
@@ -66,14 +69,7 @@ void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
     while (true) {
-        controller.moveChassis();
-        controller.moveFourbar();
-        controller.moveBackLift();
-
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) controller.resetFourbar();
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) controller.moveClaw();
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) controller.changeChassisSensitivity();
-        if (controller.master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) controller.changeChassisSpeed();
+        
 
 		pros::delay(20);
 	}
