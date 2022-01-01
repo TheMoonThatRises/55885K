@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include <algorithm>
 
+#define S1(x) #x
+#define S2(x) S1(x)
+#define LOCATION __FILE__ " (" S2(__LINE__) ")"
+
 using namespace KRONOS;
 
 Robot::Robot():
@@ -16,7 +20,7 @@ T Robot::getType(std::vector<Device<T>> devices, std::string name) {
         if (name.length() == 2 && device.callsign == name) return device.device;
         else if (device.name == name) return device.device;
 
-    throw std::runtime_error("Device not found. " + __FILE__ + " (" + __LINE__ + ")");
+    throw std::runtime_error("Device not found. " + std::string(LOCATION));
 }
 
 template<class T>
