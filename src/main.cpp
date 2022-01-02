@@ -1,5 +1,5 @@
-#include "main.h"
 #include "KRONOS/kronos.h"
+#include "KRONOS/helpers.h"
 
 KRONOS::Robot robot;
 KRONOS::Autonomous auton(robot);
@@ -12,7 +12,11 @@ KRONOS::Autonomous auton(robot);
  */
 void initialize() {
 	std::cout << "Initializing..." << std::endl;
+	robot
+		.addPiston(KRONOS::Device(KRONOS::Piston('a'), "claw", "cl"))
 
+		.addButton("select", pros::ADIDigitalIn('b'))
+		.addButton("lock", pros::ADIDigitalIn('c'));
 }
 
 /**
