@@ -1,6 +1,8 @@
 #include "controller.hpp"
 
-Controller::Controller(pros::controller_id_e_t controller):pros::Controller(controller) {
+Controller::Controller(pros::controller_id_e_t controller):
+    pros::Controller(controller) 
+{
 
 }
 
