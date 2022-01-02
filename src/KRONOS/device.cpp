@@ -2,16 +2,12 @@
 #include "piston.hpp"
 #include "motor.hpp"
 
-#define S1(x) #x
-#define S2(x) S1(x)
-#define LOCATION __FILE__ " (" S2(__LINE__) ")"
-
 using namespace KRONOS;
 
 template<class D>
 Device<D>::Device(D device, const std::string& name, const std::string& callsign):
     reserved {
-
+        "ln"
     },
     device(device),
     name(name),
