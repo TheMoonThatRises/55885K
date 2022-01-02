@@ -12,7 +12,7 @@ namespace KRONOS {
                                            autonToString;
             int auton;
         public:
-            Autonomous(Robot &robot);
+            explicit Autonomous(Robot &robot);
 
             void runAuton();
             void selectAuton();

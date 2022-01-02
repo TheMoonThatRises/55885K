@@ -5,8 +5,8 @@
 
 class Controller: public pros::Controller {
     public:
-        Controller(pros::controller_id_e_t controller);
-        void setControllerText(std::string text);
+        explicit Controller(pros::controller_id_e_t controller);
+        void setControllerText(const std::string& text);
 };
 
 #endif
