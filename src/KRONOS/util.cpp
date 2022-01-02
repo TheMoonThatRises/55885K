@@ -1,6 +1,4 @@
 #include "util.hpp"
-#include <fstream>
-#include <string.h>
 
 // Code from stack answer https://stackoverflow.com/a/16286297
 std::vector<std::string> Util::splitString(const std::string& str,const std::string& sep) {

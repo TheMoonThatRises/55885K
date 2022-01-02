@@ -1,11 +1,8 @@
-#include "main.h"
+#include "helpers.h"
 #include "motor.hpp"
 #include "piston.hpp"
 #include "controller.hpp"
 #include "device.hpp"
-#include <vector>
-#include <string>
-#include <map>
 
 
 #ifndef _KRONOS_ROBOT_HPP_

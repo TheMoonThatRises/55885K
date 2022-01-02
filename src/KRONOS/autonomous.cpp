@@ -1,9 +1,5 @@
 #include "autonomous.hpp"
 #include "util.hpp"
-#include <sstream>
-#include <iostream>
-#include <stdexcept>
-
 
 using namespace KRONOS;
 
@@ -16,7 +12,7 @@ Autonomous::Autonomous(Robot &robot):
     autonToString {"midGoals", "None"},
     auton(0)
 {
-    
+
 }
 
 void Autonomous::selectAuton() {

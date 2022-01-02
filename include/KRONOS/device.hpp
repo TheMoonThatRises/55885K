@@ -1,5 +1,4 @@
-#include <string>
-#include <vector>
+#include "helpers.h"
 
 #ifndef _KRONOS_DEVICE_HPP_
 #define _KRONOS_DEVICE_HPP_

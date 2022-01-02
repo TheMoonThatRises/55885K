@@ -1,6 +1,4 @@
 #include "robot.hpp"
-#include <stdexcept>
-#include <algorithm>
 
 #define S1(x) #x
 #define S2(x) S1(x)

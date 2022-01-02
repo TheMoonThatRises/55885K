@@ -1,6 +1,4 @@
-#include "main.h"
-#include <string>
-
+#include "helpers.h"
 
 #ifndef _KRONOS_MOTOR_HPP_
 #define _KRONOS_MOTOR_HPP_
