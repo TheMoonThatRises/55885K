@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-#ifndef _KRONO_UTIL_HPP_
+#ifndef _KRONOS_UTIL_HPP_
 #define _KRONOS_UTIL_HPP_
 
 class Util {
