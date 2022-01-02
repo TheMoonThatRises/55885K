@@ -1,7 +1,5 @@
 #include "robot.hpp"
 
-#include <utility>
-
 using namespace KRONOS;
 
 Robot::Robot():
@@ -22,6 +20,13 @@ T Robot::getType(std::vector<Device<T>> devices, const std::string& name) {
 template<class T>
 Robot& Robot::addType(std::vector<Device<T>> &devices, Device<T> device) {
     devices.push_back(device);
+
+    return *this;
+}
+
+template<class C>
+Robot& Robot::linkController(std::map<C, std::string> &typeMap, C controls, std::string deviceName) {
+    typeMap.insert({controls, deviceName});
 
     return *this;
 }
@@ -56,20 +61,48 @@ Controller Robot::getController() {
     return master;
 }
 
-void Robot::pairMotors(const std::vector<std::string>& callNames, const std::string& pairName) {
-    motorPairs.insert({pairName, callNames});
+Robot& Robot::pairDevices(const std::vector<std::string>& callNames, const std::string& pairName) {
+    devicePairs.insert({pairName, callNames});
+
+    return *this;
 }
 
-void Robot::movePair(const std::string& pairName, int32_t velocity) {
-    for (std::string name : motorPairs.at(pairName))
+template<class T>
+std::vector<Device<T>> Robot::getPairs(const device_types type, const std::string& name) {
+    std::vector<Device<T>> pairs;
+
+    for (std::string deviceName : devicePairs.at(name))
+        switch (type) {
+            case MOTOR:
+                pairs.push_back(getMotor(deviceName));
+                break;
+            case PISTON:
+                pairs.push_back(getPiston(deviceName));
+                break;
+        }
+
+    return pairs;
+}
+
+void Robot::movePairMotors(const std::string& pairName, int32_t velocity) {
+    for (std::string name : devicePairs.at(pairName))
         getMotor(name).move_velocity(velocity);
 }
 
-void Robot::movePair(const std::string& pairName, int32_t velocity, double distance) {
-    for (const std::string& name : motorPairs.at(pairName))
+void Robot::movePairMotors(const std::string& pairName, int32_t velocity, double distance) {
+    for (const std::string& name : devicePairs.at(pairName))
         getMotor(name).move_relative(distance, velocity);
 }
 
-void Robot::controllerListener() {
+Robot& Robot::linkDeviceController(pros::controller_analog_e_t control, std::string deviceName) {
+    return linkController(controllerLinkAnalog, control, deviceName);
+}
 
+Robot& Robot::linkDeviceController(pros::controller_digital_e_t control, std::string deviceName) {
+    return linkController(controllerLinkDigital, control, deviceName);
+}
+
+void Robot::controllerListener() {
+    for (const auto& [controlType, devicePair] : controllerLinkDigital)
+        if (master.get_digital(controlType));
 }
