@@ -9,32 +9,32 @@ Code for vex robotics team 55885K-21-22
 
 ### Chassis Motors
 
-    Right back chassis motor: 6
+    Right back chassis motor: -
 
-    Right front chassis motor: 7
+    Right front chassis motor: -
     
-    Left back chassis motor: 5
+    Left back chassis motor: -
 
-    Left front chassis motor: 8
+    Left front chassis motor: -
 
 
 ### Fourbar Motors
 
-    Front fourbar right motor: 9
+    Front fourbar right motor: -
 
-    Front fourbar left motor: 10
+    Front fourbar left motor: -
 
 
 ### Backlift Motors
 
-    Backlift top motor: 12
+    Backlift top motor: -
 
-    Backlift bottom motor: 13
+    Backlift bottom motor: -
 
 
 ### Miscellaneous
     
-    Radio: 11
+    Radio: -
 
     Piston Claw: A
 
