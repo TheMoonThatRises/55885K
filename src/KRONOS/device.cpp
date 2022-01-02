@@ -1,6 +1,6 @@
 #include "device.hpp"
-#include <stdexcept>
-#include <algorithm>
+#include "piston.hpp"
+#include "motor.hpp"
 
 #define S1(x) #x
 #define S2(x) S1(x)
@@ -22,3 +22,6 @@ Device<D>::Device(D device, std::string name, std::string callsign):
     
     if (std::find(reserved.begin(), reserved.end(), callsign) != reserved.end()) throw std::runtime_error(callsign + " is a reserved sign. " + std::string(LOCATION));
 }
+
+template class Device<Piston>;
+template class Device<Motor>;
