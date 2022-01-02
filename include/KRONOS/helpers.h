@@ -7,7 +7,7 @@
 
 #include "main.h"
 #include <string>
-#include <string.h>
+#include <cstring>
 #include <algorithm>
 #include <stdexcept>
 #include <sstream>
