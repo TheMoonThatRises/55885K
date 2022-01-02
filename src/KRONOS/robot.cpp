@@ -1,8 +1,6 @@
 #include "robot.hpp"
 
-#define S1(x) #x
-#define S2(x) S1(x)
-#define LOCATION __FILE__ " (" S2(__LINE__) ")"
+#include <utility>
 
 using namespace KRONOS;
 
@@ -13,7 +11,7 @@ Robot::Robot():
 }
 
 template<class T>
-T Robot::getType(std::vector<Device<T>> devices, std::string name) {
+T Robot::getType(std::vector<Device<T>> devices, const std::string& name) {
     for (Device<T> device : devices) 
         if (name.length() == 2 && device.callsign == name) return device.device;
         else if (device.name == name) return device.device;
@@ -29,28 +27,28 @@ Robot& Robot::addType(std::vector<Device<T>> &devices, Device<T> device) {
 }
 
 Robot& Robot::addMotor(Device<Motor> motor) {
-    return addType(motors, motor);
+    return addType(motors, std::move(motor));
 }
 
 Robot& Robot::addPiston(Device<Piston> piston) {
-    return addType(pistons, piston);
+    return addType(pistons, std::move(piston));
 }
 
-Robot& Robot::addButton(std::string name, pros::ADIDigitalIn button) {
+Robot& Robot::addButton(const std::string& name, pros::ADIDigitalIn button) {
     buttons.insert({name, button});
 
     return *this;
 }
 
-Motor Robot::getMotor(std::string name) {
+Motor Robot::getMotor(const std::string& name) {
     return getType(motors, name);
 }
 
-Piston Robot::getPiston(std::string name) {
+Piston Robot::getPiston(const std::string& name) {
     return getType(pistons, name);
 }
 
-pros::ADIDigitalIn Robot::getButton(std::string name) {
+pros::ADIDigitalIn Robot::getButton(const std::string& name) {
     return buttons.at(name);
 }
 
@@ -58,16 +56,20 @@ Controller Robot::getController() {
     return master;
 }
 
-void Robot::pairMotors(std::vector<std::string> callNames, std::string pairName) {
+void Robot::pairMotors(const std::vector<std::string>& callNames, const std::string& pairName) {
     motorPairs.insert({pairName, callNames});
 }
 
-void Robot::movePair(std::string pairName, int32_t velocity) {
+void Robot::movePair(const std::string& pairName, int32_t velocity) {
     for (std::string name : motorPairs.at(pairName))
         getMotor(name).move_velocity(velocity);
 }
 
-void Robot::movePair(std::string pairName, int32_t velocity, double distance) {
-    for (std::string name : motorPairs.at(pairName))
+void Robot::movePair(const std::string& pairName, int32_t velocity, double distance) {
+    for (const std::string& name : motorPairs.at(pairName))
         getMotor(name).move_relative(distance, velocity);
+}
+
+void Robot::controllerListener() {
+
 }

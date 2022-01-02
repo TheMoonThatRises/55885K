@@ -12,7 +12,7 @@ namespace KRONOS {
     class Robot {
         private:
             template<class T>
-            T getType(std::vector<Device<T>> devices, std::string name);
+            T getType(std::vector<Device<T>> devices, const std::string& name);
             template<class T>
             Robot& addType(std::vector<Device<T>> &devices, Device<T> device);
         protected:
@@ -25,14 +25,15 @@ namespace KRONOS {
             Robot();
             Robot& addMotor(Device<Motor> motor);
             Robot& addPiston(Device<Piston> piston);
-            Robot& addButton(std::string name, pros::ADIDigitalIn button);
-            Motor getMotor(std::string name);
-            Piston getPiston(std::string name);
-            pros::ADIDigitalIn getButton(std::string name);
+            Robot& addButton(const std::string& name, pros::ADIDigitalIn button);
+            Motor getMotor(const std::string& name);
+            Piston getPiston(const std::string& name);
+            pros::ADIDigitalIn getButton(const std::string& name);
             Controller getController();
-            void pairMotors(std::vector<std::string> callNames, std::string pairName);
-            void movePair(std::string pairName, int32_t velocity);
-            void movePair(std::string pairName, int32_t velocity, double distance);
+            void pairMotors(const std::vector<std::string>& callNames, const std::string& pairName);
+            void movePair(const std::string& pairName, int32_t velocity);
+            void movePair(const std::string& pairName, int32_t velocity, double distance);
+            void controllerListener();
     };
 }
 
