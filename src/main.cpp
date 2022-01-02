@@ -13,6 +13,8 @@ KRONOS::Autonomous auton(robot);
 void initialize() {
 	std::cout << "Initializing..." << std::endl;
 	robot
+//		.addPiston(KRONOS::Device(KRONOS::Motor())
+
 		.addPiston(KRONOS::Device(KRONOS::Piston('a'), "claw", "cl"))
 
 		.addButton("select", pros::ADIDigitalIn('b'))
@@ -73,7 +75,7 @@ void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
 
     while (true) {
-        
+		robot.controllerListener();
 
 		pros::delay(20);
 	}
