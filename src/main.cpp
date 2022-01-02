@@ -13,12 +13,26 @@ KRONOS::Autonomous auton(robot);
 void initialize() {
 	std::cout << "Initializing..." << std::endl;
 	robot
-//		.addPiston(KRONOS::Device(KRONOS::Motor())
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_COAST), "frontLeftTank", "fl"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_COAST), "frontRightTank", "fr"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_COAST), "backLeftTank", "bl"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_COAST), "backRightTank", "br"))
+
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "leftFourbar", "lf"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "rightFourbar", "rf"))
+
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "backDrag", "bd"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(NULL, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "backDrag2", "d2"))
 
 		.addPiston(KRONOS::Device(KRONOS::Piston('a'), "claw", "cl"))
 
 		.addButton("select", pros::ADIDigitalIn('b'))
 		.addButton("lock", pros::ADIDigitalIn('c'));
+
+	robot
+		.pairDevices({"fl", "bl"}, "leftTank")
+		.pairDevices({"fr", "br"}, "rightTank")
+		.pairDevices({"lf", "rf"}, "fourbar");
 }
 
 /**
