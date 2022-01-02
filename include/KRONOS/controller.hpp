@@ -1,5 +1,4 @@
-#include "main.h"
-#include <string>
+#include "helpers.h"
 
 #ifndef _KRONOS_CONTROLLER_HPP_
 #define _KRONOS_CONTROLLER_HPP_

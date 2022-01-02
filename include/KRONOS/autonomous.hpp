@@ -1,8 +1,5 @@
-#include "main.h"
+#include "helpers.h"
 #include "robot.hpp"
-#include <string>
-#include <vector>
-
 
 #ifndef _KRONOS_AUTONOMOUS_HPP_
 #define _KRONOS_AUTONOMOUS_HPP_

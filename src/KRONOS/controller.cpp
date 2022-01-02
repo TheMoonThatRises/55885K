@@ -1,5 +1,4 @@
 #include "controller.hpp"
-#include <iostream>
 
 Controller::Controller(pros::controller_id_e_t controller):pros::Controller(controller) {
 
