@@ -9,7 +9,7 @@
 using namespace KRONOS;
 
 template<class D>
-Device<D>::Device(D device, std::string name, std::string callsign):
+Device<D>::Device(D device, const std::string& name, const std::string& callsign):
     reserved {
 
     },

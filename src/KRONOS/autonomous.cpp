@@ -40,7 +40,7 @@ void Autonomous::runAuton() {
         std::vector<std::string> commandAr = Util::splitString(commands, "_");
         std::map<std::string, int> dists {};
 
-        for (const std::string command : commandAr) {
+        for (const std::string& command : commandAr) {
             std::cout << command.substr(2) << " : " << command << std::endl;
             int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
             std::string commandSt = command.substr(0, 2);
@@ -48,7 +48,7 @@ void Autonomous::runAuton() {
             dists.insert({commandSt, dist});
         }
 
-        for (const auto [command, speed] : dists)
+        for (const auto& [command, speed] : dists)
             if (command != "ln")
                 try {
                     robot.getMotor(command).move_velocity(speed);

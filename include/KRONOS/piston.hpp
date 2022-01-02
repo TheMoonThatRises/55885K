@@ -10,7 +10,7 @@ namespace KRONOS {
         public:
             explicit Piston(char port);
             bool set_value(bool value);
-            bool get_value();
+            bool get_value() const;
     };
 }
 

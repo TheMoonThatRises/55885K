@@ -9,7 +9,7 @@ namespace KRONOS {
         private:
             std::vector<std::string> reserved;
         public:
-            Device(D device, std::string name, std::string callsign);
+            Device(D device, const std::string& name, const std::string& callsign);
             D device;
             std::string name;
             std::string callsign;
