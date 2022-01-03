@@ -18,14 +18,14 @@ T Robot::getType(std::vector<Device<T>> devices, const std::string& name) {
 }
 
 template<class T>
-Robot& Robot::addType(std::vector<Device<T>> &devices, Device<T> device) {
+Robot& Robot::addType(std::vector<Device<T>>& devices, Device<T> device) {
     devices.push_back(device);
 
     return *this;
 }
 
 template<class C>
-Robot& Robot::linkController(std::map<C, std::string> &typeMap, C controls, std::string deviceName) {
+Robot& Robot::linkController(std::map<C, std::string>& typeMap, C controls, std::string deviceName) {
     typeMap.insert({controls, deviceName});
 
     return *this;
