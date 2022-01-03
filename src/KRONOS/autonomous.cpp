@@ -3,7 +3,7 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot &robot):
+Autonomous::Autonomous(Robot& robot):
     robot(robot),
     autons {
             "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",

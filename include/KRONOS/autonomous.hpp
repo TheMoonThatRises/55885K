@@ -7,7 +7,7 @@
 namespace KRONOS {
     class Autonomous {
         private:
-            Robot &robot;
+            Robot& robot;
             const std::vector<std::string> autons,
                                            autonToString;
             int auton;
