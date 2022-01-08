@@ -3,8 +3,9 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot& robot):
+Autonomous::Autonomous(Robot& robot, Controller& controller):
     robot(robot),
+    controller(controller),
     autons {
             "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",
             ""
@@ -24,12 +25,13 @@ void Autonomous::selectAuton() {
 
             std::cout << autons.size() << std::endl;
 
-            robot.getController().setControllerText("Auton < " + autonToString.at(auton));
+            controller.setControllerText("Auton < " + autonToString.at(auton));
             pros::delay(200);
-        } else if (robot.getButton("lock").get_value()) isSelected = true;
+        } else if (robot.getButton("lock").get_value()) 
+            isSelected = true;
     }
 
-    robot.getController().setControllerText("Locked < " + autonToString.at(auton));
+    controller.setControllerText("Locked < " + autonToString.at(auton));
 }
 
 void Autonomous::runAuton() {
@@ -58,6 +60,7 @@ void Autonomous::runAuton() {
                     } catch (std::runtime_error err2) { }
                 }
 
-        if (dists.at("ln") && std::isdigit(dists.at("ln"))) pros::delay(dists.at("ln"));
+        if (dists.at("ln") && std::isdigit(dists.at("ln"))) 
+            pros::delay(dists.at("ln"));
     }
 }
