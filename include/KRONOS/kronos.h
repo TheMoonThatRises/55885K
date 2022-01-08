@@ -3,5 +3,6 @@
 
 #include "robot.hpp"
 #include "autonomous.hpp"
+#include "controller.hpp"
 
 #endif
