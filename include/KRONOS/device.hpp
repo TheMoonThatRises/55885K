@@ -4,12 +4,17 @@
 #define _KRONOS_DEVICE_HPP_
 
 namespace KRONOS {
+    enum device_types {
+        MOTOR,
+        PISTON
+    };
+    
     template<class D>
     class Device {
         private:
-            std::vector<std::string> reserved;
+            const std::vector<std::string> reserved;
         public:
-            Device(D device, const std::string& name, const std::string& callsign);
+            Device(const D& device, const std::string& name, const std::string& callsign);
             D device;
             std::string name;
             std::string callsign;
