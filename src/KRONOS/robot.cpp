@@ -2,44 +2,45 @@
 
 using namespace KRONOS;
 
-Robot::Robot():
-    master(pros::E_CONTROLLER_MASTER)
-{
-
-}
-
 template<class T>
-T Robot::getType(std::vector<Device<T>> devices, const std::string& name) {
+T Robot::getType(const std::vector<Device<T>>& devices, const std::string& name) {
     for (Device<T> device : devices) 
-        if (name.length() == 2 && device.callsign == name) return device.device;
-        else if (device.name == name) return device.device;
+        if (name.length() == 2 && device.callsign == name) 
+            return device.device;
+        else if (device.name == name) 
+            return device.device;
 
     throw std::runtime_error("Device not found. " + std::string(LOCATION));
 }
 
 template<class T>
-Robot& Robot::addType(std::vector<Device<T>>& devices, Device<T> device) {
+Robot& Robot::addType(std::vector<Device<T>>& devices, const Device<T>& device) {
     devices.push_back(device);
 
+    device_types devicetype;
+
+    std::string name = typeid(T).name();
+    std::transform(name.begin(), name.end(), name.begin(), [](const unsigned char& c) { return std::tolower(c); });
+
+    if (name.find("piston") != std::string::npos)
+        devicetype = KRONOS::PISTON;
+    else if (name.find("motor") != std::string::npos)
+        devicetype = KRONOS::MOTOR;
+
+    deviceType.insert({device.callsign, devicetype});
+
     return *this;
 }
 
-template<class C>
-Robot& Robot::linkController(std::map<C, std::string>& typeMap, C controls, std::string deviceName) {
-    typeMap.insert({controls, deviceName});
-
-    return *this;
-}
-
-Robot& Robot::addMotor(Device<Motor> motor) {
+Robot& Robot::addMotor(const Device<Motor>& motor) {
     return addType(motors, std::move(motor));
 }
 
-Robot& Robot::addPiston(Device<Piston> piston) {
+Robot& Robot::addPiston(const Device<Piston>& piston) {
     return addType(pistons, std::move(piston));
 }
 
-Robot& Robot::addButton(const std::string& name, pros::ADIDigitalIn button) {
+Robot& Robot::addButton(const std::string& name, const pros::ADIDigitalIn& button) {
     buttons.insert({name, button});
 
     return *this;
@@ -53,12 +54,12 @@ Piston Robot::getPiston(const std::string& name) {
     return getType(pistons, name);
 }
 
-pros::ADIDigitalIn Robot::getButton(const std::string& name) {
-    return buttons.at(name);
+device_types Robot::getDeviceType(const std::string& callsign) {
+    return deviceType.at(callsign);
 }
 
-Controller Robot::getController() {
-    return master;
+pros::ADIDigitalIn Robot::getButton(const std::string& name) {
+    return buttons.at(name);
 }
 
 Robot& Robot::pairDevices(const std::vector<std::string>& callNames, const std::string& pairName) {
@@ -68,10 +69,10 @@ Robot& Robot::pairDevices(const std::vector<std::string>& callNames, const std::
 }
 
 template<class T>
-std::vector<Device<T>> Robot::getPairs(const device_types type, const std::string& name) {
+std::vector<Device<T>> Robot::getPairs(const device_types& type, const std::string& name) {
     std::vector<Device<T>> pairs;
 
-    for (std::string deviceName : devicePairs.at(name))
+    for (const std::string& deviceName : devicePairs.at(name))
         switch (type) {
             case MOTOR:
                 pairs.push_back(getMotor(deviceName));
@@ -84,25 +85,17 @@ std::vector<Device<T>> Robot::getPairs(const device_types type, const std::strin
     return pairs;
 }
 
-void Robot::movePairMotors(const std::string& pairName, int32_t velocity) {
-    for (std::string name : devicePairs.at(pairName))
+void Robot::movePairMotors(const std::string& pairName, const int32_t& velocity) {
+    for (const std::string& name : devicePairs.at(pairName))
         getMotor(name).move_velocity(velocity);
 }
 
-void Robot::movePairMotors(const std::string& pairName, int32_t velocity, double distance) {
+void Robot::movePairMotors(const std::string& pairName, const int32_t& velocity, const double& distance) {
     for (const std::string& name : devicePairs.at(pairName))
         getMotor(name).move_relative(distance, velocity);
 }
 
-Robot& Robot::linkDeviceController(pros::controller_analog_e_t control, std::string deviceName) {
-    return linkController(controllerLinkAnalog, control, deviceName);
-}
-
-Robot& Robot::linkDeviceController(pros::controller_digital_e_t control, std::string deviceName) {
-    return linkController(controllerLinkDigital, control, deviceName);
-}
-
-void Robot::controllerListener() {
-    for (const auto& [controlType, devicePair] : controllerLinkDigital)
-        if (master.get_digital(controlType));
+void Robot::activatePairPiston(const std::string& pairName, bool activated) {
+    for (const std::string& name : devicePairs.at(pairName))
+        getPiston(name).set_value(activated);
 }
