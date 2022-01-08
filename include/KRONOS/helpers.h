@@ -17,5 +17,6 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
+#include <cctype>
 
 #endif
