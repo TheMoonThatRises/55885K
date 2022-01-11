@@ -8,7 +8,14 @@ namespace KRONOS {
         protected:
             bool value;
         public:
+            /*
+                @param port
+            */
             explicit Piston(const char& port);
+
+            /*
+                @param value
+            */
             bool set_value(const bool& value);
             bool get_value() const;
     };

@@ -5,7 +5,12 @@
 
 class Util {
     public:
-        static std::vector<std::string> splitString(const std::string& str,const std::string& sep);
+        /*
+            @param str
+            @param sep
+            @return
+        */
+        static std::vector<std::string> splitString(const std::string& str, const std::string& sep);
 };
 
 #endif
