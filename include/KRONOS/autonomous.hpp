@@ -14,8 +14,11 @@ namespace KRONOS {
                                            autonToString;
             int auton;
         public:
+            /*
+                @param robot
+                @param controller
+            */
             Autonomous(Robot& robot, Controller& controller);
-
             void runAuton();
             void selectAuton();
     };
