@@ -50,44 +50,49 @@ Code for vex robotics team 55885K-21-22
 ### Controlling the Robot
 
 
-* **Button B**
+#### **Button B**
 
     Resets the front fourbar. While resetting, the robot will be unable to perform any other actions for 1 second.
 
 
-* **Button A**
+#### **Button A**
 
     Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.5.
 
 
-* **Button X**
+#### **Button X**
 
-	Changes the speed of the robot, cycling by adding 50 with a max of 100 extra speed and a default of 0
-
-
-* **Button Y**
-
-	Opens / Closes the claw for the fourbar
+	Changes the speed of the robot, cycling by adding 50 with a max of 100 extra speed and a default of 0.
 
 
-* **Left Joystick**
+#### **Button Y**
 
-	Controls the left-side of the chassis
-
-
-* **Right Joystick**
-
-	Controls the right-side of the chassis
+	Opens / Closes the claw for the fourbar.
 
 
-* **Left Button 1/2**
+#### **Left Joystick**
+
+	Controls the left-side of the chassis.
+
+
+#### **Right Joystick**
+
+	Controls the right-side of the chassis.
+
+
+#### **Left Button 1/2**
 
 	Move front fourbar up and down.
 
 
-* **Right Button 1/2**
+#### **Right Button 1/2**
 
 	Move back lift up and down.
+
+
+#### **Up/Down Arrow**
+
+    Move back drag up and down.
 
 
 
@@ -103,12 +108,12 @@ Code for vex robotics team 55885K-21-22
 ## Auton
 
 
-By default, auton starts on `midGoals`, which goes for the right neutral goal.
+    By default, auton starts on `midGoals`, which goes for the right neutral goal.
 
 ### Setup
 
-To toggle between autons, press the upper of the two buttons on the robot's chassis. The controller will output which auton is currently selected. To ensure that you don't accidently change the auton, press the bottom button. It is best practice to press the bottom button either way.
+    To toggle between autons, press the upper of the two buttons on the robot's chassis. The controller will output which auton is currently selected. To ensure that you don't accidently change the auton, press the bottom button. It is best practice to press the bottom button either way.
 
 ### Debugging
 
-The auton works reliably, though it is desynced with the tower, which may cause the robot to either not run auton, or have one side of the robot move faster than the other side.
+    The auton works reliably, though it is desynced with the tower, which may cause the robot to either not run auton, or have one side of the robot move faster than the other side.
