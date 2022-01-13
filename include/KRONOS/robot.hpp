@@ -11,6 +11,8 @@ namespace KRONOS {
     class Robot {
         private:
             /*
+                Get device by name.
+
                 @param devices
                 @param name
                 @return Returns device.
@@ -19,6 +21,8 @@ namespace KRONOS {
             T getType(const std::vector<Device<T>>& devices, const std::string& name);
 
             /*
+                Adds device to robot.
+
                 @param devices
                 @param device
                 @return Returns robot to allow linking.

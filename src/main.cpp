@@ -36,8 +36,10 @@ void initialize() {
 		.pairDevices({"lf", "rf"}, "fourbar");
 
 	controller
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, "rightTank", true)
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, "leftTank", true);
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, [](pros::controller_analog_e_t control) { robot.movePairMotors("leftTank", controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y)); })
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, [](pros::controller_analog_e_t control) { robot.movePairMotors("rightTank", controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)); })
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, [](pros::controller_digital_e_t control) { robot.movePairMotors("fourbar", 80); })
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, [](pros::controller_digital_e_t control) { robot.movePairMotors("fourbar", 80); });
 }
 
 /**

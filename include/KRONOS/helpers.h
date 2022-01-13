@@ -1,10 +1,6 @@
 #ifndef _KRONOS_HELPERS_H_
 #define _KRONOS_HELPERS_H_
 
-#define S1(x) #x
-#define S2(x) S1(x)
-#define LOCATION __FILE__ " (" S2(__LINE__) ")"
-
 #include "main.h"
 #include <string>
 #include <cstring>
@@ -18,5 +14,12 @@
 #include <fstream>
 #include <utility>
 #include <cctype>
+
+#define S1(x) #x
+#define S2(x) S1(x)
+#define LOCATION __FILE__ " (" S2(__LINE__) ")"
+
+template<class D>
+using function = std::function<void(D)>;
 
 #endif

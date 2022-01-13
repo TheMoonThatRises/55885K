@@ -10,8 +10,8 @@ Controller::Controller(KRONOS::Robot& robot):
 }
 
 template<class T>
-Controller& Controller::link(std::map<T, std::vector<std::string>>& linker, const T& control, const std::vector<std::string>& callsigns) {
-    linker.insert({control, callsigns});
+Controller& Controller::link(std::map<T, function<T>>& linker, const T& control, const function<T> action) {
+    linker.insert({control, action});
 
     return *this;
 }
@@ -22,28 +22,22 @@ void Controller::setControllerText(const std::string& text) {
     std::cout << text << std::endl;
 }
 
-Controller& Controller::linkDigital(const pros::controller_digital_e_t& control, const std::string& callsign, const bool& isPair) {
-    return link(digitalLink, control, isPair ? robot.getMotorPair(callsign) : std::vector<std::string> {callsign});
+Controller& Controller::linkDigital(const pros::controller_digital_e_t& control, const function<pros::controller_digital_e_t> action) {
+    return link(digitalLink, control, action);
 }
 
-Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const std::string& callsign, const bool& isPair) {
-    return link(analogLink, control, std::vector<std::string> {callsign});
+Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const function<pros::controller_analog_e_t> action) {
+    return link(analogLink, control, action);
 }
 
 void Controller::listener() {
-    for (const auto& [controlType, devicePair] : digitalLink)
-        if (get_digital(controlType));
+    for (const auto& [controlType, action] : digitalLink)
+        if (get_digital(controlType))
+            action(controlType);
 
 
-    for (const auto& [controlType, devicePair] : analogLink)
+    for (const auto& [controlType, action] : analogLink)
         if (get_analog(controlType))
-            for (std::string callsign: devicePair)
-                switch (robot.getDeviceType(callsign)) {
-                    case PISTON:
-                        robot.getPiston(callsign).set_value(get_analog(controlType));
-                        break;
-                    case MOTOR:
-                        robot.getMotor(callsign).move_velocity(get_analog(controlType));
-                        break;
-                }
+            action(controlType);
+            
 }
