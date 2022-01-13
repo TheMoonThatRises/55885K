@@ -9,32 +9,32 @@ Code for vex robotics team 55885K-21-22
 
 ### Chassis Motors
 
-    Right back chassis motor: -
+    Right back chassis motor: 6
 
-    Right front chassis motor: -
+    Right front chassis motor: 7
     
-    Left back chassis motor: -
+    Left back chassis motor: 5
 
-    Left front chassis motor: -
+    Left front chassis motor: 8
 
 
 ### Fourbar Motors
 
-    Front fourbar right motor: -
+    Front fourbar right motor: 9
 
-    Front fourbar left motor: -
+    Front fourbar left motor: 10
 
 
-### Backlift Motors
+### Back Motors
 
-    Backlift top motor: -
+    Backdrag motor: 11
 
-    Backlift bottom motor: -
+    Backlift motor: 12
 
 
 ### Miscellaneous
     
-    Radio: -
+    Radio: 13
 
     Piston Claw: A
 
@@ -94,7 +94,6 @@ Code for vex robotics team 55885K-21-22
 
 ### Controller Screen
 
-  
 
     Beneath the robot's stats, the text shows what value is being set to what using the less than (<) sign.
 
@@ -103,7 +102,6 @@ Code for vex robotics team 55885K-21-22
 
 ## Auton
 
-  
 
 By default, auton starts on `midGoals`, which goes for the right neutral goal.
 
