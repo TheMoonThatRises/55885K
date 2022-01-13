@@ -7,12 +7,19 @@
 namespace KRONOS {
     class Controller: public pros::Controller {
         private:
+            /*
+                Adds callsigns to controller controls.
+
+                @param map
+                @param control Control you want to link.
+                @param callsigns List of callsigns.
+            */
             template<class T>
-            Controller& link(std::map<T, std::vector<std::string>>& linker, const T& control, const std::vector<std::string>& callsigns);
+            Controller& link(std::map<T, function<T>>& linker, const T& control, const function<T> action);
         protected:
             Robot& robot;
-            std::map<pros::controller_digital_e_t, std::vector<std::string>> digitalLink;
-            std::map<pros::controller_analog_e_t, std::vector<std::string>> analogLink;
+            std::map<pros::controller_digital_e_t, function<pros::controller_digital_e_t>> digitalLink;
+            std::map<pros::controller_analog_e_t, function<pros::controller_analog_e_t>> analogLink;
         public:
             /*
                 @param robot
@@ -28,20 +35,18 @@ namespace KRONOS {
             /*
                 Links one of the buttons do an action.
                 @param control Button to link.
-                @param callsign The callsign of a device or device pair.
-                @param isPair If the callsign is a device pair or not.
+                @param action Function to run.
                 @return Allows you to train functions together.
             */
-            Controller& linkDigital(const pros::controller_digital_e_t& control, const std::string& callsign, const bool& isPair);
+            Controller& linkDigital(const pros::controller_digital_e_t& control, const function<pros::controller_digital_e_t> action);
 
             /*
                 Links the joystick value to a device.
                 @param control Joystick and axis to link.
-                @param callsign The callsign of a device or device pair.
-                @param isPair If the callsign is a device pair or not.
+                @param action Function to run.
                 @return Allows you to train functions together. 
             */
-            Controller& linkAnalog(const pros::controller_analog_e_t& control, const std::string& callsign, const bool& isPair);
+            Controller& linkAnalog(const pros::controller_analog_e_t& control, const function<pros::controller_analog_e_t> action);
             void listener();
     };
 }
