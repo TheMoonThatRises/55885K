@@ -37,6 +37,14 @@ namespace KRONOS {
             std::map<std::string, device_types> deviceType;
         public:
             /*
+                @param wheelAddVelocity
+                @param chassisSensitivity
+            */
+            Robot(int wheelAddVelocity, int chassisSensitivity);
+
+            int wheelAddVelocity, chassisSensitivity;
+
+            /*
                 Adds motor to robot.
 
                 @param motor

@@ -2,6 +2,13 @@
 
 using namespace KRONOS;
 
+Robot::Robot(int wheelAddVelocity, int chassisSensitivity):
+    wheelAddVelocity(wheelAddVelocity),
+    chassisSensitivity(chassisSensitivity)
+{
+
+}
+
 template<class T>
 T Robot::getType(const std::vector<Device<T>>& devices, const std::string& name) {
     for (Device<T> device : devices) 
