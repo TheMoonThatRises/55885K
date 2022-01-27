@@ -7,10 +7,11 @@ Autonomous::Autonomous(Robot& robot, Controller& controller):
     robot(robot),
     controller(controller),
     autons {
-            "ls200_rs200_cT1500\ncl\nls-100_rs-100_cT3000\ncl",
+            "fl200_fr200_bl200_br200_ln1500\ncl\nfl-100_fr-100_bl-100_br-100_ln3000\ncl",
+            "",
             ""
     },
-    autonToString {"midGoals", "None"},
+    autonToString {"midGoals", "allGoals", "None"},
     auton(0)
 {
 
@@ -35,6 +36,22 @@ void Autonomous::selectAuton() {
 }
 
 void Autonomous::runAuton() {
+    auto findDevices = [&](const std::string& command, const int& speed) {
+        if (command != "ln")
+            try {
+                robot.getMotor(command).move_velocity(speed);
+            } catch (std::runtime_error err) {
+                try {
+                    robot.movePairMotors(command, speed);
+                } catch (std::runtime_error err2) {
+                    try {
+                        if (speed != 0)
+                            robot.getPiston(command).set_value(!robot.getPiston(command).get_value());
+                    } catch (std::runtime_error err3) { }
+                }
+            }
+    };
+
     std::string commands;
     std::istringstream Commands(autons.at(auton));
 
@@ -51,16 +68,12 @@ void Autonomous::runAuton() {
         }
 
         for (const auto& [command, speed] : dists)
-            if (command != "ln")
-                try {
-                    robot.getMotor(command).move_velocity(speed);
-                } catch (std::runtime_error err) {
-                    try {
-                        robot.getPiston(command).set_value(!robot.getPiston(command).get_value());
-                    } catch (std::runtime_error err2) { }
-                }
+            findDevices(command, speed);
 
         if (dists.at("ln") && std::isdigit(dists.at("ln"))) 
             pros::delay(dists.at("ln"));
+
+        for (const auto& [command, speed] : dists)
+            findDevices(command, 0);
     }
 }
