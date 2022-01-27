@@ -19,7 +19,6 @@
 #define S2(x) S1(x)
 #define LOCATION __FILE__ " (" S2(__LINE__) ")"
 
-template<class D>
-using function = std::function<void(D)>;
+using function = std::function<void()>;
 
 #endif

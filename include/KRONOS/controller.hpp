@@ -15,11 +15,11 @@ namespace KRONOS {
                 @param callsigns List of callsigns.
             */
             template<class T>
-            Controller& link(std::map<T, function<T>>& linker, const T& control, const function<T> action);
+            Controller& link(std::map<T, std::map<std::string, function>>& linker, const T& control, const function action, const function idle);
         protected:
             Robot& robot;
-            std::map<pros::controller_digital_e_t, function<pros::controller_digital_e_t>> digitalLink;
-            std::map<pros::controller_analog_e_t, function<pros::controller_analog_e_t>> analogLink;
+            std::map<pros::controller_digital_e_t, std::map<std::string, function>> digitalLink;
+            std::map<pros::controller_analog_e_t, std::map<std::string, function>> analogLink;
         public:
             /*
                 @param robot
@@ -38,7 +38,7 @@ namespace KRONOS {
                 @param action Function to run.
                 @return Allows you to train functions together.
             */
-            Controller& linkDigital(const pros::controller_digital_e_t& control, const function<pros::controller_digital_e_t> action);
+            Controller& linkDigital(const pros::controller_digital_e_t& control, const function action, const function idle);
 
             /*
                 Links the joystick value to a device.
@@ -46,7 +46,7 @@ namespace KRONOS {
                 @param action Function to run.
                 @return Allows you to train functions together. 
             */
-            Controller& linkAnalog(const pros::controller_analog_e_t& control, const function<pros::controller_analog_e_t> action);
+            Controller& linkAnalog(const pros::controller_analog_e_t& control, const function action);
             void listener();
     };
 }
