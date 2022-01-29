@@ -14,9 +14,10 @@ namespace KRONOS {
             explicit Piston(const char& port);
 
             /*
-                @param value
+                @param setValue
             */
-            bool set_value(const bool& value);
+            bool set_value(bool setValue);
+            bool toggle();
             bool get_value() const;
     };
 }
