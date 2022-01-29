@@ -3,7 +3,7 @@
 
 KRONOS::Robot robot(0, 1);
 KRONOS::Controller controller(robot);
-KRONOS::Autonomous auton(robot, controller);
+KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1500\ncl\nfl-100_fr-100_bl-100_br-100_ln3000\ncl", "", ""}, {"midGoals", "allGoals", "None"});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -15,7 +15,7 @@ void initialize() {
 	std::cout << "Initializing..." << std::endl;
 	robot
 		// Adding chassis motors
-		.addMotor(KRONOS::Device(KRONOS::Motor(8, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontRightTank", "ff"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(8, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontRightTank", "fr"))
 		.addMotor(KRONOS::Device(KRONOS::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontLeftTank", "fl"))
 		.addMotor(KRONOS::Device(KRONOS::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backRightTank", "br"))
 		.addMotor(KRONOS::Device(KRONOS::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backLeftTank", "bl"))
@@ -94,7 +94,7 @@ void initialize() {
 		}, nullptr) // Linking extra wheel speed to button x
 
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_Y, []() {
-			robot.getPiston("claw").set_value(!robot.getPiston("claw").get_value());
+			robot.getPiston("claw").toggle();
 
 			controller.setControllerText("Front Claw < " + std::string(robot.getPiston("claw").get_value() ? "on" : "off"));
 
