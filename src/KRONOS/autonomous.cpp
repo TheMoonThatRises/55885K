@@ -3,15 +3,11 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot& robot, Controller& controller):
+Autonomous::Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString):
     robot(robot),
     controller(controller),
-    autons {
-            "fl200_fr200_bl200_br200_ln1500\ncl\nfl-100_fr-100_bl-100_br-100_ln3000\ncl",
-            "",
-            ""
-    },
-    autonToString {"midGoals", "allGoals", "None"},
+    autons (autons),
+    autonToString (autonToString),
     auton(0)
 {
 
@@ -37,19 +33,18 @@ void Autonomous::selectAuton() {
 
 void Autonomous::runAuton() {
     auto findDevices = [&](const std::string& command, const int& speed) {
-        if (command != "ln")
+        try {
+            robot.getMotor(command).move_velocity(speed);
+        } catch (std::runtime_error err) {
             try {
-                robot.getMotor(command).move_velocity(speed);
-            } catch (std::runtime_error err) {
+                robot.movePairMotors(command, speed);
+            } catch (std::runtime_error err2) {
                 try {
-                    robot.movePairMotors(command, speed);
-                } catch (std::runtime_error err2) {
-                    try {
-                        if (speed != 0)
-                            robot.getPiston(command).set_value(!robot.getPiston(command).get_value());
-                    } catch (std::runtime_error err3) { }
-                }
+                    if (speed != 0)
+                        robot.getPiston(command).toggle();
+                } catch (std::runtime_error err3) { }
             }
+        }
     };
 
     std::string commands;
@@ -60,7 +55,6 @@ void Autonomous::runAuton() {
         std::map<std::string, int> dists {};
 
         for (const std::string& command : commandAr) {
-            std::cout << command.substr(2) << " : " << command << std::endl;
             int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
             std::string commandSt = command.substr(0, 2);
             
@@ -68,12 +62,15 @@ void Autonomous::runAuton() {
         }
 
         for (const auto& [command, speed] : dists)
-            findDevices(command, speed);
+            if (command != "ln")
+                findDevices(command, speed);
 
-        if (dists.at("ln") && std::isdigit(dists.at("ln"))) 
+        if (dists.find("ln") != dists.end()) {
             pros::delay(dists.at("ln"));
 
-        for (const auto& [command, speed] : dists)
-            findDevices(command, 0);
+            for (const auto& [command, speed] : dists)
+                if (command != "ln")
+                findDevices(command, 0);
+        }
     }
 }
