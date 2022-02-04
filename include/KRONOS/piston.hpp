@@ -18,7 +18,7 @@ namespace KRONOS {
             */
             bool set_value(bool setValue);
             bool toggle();
-            bool get_value() const;
+            bool get_value();
     };
 }
 

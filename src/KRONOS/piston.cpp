@@ -22,6 +22,6 @@ bool Piston::toggle() {
     return value;
 }
 
-bool Piston::get_value() const {
+bool Piston::get_value() {
     return value;
 }
