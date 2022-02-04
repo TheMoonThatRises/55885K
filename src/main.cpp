@@ -3,7 +3,7 @@
 
 KRONOS::Robot robot(0, 1);
 KRONOS::Controller controller(robot);
-KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1500\ncl\nfl-100_fr-100_bl-100_br-100_ln3000\ncl", "", ""}, {"midGoals", "allGoals", "None"});
+KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1400\ncl\nfl-100_fr-100_bl-100_br-100_ln2700\ncl", "", ""}, {"midGoals", "allGoals", "None"});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
