@@ -35,14 +35,13 @@ void Autonomous::runAuton() {
     auto findDevices = [&](const std::string& command, const int& speed) {
         try {
             robot.getMotor(command).move_velocity(speed);
-        } catch (std::runtime_error err) {
+        } catch (std::exception& err) {
             try {
                 robot.movePairMotors(command, speed);
-            } catch (std::runtime_error err2) {
+            } catch (std::exception& err2) {
                 try {
-                    if (speed != 0)
-                        robot.getPiston(command).toggle();
-                } catch (std::runtime_error err3) { }
+                    robot.getPiston(command).toggle();
+                } catch (std::exception& err3) { }
             }
         }
     };
@@ -70,7 +69,7 @@ void Autonomous::runAuton() {
 
             for (const auto& [command, speed] : dists)
                 if (command != "ln")
-                findDevices(command, 0);
+                    findDevices(command, 0);
         }
     }
 }
