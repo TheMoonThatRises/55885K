@@ -18,7 +18,7 @@ namespace KRONOS {
                 @return Returns device.
             */
             template<class T>
-            T getType(const std::vector<Device<T>>& devices, const std::string& name);
+            T& getType(std::vector<Device<T>>& devices, const std::string& name);
 
             /*
                 Adds device to robot.
@@ -84,7 +84,7 @@ namespace KRONOS {
                 @param name
                 @return Motor that you called for.
             */
-            Motor getMotor(const std::string& name);
+            Motor& getMotor(const std::string& name);
 
             /*
                 Returns piston by callsign or name.
@@ -92,15 +92,7 @@ namespace KRONOS {
                 @param name
                 @return Piston that you called for.
             */
-            Piston getPiston(const std::string& name);
-
-            /*
-                Returns motor pair by callsign.
-
-                @param callsign
-                @return Motor pair that you called for.
-            */
-            std::vector<std::string> getMotorPair(const std::string& callsign);
+            Piston& getPiston(const std::string& name);
 
             /*
                 Gets device type of device assigned to callsign.
@@ -148,7 +140,6 @@ namespace KRONOS {
                 @param activated
             */
             void activatePairPiston(const std::string& pairName, bool activated);
-            void controllerListener();
     };
 }
 

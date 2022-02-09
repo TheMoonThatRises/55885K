@@ -16,7 +16,7 @@ namespace KRONOS {
             /*
                 @param setValue
             */
-            bool set_value(bool setValue);
+            bool set_value(const bool& setValue);
             bool toggle();
             bool get_value();
     };
