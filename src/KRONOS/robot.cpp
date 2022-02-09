@@ -10,11 +10,9 @@ Robot::Robot(int wheelAddVelocity, int chassisSensitivity):
 }
 
 template<class T>
-T Robot::getType(const std::vector<Device<T>>& devices, const std::string& name) {
-    for (Device<T> device : devices) 
-        if (name.length() == 2 && device.callsign == name) 
-            return device.device;
-        else if (device.name == name) 
+T& Robot::getType(std::vector<Device<T>>& devices, const std::string& name) {
+    for (Device<T>& device : devices) 
+        if ((name.length() == 2 && device.callsign == name) || device.name == name) 
             return device.device;
 
     throw std::runtime_error("Device not found. " + std::string(LOCATION));
@@ -40,11 +38,11 @@ Robot& Robot::addType(std::vector<Device<T>>& devices, const Device<T>& device) 
 }
 
 Robot& Robot::addMotor(const Device<Motor>& motor) {
-    return addType(motors, std::move(motor));
+    return addType(motors, motor);
 }
 
 Robot& Robot::addPiston(const Device<Piston>& piston) {
-    return addType(pistons, std::move(piston));
+    return addType(pistons, piston);
 }
 
 Robot& Robot::addButton(const std::string& name, const pros::ADIDigitalIn& button) {
@@ -53,11 +51,11 @@ Robot& Robot::addButton(const std::string& name, const pros::ADIDigitalIn& butto
     return *this;
 }
 
-Motor Robot::getMotor(const std::string& name) {
+Motor& Robot::getMotor(const std::string& name) {
     return getType(motors, name);
 }
 
-Piston Robot::getPiston(const std::string& name) {
+Piston& Robot::getPiston(const std::string& name) {
     return getType(pistons, name);
 }
 
