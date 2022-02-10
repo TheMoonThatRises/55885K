@@ -3,12 +3,12 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString):
+Autonomous::Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString, int defaultAuton):
     robot(robot),
     controller(controller),
     autons (autons),
     autonToString (autonToString),
-    auton(0)
+    auton(defaultAuton)
 {
 
 }

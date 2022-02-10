@@ -20,7 +20,7 @@ namespace KRONOS {
                 @param autons All the autonomous strings.
                 @param autonToString What the name of the auton is in the same index as in the vector `autons`.
             */
-            Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString);
+            Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString, int defaultAuton);
             void runAuton();
             void selectAuton();
     };
