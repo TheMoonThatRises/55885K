@@ -166,6 +166,6 @@ void opcontrol() {
     while (true) {
 		controller.listener();
 
-		pros::delay(2);
+		pros::delay(20);
 	}
 }
