@@ -1,9 +1,11 @@
 #include "KRONOS/kronos.h"
 #include "KRONOS/helpers.h"
 
+#define YGOAL 1
+
 KRONOS::Robot robot(0, 1);
 KRONOS::Controller controller(robot);
-KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1400\ncl\nfl-100_fr-100_bl-100_br-100_ln2700\ncl", "", ""}, {"midGoals", "allGoals", "None"});
+KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1400\ncl\nfl-100_fr-100_bl-100_br-100_ln2400\ncl", "fl200_fr200_bl200_br200_kl200_ln1500\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln600\nfl100_fr-100_bl100_br-100_kl100_ln775\nfl-200_fr-200_bl-200_br-200_ln700\nfl-50_fr-50_bl-50_br-50_ln2000\nfl40_fr30_bl40_br30_kl-200_ln1000\nfl60_fr50_bl60_br50_ln5000", ""}, {"midGoals", "allGoals", "None"}, 1);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -33,7 +35,10 @@ void initialize() {
 
 		// Adding buttons
 		.addButton("select", pros::ADIDigitalIn('b'))
-		.addButton("lock", pros::ADIDigitalIn('c'));
+		.addButton("lock", pros::ADIDigitalIn('c'))
+
+		.addVision(KRONOS::Device(KRONOS::Vision(14), "vision", "vs"))
+		.addProximity(KRONOS::Device(KRONOS::Proximity(15), "proximity", "px"));
 
 	robot
 		.pairDevices({"frontLeftTank", "backLeftTank"}, "leftTank") // Pairing chassis left side
@@ -100,6 +105,10 @@ void initialize() {
 
 			pros::delay(200);
 		}, nullptr); // Linking claw to button y
+
+	robot
+		.getVision("vision")
+			.addSignature(YGOAL, pros::Vision::signature_from_utility(YGOAL, -97, 51, -23, -3017, -2363, -2690, 3.300, 0));
 }
 
 /**
@@ -157,6 +166,6 @@ void opcontrol() {
     while (true) {
 		controller.listener();
 
-		pros::delay(10);
+		pros::delay(2);
 	}
 }
