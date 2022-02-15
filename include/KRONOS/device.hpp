@@ -6,7 +6,9 @@
 namespace KRONOS {
     enum device_types {
         MOTOR,
-        PISTON
+        PISTON,
+        PROXIMITY,
+        VISION
     };
     
     template<class D>

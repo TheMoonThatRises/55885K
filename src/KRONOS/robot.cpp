@@ -45,6 +45,14 @@ Robot& Robot::addPiston(const Device<Piston>& piston) {
     return addType(pistons, piston);
 }
 
+Robot& Robot::addProximity(const Device<Proximity>& proximity) {
+    return addType(proximities, proximity);
+}
+
+Robot& Robot::addVision(const Device<Vision>& vision) {
+    return addType(visions, vision);
+}
+
 Robot& Robot::addButton(const std::string& name, const pros::ADIDigitalIn& button) {
     buttons.insert({name, button});
 
@@ -57,6 +65,14 @@ Motor& Robot::getMotor(const std::string& name) {
 
 Piston& Robot::getPiston(const std::string& name) {
     return getType(pistons, name);
+}
+
+Proximity& Robot::getProximity(const std::string& name) {
+    return getType(proximities, name);
+}
+
+Vision& Robot::getVision(const std::string& name) {
+    return getType(visions, name);
 }
 
 device_types Robot::getDeviceType(const std::string& callsign) {
@@ -85,6 +101,8 @@ std::vector<Device<T>> Robot::getPairs(const device_types& type, const std::stri
             case PISTON:
                 pairs.push_back(getPiston(deviceName));
                 break;
+            case PROXIMITY:
+                pairs.push_back(getProximity(deviceName));
         }
 
     return pairs;
@@ -103,4 +121,32 @@ void Robot::movePairMotors(const std::string& pairName, const int32_t& velocity,
 void Robot::activatePairPiston(const std::string& pairName, bool activated) {
     for (const std::string& name : devicePairs.at(pairName))
         getPiston(name).set_value(activated);
+}
+
+void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset) {
+    auto setMotorsSpeed = [&](const std::vector<Motor>& chassisSide, const int& speed) {
+        for (const Motor& motor : chassisSide)
+            motor.move_velocity(speed);
+    };
+
+    getVision("vision").setSignature(sig);
+
+    while (proximity.get_proximity() < minDistance) {
+        pros::vision_object_s_t YGoal = vision.get_by_sig(size, sig);
+
+        int yPos = YGoal.y_middle_coord + yOffset;
+
+        if (yPos > 0) {
+            setMotorsSpeed(leftChassis, speed - 10);
+            setMotorsSpeed(rightChassis, speed);
+        } else if (yPos < 0) {
+            setMotorsSpeed(leftChassis, speed);
+            setMotorsSpeed(rightChassis, speed - 10);
+        } else {
+            setMotorsSpeed(leftChassis, speed);
+            setMotorsSpeed(rightChassis, speed);
+        }
+
+        pros::delay(100);
+    }
 }

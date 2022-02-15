@@ -1,6 +1,8 @@
 #include "helpers.h"
 #include "motor.hpp"
 #include "piston.hpp"
+#include "proximity.hpp"
+#include "vision.hpp"
 #include "device.hpp"
 
 
@@ -32,6 +34,8 @@ namespace KRONOS {
         protected:
             std::vector<Device<Motor>> motors;
             std::vector<Device<Piston>> pistons;
+            std::vector<Device<Proximity>> proximities;
+            std::vector<Device<Vision>> visions;
             std::map<std::string, pros::ADIDigitalIn> buttons;
             std::map<std::string, std::vector<std::string>> devicePairs;
             std::map<std::string, device_types> deviceType;
@@ -59,6 +63,22 @@ namespace KRONOS {
                 @return Allows you to train functions together.
             */
             Robot& addPiston(const Device<Piston>& piston);
+
+            /*
+                Adds optical sensor to robot.
+
+                @param optical
+                @return Allows you to train functions together.
+            */
+           Robot& addProximity(const Device<Proximity>& optical);
+
+           /*
+                Adds vision sensor to robot.
+
+                @param vision
+                @return Allows you to train functions together.
+           */
+            Robot& addVision(const Device<Vision>& vision);
 
             /*
                 Adds button to robot.
@@ -93,6 +113,22 @@ namespace KRONOS {
                 @return Piston that you called for.
             */
             Piston& getPiston(const std::string& name);
+
+            /*
+                Returns optical sensor by callsign or name.
+
+                @param name
+                @return Optical that you called for.
+            */
+            Proximity& getProximity(const std::string& name);
+
+            /*
+                Returns the vision sensor by callsign or name.
+
+                @param name
+                @return Vision sensor that you called for.
+            */
+            Vision& getVision(const std::string& name);
 
             /*
                 Gets device type of device assigned to callsign.
@@ -140,6 +176,17 @@ namespace KRONOS {
                 @param activated
             */
             void activatePairPiston(const std::string& pairName, bool activated);
+
+            /*
+                Follow an object until the object was at the specified distance away.
+
+                @param vision
+                @param proximity
+                @param speed
+                @param minDistance
+                @param yOffset
+            */
+            void followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset);
     };
 }
 

@@ -1,6 +1,8 @@
 #include "device.hpp"
 #include "piston.hpp"
 #include "motor.hpp"
+#include "proximity.hpp"
+#include "vision.hpp"
 
 using namespace KRONOS;
 
@@ -24,3 +26,5 @@ Device<D>::Device(const D& device, const std::string& name, const std::string& c
 
 template class Device<Piston>;
 template class Device<Motor>;
+template class Device<Proximity>;
+template class Device<Vision>;

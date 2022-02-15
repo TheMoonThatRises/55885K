@@ -31,6 +31,10 @@ Code for vex robotics team 55885K-21-22
 
     Radio: 13
 
+    Vision Sensor: 14
+
+    Proximity Sensor: 15
+
     Piston Claw: A
 
     Select Auton Button: B
