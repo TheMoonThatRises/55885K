@@ -49,6 +49,13 @@ namespace KRONOS {
             int wheelAddVelocity, chassisSensitivity;
 
             /*
+                Returns all the motors in the vector.
+
+                @return All the motors in the vector.
+            */
+            std::vector<Device<Motor>>& getMotorVector();
+
+            /*
                 Adds motor to robot.
 
                 @param motor
@@ -181,9 +188,13 @@ namespace KRONOS {
                 Follow an object until the object was at the specified distance away.
 
                 @param vision
+                @param size
+                @param sig
                 @param proximity
                 @param speed
                 @param minDistance
+                @param leftChassis
+                @param rightChassis
                 @param yOffset
             */
             void followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset);
