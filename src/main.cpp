@@ -23,8 +23,8 @@ void initialize() {
 		.addMotor(KRONOS::Device(KRONOS::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backLeftTank", "bl"))
 
 		// Adding fourbar motors
-		.addMotor(KRONOS::Device(KRONOS::Motor(10, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "leftFourbar", "lf"))
-		.addMotor(KRONOS::Device(KRONOS::Motor(9, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "rightFourbar", "rf"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(10, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "leftFourbar", "lf"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(9, pros::E_MOTOR_GEARSET_36, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "rightFourbar", "rf"))
 
 		// Adding back motors
 		.addMotor(KRONOS::Device(KRONOS::Motor(11, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "backDrag", "bd"))
@@ -108,7 +108,7 @@ void initialize() {
 
 	robot
 		.getVision("vision")
-			.addSignature(YGOAL, pros::Vision::signature_from_utility(YGOAL, -97, 51, -23, -3017, -2363, -2690, 3.300, 0));
+			.addSignature(YGOAL, pros::Vision::signature_from_utility(YGOAL, 1759, 2397, 2078, -4209, -3803, -4006, 6.400, 0));
 }
 
 /**
@@ -162,6 +162,8 @@ void autonomous() {
  */
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
+
+	// robot.followObject(robot.getVision("vision"), 0, YGOAL, robot.getProximity("proximity"), 50, 200, {robot.getMotor("fl"), robot.getMotor("bl")}, {robot.getMotor("fr"), robot.getMotor("br")}, 50);
 
     while (true) {
 		controller.listener();
