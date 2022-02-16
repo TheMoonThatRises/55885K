@@ -6,7 +6,7 @@
 #define _KRONOS_PROXIMITY_HPP_
 
 namespace KRONOS {
-    class Proximity : public pros::Optical {
+    class Proximity : public pros::Distance {
         public:
             /*
                 @param port
