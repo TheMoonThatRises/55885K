@@ -33,6 +33,12 @@ Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, c
 void Controller::listener() {
     std::vector<int> activeButtons;
 
+    for (const Device<Motor>& motor : robot.getMotorVector())
+        if (motor.device.is_over_temp()) {
+            rumble("_._._._.");
+            break;
+        }
+
     for (const auto& [controlType, type] : digitalLink)
         if (get_digital(controlType)) {
             activeButtons.push_back(controlType);
