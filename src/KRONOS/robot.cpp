@@ -37,6 +37,10 @@ Robot& Robot::addType(std::vector<Device<T>>& devices, const Device<T>& device) 
     return *this;
 }
 
+std::vector<Device<Motor>>& Robot::getMotorVector() {
+    return motors;
+}
+
 Robot& Robot::addMotor(const Device<Motor>& motor) {
     return addType(motors, motor);
 }
@@ -129,22 +133,27 @@ void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig,
             motor.move_velocity(speed);
     };
 
-    getVision("vision").setSignature(sig);
+    vision.setSignature(sig);
+    pros::vision_object_s_t YGoal = vision.get_by_sig(size, sig);
 
-    while (proximity.get_proximity() < minDistance) {
-        pros::vision_object_s_t YGoal = vision.get_by_sig(size, sig);
+    while (proximity.get() >= minDistance) {
+        YGoal = vision.get_by_sig(size, sig);
+        int yPos = YGoal.y_middle_coord - yOffset;
 
-        int yPos = YGoal.y_middle_coord + yOffset;
-
-        if (yPos > 0) {
-            setMotorsSpeed(leftChassis, speed - 10);
-            setMotorsSpeed(rightChassis, speed);
-        } else if (yPos < 0) {
+        while(YGoal.signature != 1) {
             setMotorsSpeed(leftChassis, speed);
-            setMotorsSpeed(rightChassis, speed - 10);
+            setMotorsSpeed(rightChassis, -speed);
+        }
+
+        if (yPos > 50) {
+            setMotorsSpeed(leftChassis, -speed - yPos / 2);
+            setMotorsSpeed(rightChassis, -speed);
+        } else if (yPos < 50) {
+            setMotorsSpeed(leftChassis, -speed);
+            setMotorsSpeed(rightChassis, -speed - yPos / 2);
         } else {
-            setMotorsSpeed(leftChassis, speed);
-            setMotorsSpeed(rightChassis, speed);
+            setMotorsSpeed(leftChassis, -speed);
+            setMotorsSpeed(rightChassis, -speed);
         }
 
         pros::delay(100);
