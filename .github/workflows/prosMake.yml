@@ -1,38 +1,37 @@
 name: Pros Make
 
 on:
-  	pull_request:
-    	branches:
-      		- 'stable'
+  pull_request:
+    branches:
+        - 'stable'
   push:
-    	branches:
-     		- 'stable'
+    branches:
+      - 'stable'
 
 jobs:
-  	buildPros:
+  buildPros:
+    runs-on: ubuntu-latest
 
-		runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SUBMODULE_KEYS }}
+          submodules: recursive
 
-		steps:
-			- name: Checkout repository
-				uses: actions/checkout@v2
-				with:
-					token: ${{ secrets.SUBMODULE_KEYS }}
-					submodules: recursive
+      - name: Install python3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+          architecture: 'x64'
 
-			- name: Install python3.10
-				uses: actions/setup-python@v2
-				with:
-					python-version: '3.10'
-					architecture: 'x64'
+      - name: Install prosv5
+        run: pip install -r requirements.txt --no-warn-script-location --no-use-pep517
 
-			- name: Install prosv5
-					run: pip install -r requirements.txt --no-warn-script-location --no-use-pep517
-
-			- name: Install arm-none-eabi-gcc
-				uses: fiam/arm-none-eabi-gcc@v1
-				with:
-					release: '9-2019-q4'
-				
-			- name: Pros make code
-					run: pros make
+      - name: Install arm-none-eabi-gcc
+        uses: fiam/arm-none-eabi-gcc@v1
+        with:
+          release: '9-2019-q4'
+        
+      - name: Pros make code
+        run: pros make
