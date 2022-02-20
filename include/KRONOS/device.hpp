@@ -13,8 +13,6 @@ namespace KRONOS {
     
     template<class D>
     class Device {
-        private:
-            const std::vector<std::string> reserved;
         public:
             /*
                 @param device

@@ -151,7 +151,9 @@ namespace KRONOS {
                 @return Device pair that you called for.
             */
             template<class T>
-            std::vector<Device<T>> getPairs(const device_types& type, const std::string& name);
+            std::vector<T> getPairs(const device_types& type, const std::string& name);
+
+            std::vector<Motor> getMotorPairs(const std::string& name);
 
             /*
                 @param name
@@ -197,7 +199,7 @@ namespace KRONOS {
                 @param rightChassis
                 @param yOffset
             */
-            void followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset);
+            void followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset, const int& turnDir);
     };
 }
 
