@@ -53,23 +53,30 @@ void Autonomous::runAuton() {
         std::vector<std::string> commandAr = Util::splitString(commands, "_");
         std::map<std::string, int> dists {};
 
-        for (const std::string& command : commandAr) {
-            int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
-            std::string commandSt = command.substr(0, 2);
-            
-            dists.insert({commandSt, dist});
-        }
+        if (commandAr.at(0) == "tk") {
+            std::vector<Motor> leftChassis = robot.getMotorPairs(commandAr.at(7)),
+                               rightChassis = robot.getMotorPairs(commandAr.at(8));
 
-        for (const auto& [command, speed] : dists)
-            if (command != "ln")
-                findDevices(command, speed);
+            robot.followObject(robot.getVision(commandAr.at(1)), std::stoi(commandAr.at(2)), std::stoi(commandAr.at(3)), robot.getProximity(commandAr.at(4)), std::stoi(commandAr.at(5)), std::stoi(commandAr.at(6)), leftChassis, rightChassis, std::stoi(commandAr.at(9)), std::stoi(commandAr.at(10)));
+        } else {
+            for (const std::string& command : commandAr) {
+                int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
+                std::string commandSt = command.substr(0, 2);
 
-        if (dists.find("ln") != dists.end()) {
-            pros::delay(dists.at("ln"));
+                dists.insert({commandSt, dist});
+            }
 
             for (const auto& [command, speed] : dists)
-                if (command != "ln")
-                    findDevices(command, 0);
+                if (command != "tk" && command != "ln")
+                    findDevices(command, speed);
+
+            if (dists.find("ln") != dists.end()) {
+                pros::delay(dists.at("ln"));
+
+                for (const auto& [command, speed] : dists)
+                    if (command != "tk" && command != "ln")
+                        findDevices(command, 0);
+            }
         }
     }
 }

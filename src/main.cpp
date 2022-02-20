@@ -5,8 +5,7 @@
 
 KRONOS::Robot robot(0, 1);
 KRONOS::Controller controller(robot);
-KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_ln1400\ncl\nfl-100_fr-100_bl-100_br-100_ln2400\ncl", "fl200_fr200_bl200_br200_kl200_ln1500\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln600\nfl100_fr-100_bl100_br-100_kl100_ln775\nfl-200_fr-200_bl-200_br-200_ln700\nfl-50_fr-50_bl-50_br-50_ln2000\nfl40_fr30_bl40_br30_kl-200_ln1000\nfl60_fr50_bl60_br50_ln5000", ""}, {"midGoals", "allGoals", "None"}, 1);
-
+KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_lf200_rf200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_ln800\ncl\nfl-100_fr-100_bl-100_br-100_ln2400\ncl", "fl200_fr200_bl200_br200_lf200_rf200_kl200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_kl200_ln800\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln1000\ntk_vs_0_1_px_50_110_leftTank_rightTank_80_-1\nkl-200_ln1000\nfl200_fr100_bl200_br100_ln2000", "tk_vs_0_1_px_50_110_leftTank_rightTank_30_-1", ""}, {"midGoals", "allGoals", "blueGoal", "None"}, 0);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -17,10 +16,10 @@ void initialize() {
 	std::cout << "Initializing..." << std::endl;
 	robot
 		// Adding chassis motors
-		.addMotor(KRONOS::Device(KRONOS::Motor(8, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontRightTank", "fr"))
-		.addMotor(KRONOS::Device(KRONOS::Motor(7, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontLeftTank", "fl"))
-		.addMotor(KRONOS::Device(KRONOS::Motor(5, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backRightTank", "br"))
-		.addMotor(KRONOS::Device(KRONOS::Motor(6, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backLeftTank", "bl"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(8, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontRightTank", "fr"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(7, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "frontLeftTank", "fl"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(5, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backRightTank", "br"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(20, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_BRAKE), "backLeftTank", "bl"))
 
 		// Adding fourbar motors
 		.addMotor(KRONOS::Device(KRONOS::Motor(10, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "leftFourbar", "lf"))
@@ -37,8 +36,8 @@ void initialize() {
 		.addButton("select", pros::ADIDigitalIn('b'))
 		.addButton("lock", pros::ADIDigitalIn('c'))
 
-		.addVision(KRONOS::Device(KRONOS::Vision(14), "vision", "vs"))
-		.addProximity(KRONOS::Device(KRONOS::Proximity(15), "proximity", "px"));
+		.addVision(KRONOS::Device(KRONOS::Vision(17), "vision", "vs"))
+		.addProximity(KRONOS::Device(KRONOS::Proximity(4), "proximity", "px"));
 
 	robot
 		.pairDevices({"frontLeftTank", "backLeftTank"}, "leftTank") // Pairing chassis left side
@@ -46,14 +45,14 @@ void initialize() {
 		.pairDevices({"leftFourbar", "rightFourbar"}, "fourbar"); // Pairing fourbar
 
 	controller
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, []() {
-			int leftVelocity = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / robot.chassisSensitivity;
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, []() {
+			int leftVelocity = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / robot.chassisSensitivity;
 			leftVelocity += (leftVelocity != 0) ? ((leftVelocity > 0) ? robot.wheelAddVelocity : -robot.wheelAddVelocity) : 0;
 
 			robot.movePairMotors("leftTank", leftVelocity); 
 		}) // Linking left side chassis to left joystick y axis
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, []() {
-			int rightVelocity = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / robot.chassisSensitivity;
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, []() {
+			int rightVelocity = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / robot.chassisSensitivity;
 			rightVelocity += (rightVelocity != 0) ? ((rightVelocity > 0) ? robot.wheelAddVelocity : -robot.wheelAddVelocity) : 0;
 
 			robot.movePairMotors("rightTank", rightVelocity); 
@@ -108,9 +107,8 @@ void initialize() {
 
 	robot
 		.getVision("vision")
-			.addSignature(YGOAL, pros::Vision::signature_from_utility(YGOAL, 1759, 2397, 2078, -4209, -3803, -4006, 6.400, 0));
+			.addSignature(YGOAL, KRONOS::Vision::signature_from_utility(YGOAL, 7473, 12171, 9822, -1985, -1565, -1776, 2.200, 0));
 }
-
 /**
  * Runs while the Robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either Autonomous or opcontrol. When
@@ -129,6 +127,8 @@ void disabled() {}
 
 
 void competition_initialize() {
+	std::cout << "Selecting auton..." << std::endl;
+
     auton.selectAuton();
 }
 
@@ -144,6 +144,8 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+	std::cout << "Running auton..." << std::endl;
+
     auton.runAuton();
 }
 
@@ -162,8 +164,6 @@ void autonomous() {
  */
 void opcontrol() {
 	std::cout << "Running opcontrol function." << std::endl;
-
-	// robot.followObject(robot.getVision("vision"), 0, YGOAL, robot.getProximity("proximity"), 50, 200, {robot.getMotor("fl"), robot.getMotor("bl")}, {robot.getMotor("fr"), robot.getMotor("br")}, 50);
 
     while (true) {
 		controller.listener();

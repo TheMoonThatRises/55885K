@@ -93,23 +93,13 @@ Robot& Robot::pairDevices(const std::vector<std::string>& callNames, const std::
     return *this;
 }
 
-template<class T>
-std::vector<Device<T>> Robot::getPairs(const device_types& type, const std::string& name) {
-    std::vector<Device<T>> pairs;
+std::vector<Motor> Robot::getMotorPairs(const std::string& name) {
+    std::vector<Motor> pairs;
 
     for (const std::string& deviceName : devicePairs.at(name))
-        switch (type) {
-            case MOTOR:
-                pairs.push_back(getMotor(deviceName));
-                break;
-            case PISTON:
-                pairs.push_back(getPiston(deviceName));
-                break;
-            case PROXIMITY:
-                pairs.push_back(getProximity(deviceName));
-        }
+        pairs.push_back(getMotor(deviceName));
 
-    return pairs;
+   return pairs;
 }
 
 void Robot::movePairMotors(const std::string& pairName, const int32_t& velocity) {
@@ -127,7 +117,7 @@ void Robot::activatePairPiston(const std::string& pairName, bool activated) {
         getPiston(name).set_value(activated);
 }
 
-void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset) {
+void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig, Proximity& proximity, const int32_t& speed, const int64_t& minDistance, const std::vector<Motor>& leftChassis, const std::vector<Motor>& rightChassis, const int32_t& yOffset, const int& turnDir) {
     auto setMotorsSpeed = [&](const std::vector<Motor>& chassisSide, const int& speed) {
         for (const Motor& motor : chassisSide)
             motor.move_velocity(speed);
@@ -136,26 +126,33 @@ void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig,
     vision.setSignature(sig);
     pros::vision_object_s_t YGoal = vision.get_by_sig(size, sig);
 
-    while (proximity.get() >= minDistance) {
+    while (true) {
+        int distance = proximity.get();
         YGoal = vision.get_by_sig(size, sig);
-        int yPos = YGoal.y_middle_coord - yOffset;
+        int xPos = YGoal.x_middle_coord - yOffset;
 
-        while(YGoal.signature != 1) {
-            setMotorsSpeed(leftChassis, speed);
-            setMotorsSpeed(rightChassis, -speed);
+        if (distance == PROS_ERR)
+            std::cout << "Distance error -- errno" << errno << std::endl;
+        else if (distance < minDistance && distance > 0 && YGoal.signature == 1)
+            break;
+
+        while(YGoal.signature != 1 || (xPos < 40 && xPos > 60)) {
+            setMotorsSpeed(leftChassis, -speed * turnDir);
+            setMotorsSpeed(rightChassis, speed * turnDir);
+            YGoal = vision.get_by_sig(size, sig);
         }
 
-        if (yPos > 50) {
-            setMotorsSpeed(leftChassis, -speed - yPos / 2);
-            setMotorsSpeed(rightChassis, -speed);
-        } else if (yPos < 50) {
+        // if (xPos > 50) {
+        //     setMotorsSpeed(leftChassis, -speed - xPos / 2);
+        //     setMotorsSpeed(rightChassis, -speed);
+        // } else if (xPos < 50) {
+        //     setMotorsSpeed(leftChassis, -speed);
+        //     setMotorsSpeed(rightChassis, -speed - xPos / 2);
+        // } else {
             setMotorsSpeed(leftChassis, -speed);
-            setMotorsSpeed(rightChassis, -speed - yPos / 2);
-        } else {
-            setMotorsSpeed(leftChassis, -speed);
             setMotorsSpeed(rightChassis, -speed);
-        }
+        // }
 
-        pros::delay(100);
+        pros::delay(20);
     }
 }
