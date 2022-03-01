@@ -23,19 +23,17 @@ Code for vex robotics team 55885K-21-22
 
 ### Back Motors
 
-    Backdrag motor: 11
-
     Backlift motor: 12
 
 ### Miscellaneous
 
     Radio: 13
 
-    Vision Sensor: 14
+    Vision Sensor: 17
 
-    Proximity Sensor: 15
+    Proximity Sensor: 4
 
-    Piston Claw: A
+    Motor Claw: 15
 
     Select Auton Button: B
 
