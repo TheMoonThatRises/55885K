@@ -1,6 +1,0 @@
-[submodule "src/KRONOS"]
-	path = src/KRONOS
-	url = https://github.com/RangerEmerald/KRONOS-Source
-[submodule "include/KRONOS"]
-	path = include/KRONOS
-	url = https://github.com/RangerEmerald/KRONOS-Include
