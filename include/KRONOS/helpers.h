@@ -20,5 +20,6 @@
 #define LOCATION __FILE__ " (" S2(__LINE__) ")"
 
 using function = std::function<void()>;
+using queueFunction = std::function<void(std::vector<std::string>&)>;
 
 #endif
