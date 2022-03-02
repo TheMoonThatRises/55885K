@@ -2,6 +2,12 @@
 
 using namespace KRONOS;
 
+Robot::Robot(std::map<std::string, std::string>& env):
+    env(env)
+{
+
+}
+
 template<class T>
 T& Robot::getType(std::vector<Device<T>>& devices, const std::string& name) {
     for (Device<T>& device : devices) 
