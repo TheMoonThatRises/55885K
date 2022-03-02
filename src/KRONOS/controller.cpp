@@ -33,6 +33,9 @@ Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, c
 void Controller::listener() {
     std::vector<int> activeButtons;
 
+    robot.queue.runQueue();
+
+
     for (const Device<Motor>& motor : robot.getMotorVector())
         if (motor.device.is_over_temp()) {
             setControllerText("Overheating port: " + std::to_string(motor.device.get_port()));
@@ -42,7 +45,7 @@ void Controller::listener() {
         }
 
     for (const auto& [controlType, type] : digitalLink)
-        if (get_digital(controlType)) {
+        if (get_digital(controlType) != 0) {
             activeButtons.push_back(controlType);
             type.at("action")();
         }
