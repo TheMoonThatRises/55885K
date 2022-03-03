@@ -4,7 +4,7 @@
 #define YGOAL 1
 #define motorJoystickRatio 1.574
 
-std::map<std::string, std::string> env {{"motorAcc", "0"}, {"maxAcc", "100"}};
+std::map<std::string, std::string> env {{"motorAcc", "0"}, {"maxAcc", "100"}, {"leftAcc", "0"}, {"rightAcc", "0"}};
 
 KRONOS::Robot robot(env);
 KRONOS::Controller controller(robot);
@@ -47,11 +47,29 @@ void initialize() {
 		.pairDevices({"leftFourbar", "rightFourbar"}, "fourbar"); // Pairing fourbar
 
 	controller
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, []() { robot.movePairMotors("leftTank", controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio); }) // Linking left side chassis to left joystick y axis
-		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, []() { robot.movePairMotors("rightTank", controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio); }) // Linking right side chassis to right joystick y axis
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, [&]() {
+			if (std::stoi(robot.env.at("rightAcc")) < controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) > 0)
+				robot.env.at("rightAcc") = std::to_string(std::stoi(robot.env.at("rightAcc")) + 50);
+			else if (std::stoi(robot.env.at("rightAcc")) > controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) < 0)
+				robot.env.at("rightAcc") = std::to_string(std::stoi(robot.env.at("rightAcc")) - 50);
+
+			robot.movePairMotors("leftTank", std::stoi(robot.env.at("rightAcc")));
+		}, [&]() {
+			robot.env.at("rightAcc") = "0";
+		}) // Linking left side chassis to left joystick y axis
+		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, [&]() {
+			if (std::stoi(robot.env.at("leftAcc")) < controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) > 0)
+				robot.env.at("leftAcc") = std::to_string(std::stoi(robot.env.at("leftAcc")) + 50);
+			else if (std::stoi(robot.env.at("leftAcc")) > controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) < 0)
+				robot.env.at("leftAcc") = std::to_string(std::stoi(robot.env.at("leftAcc")) - 50);
+
+			robot.movePairMotors("rightTank", std::stoi(robot.env.at("leftAcc")));
+		}, [&]() {
+			robot.env.at("leftAcc") = "0";
+		}) // Linking right side chassis to right joystick y axis
 
 		// Linking fourbar movement to left back buttons
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, []() {
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) < std::stoi(robot.env.at("maxAcc")))
 					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) + 20);
@@ -62,7 +80,7 @@ void initialize() {
 					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 5);
 				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
 			 })
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, []() {
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) > -std::stoi(robot.env.at("maxAcc")))
 					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 20);
