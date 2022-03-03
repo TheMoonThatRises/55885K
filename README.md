@@ -33,7 +33,7 @@ Code for vex robotics team 55885K-21-22
 
     Proximity Sensor: 4
 
-    Motor Claw: 15
+    Motor Claw: 19
 
     Select Auton Button: B
 
@@ -45,11 +45,11 @@ Code for vex robotics team 55885K-21-22
 
 #### **Button B**
 
-    Resets the front fourbar. While resetting, the robot will be unable to perform any other actions for 1 second.
+    Currently kills the robot.
 
 #### **Button A**
 
-    Changes the sensitivy of the controller. Default is / 1. Can go up to / 3.5.
+    Holding the button will change the chassis brake mode to `BRAKE`.
 
 #### **Button X**
 
@@ -74,10 +74,6 @@ Code for vex robotics team 55885K-21-22
 #### **Right Button 1/2**
 
     Move back lift up and down.
-
-#### **Up/Down Arrow**
-
-    Move back drag up and down.
 
 ### Controller Screen
 
