@@ -12,3 +12,7 @@ std::vector<std::string> Util::splitString(const std::string& str,const std::str
     }
     return arr;
 }
+
+std::string Util::addNumberString(const std::string& str, const int& num) {
+    return std::to_string(std::stoi(str) + num);
+}

@@ -11,6 +11,7 @@ class Util {
             @return
         */
         static std::vector<std::string> splitString(const std::string& str, const std::string& sep);
+        static std::string addNumberString(const std::string& str, const int& num);
 };
 
 #endif
