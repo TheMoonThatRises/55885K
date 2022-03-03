@@ -9,7 +9,7 @@ class QueueItem {
         std::string id;
         queueFunction run;
     public:
-        QueueItem(const std::string& id, const queueFunction& run, const std::vector<std::string>& env);
+        QueueItem(const std::string& id, const queueFunction run, const std::vector<std::string>& env);
         std::string getId();
         bool runFunction();
 };

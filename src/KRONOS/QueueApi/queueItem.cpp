@@ -1,6 +1,6 @@
 #include "KRONOS/QueueApi/queueItem.hpp"
 
-QueueItem::QueueItem(const std::string& id, const queueFunction& run, const std::vector<std::string>& env):
+QueueItem::QueueItem(const std::string& id, const queueFunction run, const std::vector<std::string>& env):
     env(env),
     id(id),
     run(run)
