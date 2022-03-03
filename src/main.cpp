@@ -48,20 +48,22 @@ void initialize() {
 
 	controller
 		.linkAnalog(pros::E_CONTROLLER_ANALOG_RIGHT_Y, [&]() {
-			if (std::stoi(robot.env.at("rightAcc")) < controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) > 0)
-				robot.env.at("rightAcc") = std::to_string(std::stoi(robot.env.at("rightAcc")) + 50);
-			else if (std::stoi(robot.env.at("rightAcc")) > controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) < 0)
-				robot.env.at("rightAcc") = std::to_string(std::stoi(robot.env.at("rightAcc")) - 50);
+			double controllerValue = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) * motorJoystickRatio;
+			if (std::stoi(robot.env.at("rightAcc")) < controllerValue && controllerValue > 0)
+				robot.env.at("rightAcc") = Util::addNumberString(robot.env.at("rightAcc"), 50);
+			else if (std::stoi(robot.env.at("rightAcc")) > controllerValue && controllerValue < 0)
+				robot.env.at("rightAcc") = Util::addNumberString(robot.env.at("rightAcc"), -50);
 
 			robot.movePairMotors("leftTank", std::stoi(robot.env.at("rightAcc")));
 		}, [&]() {
 			robot.env.at("rightAcc") = "0";
 		}) // Linking left side chassis to left joystick y axis
 		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, [&]() {
-			if (std::stoi(robot.env.at("leftAcc")) < controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) > 0)
-				robot.env.at("leftAcc") = std::to_string(std::stoi(robot.env.at("leftAcc")) + 50);
-			else if (std::stoi(robot.env.at("leftAcc")) > controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio && controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) < 0)
-				robot.env.at("leftAcc") = std::to_string(std::stoi(robot.env.at("leftAcc")) - 50);
+			double controllerValue = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio;
+			if (std::stoi(robot.env.at("leftAcc")) < controllerValue && controllerValue > 0)
+				robot.env.at("leftAcc") = Util::addNumberString(robot.env.at("leftAcc"), 50);
+			else if (std::stoi(robot.env.at("leftAcc")) > controllerValue && controllerValue < 0)
+				robot.env.at("leftAcc") = Util::addNumberString(robot.env.at("leftAcc"), -50);
 
 			robot.movePairMotors("rightTank", std::stoi(robot.env.at("leftAcc")));
 		}, [&]() {
@@ -72,23 +74,27 @@ void initialize() {
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) < std::stoi(robot.env.at("maxAcc")))
-					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) + 20);
+					robot.env.at("motorAcc") = Util::addNumberString(robot.env.at("motorAcc"), 20);
+
 				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc"))); 
 			}, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) > 0)
-					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 5);
+					robot.env.at("motorAcc") = Util::addNumberString(robot.env.at("motorAcc"), -5);
+
 				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
 			 })
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) > -std::stoi(robot.env.at("maxAcc")))
-					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 20);
+					robot.env.at("motorAcc") = Util::addNumberString(robot.env.at("motorAcc"), -20);
+
 				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
 			}, [&]() {
 				// robot.queue.removeQueue("fourbarReset");
 				if (std::stoi(robot.env.at("motorAcc")) < 0)
-					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) + 5);
+					robot.env.at("motorAcc") = Util::addNumberString(robot.env.at("motorAcc"), 5);
+
 				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
 		})
 
