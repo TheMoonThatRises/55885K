@@ -4,7 +4,9 @@
 #define YGOAL 1
 #define motorJoystickRatio 1.574
 
-KRONOS::Robot robot;
+std::map<std::string, std::string> env {{"motorAcc", "0"}, {"maxAcc", "100"}};
+
+KRONOS::Robot robot(env);
 KRONOS::Controller controller(robot);
 KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_lf200_rf200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_ln800\ncl-200_ln200\nfl-100_fr-100_bl-100_br-100_ln2400\ncl200_ln200", "fl200_fr200_bl200_br200_lf200_rf200_kl200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_kl200_ln800\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln1000\ntk_vs_0_1_px_50_110_leftTank_rightTank_80_-1\nkl-200_ln1000\nfl200_fr100_bl200_br100_ln2000", "tk_vs_0_1_px_50_110_leftTank_rightTank_30_-1", ""}, {"midGoals", "allGoals", "blueGoal", "None"}, 0);
 /**
@@ -30,7 +32,7 @@ void initialize() {
 		.addMotor(KRONOS::Device(KRONOS::Motor(12, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "backLift", "kl"))
 
 		// Adding motor claw
-		.addMotor(KRONOS::Device(KRONOS::Motor(15, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "claw", "cl"))
+		.addMotor(KRONOS::Device(KRONOS::Motor(19, pros::E_MOTOR_GEARSET_36, false, pros::E_MOTOR_ENCODER_DEGREES, pros::E_MOTOR_BRAKE_HOLD), "claw", "cl"))
 
 		// Adding buttons
 		.addButton("select", pros::ADIDigitalIn('b'))
@@ -49,31 +51,70 @@ void initialize() {
 		.linkAnalog(pros::E_CONTROLLER_ANALOG_LEFT_Y, []() { robot.movePairMotors("rightTank", controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * motorJoystickRatio); }) // Linking right side chassis to right joystick y axis
 
 		// Linking fourbar movement to left back buttons
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, []() { robot.movePairMotors("fourbar", 80); }, []() { robot.movePairMotors("fourbar", 0); })
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, []() { robot.movePairMotors("fourbar", -80); }, []() { robot.movePairMotors("fourbar", 0); })
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L1, []() {
+				// robot.queue.removeQueue("fourbarReset");
+				if (std::stoi(robot.env.at("motorAcc")) < std::stoi(robot.env.at("maxAcc")))
+					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) + 20);
+				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc"))); 
+			}, [&]() {
+				// robot.queue.removeQueue("fourbarReset");
+				if (std::stoi(robot.env.at("motorAcc")) > 0)
+					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 5);
+				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
+			 })
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_L2, []() {
+				// robot.queue.removeQueue("fourbarReset");
+				if (std::stoi(robot.env.at("motorAcc")) > -std::stoi(robot.env.at("maxAcc")))
+					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) - 20);
+				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
+			}, [&]() {
+				// robot.queue.removeQueue("fourbarReset");
+				if (std::stoi(robot.env.at("motorAcc")) < 0)
+					robot.env.at("motorAcc") = std::to_string(std::stoi(robot.env.at("motorAcc")) + 5);
+				robot.movePairMotors("fourbar", std::stoi(robot.env.at("motorAcc")));
+		})
 
 		// Linking backlift movement to right back buttons
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_R1, []() { robot.getMotor("backLift").move_velocity(-80); }, []() { robot.getMotor("backLift").move_velocity(0); })
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_R2, []() { robot.getMotor("backLift").move_velocity(80); }, []() { robot.getMotor("backLift").move_velocity(0); })
 
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_B, []() { 
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_B, []() {
 			controller.setControllerText("Resetting Fourbar");
-    
-			robot.getMotor("leftFourbar").move_relative(-robot.getMotor("leftFourbar").get_position(), 100);
-			robot.getMotor("rightFourbar").move_relative(-robot.getMotor("rightFourbar").get_position(), 100);
-
-			pros::delay(1000);
-
-			controller.setControllerText("Fourbar Resetted");
+			robot.queue.addQueue(0, QueueItem("fourbarReset", [&](std::vector<std::string> env) {
+				robot.getMotor("leftFourbar").move_absolute(0, 100);
+				robot.getMotor("rightFourbar").move_absolute(0, 100);
+				
+				if (robot.getMotor("leftFourbar").get_position() == 0 && robot.getMotor("rightFourbar").get_position() == 0) {
+					robot.queue.removeQueue("fourbarReset");
+					controller.setControllerText("Fourbar Resetted");
+				}
+			}, {}));
 		}, nullptr) // Linking fourbar reset to button b
 
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_Y, []() {
-			if (robot.getMotor("claw").get_target_position() > -150)
-				robot.getMotor("claw").move_absolute(-150, 100);
-			else
-				robot.getMotor("claw").move_absolute(0, 100);
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_A, []() {
+			for (KRONOS::Motor motor : robot.getMotorPairs("rightTank"))
+				motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-			pros::delay(200);
+			for (KRONOS::Motor motor : robot.getMotorPairs("leftTank"))
+				motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+		}, []() {
+			for (KRONOS::Motor motor : robot.getMotorPairs("rightTank"))
+				motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+			for (KRONOS::Motor motor : robot.getMotorPairs("leftTank"))
+				motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+		}) // Linking brake mode to button a
+
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_Y, []() {
+			robot.queue.addQueue(0, QueueItem("claw", [&](std::vector<std::string> env) {
+				if (env.at(0) == "down")
+					robot.getMotor("claw").move_absolute(-150, 100);
+				else
+					robot.getMotor("claw").move_absolute(0, 100);
+
+				if ((robot.getMotor("claw").get_position() >= -10 && robot.getMotor("claw").get_position() <= 30 && env.at(0) == "up") || (robot.getMotor("claw").get_position() <= -160 && robot.getMotor("claw").get_position() >= 140 && env.at(0) == "down"))
+					robot.queue.removeQueue("claw");
+			}, {(robot.getMotor("claw").get_position() > -100) ? "down" : "up"}));
 		}, nullptr); // Linking claw to button y
 
 	robot
