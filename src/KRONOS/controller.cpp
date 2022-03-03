@@ -26,8 +26,8 @@ Controller& Controller::linkDigital(const pros::controller_digital_e_t& control,
     return link(digitalLink, control, action, idle);
 }
 
-Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const function action) {
-    return link(analogLink, control, action, nullptr);
+Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const function action, const function idle) {
+    return link(analogLink, control, action, idle);
 }
 
 void Controller::listener() {
@@ -45,14 +45,17 @@ void Controller::listener() {
         }
 
     for (const auto& [controlType, type] : digitalLink)
-        if (get_digital(controlType) != 0) {
+        if (get_digital(controlType)) {
             activeButtons.push_back(controlType);
             type.at("action")();
         }
 
 
-    for (const auto& [controlType, type] : analogLink)
+    for (const auto& [controlType, type] : analogLink) {
         type.at("action")();
+        if (get_analog(controlType) == 0)
+            type.at("idle")();
+    }
             
     for (const auto& [controlType, type] : digitalLink) 
         if (type.at("idle") != nullptr && std::find(activeButtons.begin(), activeButtons.end(), controlType + ((controlType % 2 == 0) ? 1 : -1)) == activeButtons.end() && std::find(activeButtons.begin(), activeButtons.end(), controlType) == activeButtons.end())

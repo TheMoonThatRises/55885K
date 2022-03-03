@@ -46,7 +46,7 @@ namespace KRONOS {
                 @param action Function to run.
                 @return Allows you to train functions together. 
             */
-            Controller& linkAnalog(const pros::controller_analog_e_t& control, const function action);
+            Controller& linkAnalog(const pros::controller_analog_e_t& control, const function action, const function idle);
             void listener();
     };
 }
