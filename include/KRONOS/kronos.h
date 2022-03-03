@@ -4,5 +4,6 @@
 #include "robot.hpp"
 #include "autonomous.hpp"
 #include "controller.hpp"
+#include "util.hpp"
 
 #endif
