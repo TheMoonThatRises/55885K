@@ -15,6 +15,8 @@
 #include <utility>
 #include <cctype>
 
+#include "util.hpp"
+
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION __FILE__ " (" S2(__LINE__) ")"
