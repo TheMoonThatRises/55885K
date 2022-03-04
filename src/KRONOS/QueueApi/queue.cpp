@@ -5,7 +5,6 @@ QueueManager::~QueueManager() {
 }
 
 void QueueManager::runQueue() {
-    std::cout << queue.size() << std::endl;
     for (int priority = 0; priority < queue.size(); ++priority)
         queue.at(priority).runFunction();
 }
@@ -36,10 +35,16 @@ bool QueueManager::addQueue(const int& priority, QueueItem queueItem) {
 
 bool QueueManager::removeQueue(const std::string& id) {
     try {
+        bool foundId = false;
+
         for (int priority = 0; priority < queue.size(); ++priority)
-            if (queue.at(priority).getId() == id) {
+            if (foundId) {
+                auto item = queue.extract(priority);
+                item.key() = priority - 1;
+                queue.insert(std::move(item));
+            } else if (queue.at(priority).getId() == id) {
                 queue.erase(priority);
-                break;
+                foundId = true;
             }
 
         return true;
@@ -50,6 +55,7 @@ bool QueueManager::removeQueue(const std::string& id) {
 
 bool QueueManager::cleanQueue() {
     try {
+        queue.clear();
         return queue.empty();
     } catch (std::exception exception) {
         return false;
