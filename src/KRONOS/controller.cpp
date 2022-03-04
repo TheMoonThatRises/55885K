@@ -37,12 +37,12 @@ void Controller::listener() {
 
 
     for (const Device<Motor>& motor : robot.getMotorVector())
-        if (motor.device.is_over_temp()) {
-            setControllerText("Overheating port: " + std::to_string(motor.device.get_port()));
-            rumble("_._._._.");
-            pros::delay(100);
-            break;
-        }
+        // if (motor.device.is_over_temp()) {
+        //     setControllerText("Overheating port: " + std::to_string(motor.device.get_port()));
+        //     rumble("_._._._.");
+        //     pros::delay(100);
+        //     break;
+        // }
 
     for (const auto& [controlType, type] : digitalLink)
         if (get_digital(controlType)) {
