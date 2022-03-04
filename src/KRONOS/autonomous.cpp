@@ -58,6 +58,32 @@ void Autonomous::runAuton() {
                                rightChassis = robot.getMotorPairs(commandAr.at(8));
 
             robot.followObject(robot.getVision(commandAr.at(1)), std::stoi(commandAr.at(2)), std::stoi(commandAr.at(3)), robot.getProximity(commandAr.at(4)), std::stoi(commandAr.at(5)), std::stoi(commandAr.at(6)), leftChassis, rightChassis, std::stoi(commandAr.at(9)), std::stoi(commandAr.at(10)));
+        } else if (commandAr.at(0) == "bkt") {
+            while (true) {
+                if (std::stoi(commandAr.at(2)) >= robot.getProximity(commandAr.at(1)).get() && robot.getProximity(commandAr.at(1)).get()!= 0)
+                    break;
+
+                robot.movePairMotors(commandAr.at(3), std::stoi(commandAr.at(4)));
+                robot.movePairMotors(commandAr.at(5), std::stoi(commandAr.at(6)));
+
+                pros::delay(20);
+            }
+
+            robot.movePairMotors(commandAr.at(3), 0);
+            robot.movePairMotors(commandAr.at(5), 0);
+        } else if (commandAr.at(0) == "cbm") {
+            for (Motor motor : robot.getMotorPairs(commandAr.at(1)))
+                switch (std::stoi(commandAr.at(2))) {
+                    case 0:
+                        motor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+                        break;
+                    case 1:
+                        motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+                        break;
+                    case 2:
+                        motor.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+                        break;
+                }
         } else {
             for (const std::string& command : commandAr) {
                 int dist = (!command.substr(2).empty()) ? std::stoi(command.substr(2)) : 0;
@@ -78,5 +104,7 @@ void Autonomous::runAuton() {
                         findDevices(command, 0);
             }
         }
+
+        pros::delay(20);
     }
 }
