@@ -16,3 +16,7 @@ std::vector<std::string> Util::splitString(const std::string& str,const std::str
 std::string Util::addNumberString(const std::string& str, const int& num) {
     return std::to_string(std::stoi(str) + num);
 }
+
+std::string Util::addNumberString(const std::string& str, const std::string& num) {
+    return std::to_string(std::stoi(str) + std::stoi(num));
+}
