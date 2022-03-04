@@ -4,7 +4,7 @@
 #include "proximity.hpp"
 #include "vision.hpp"
 #include "device.hpp"
-#include "KRONOS/QueueApi/queue.hpp"
+#include "QueueApi/queue.hpp"
 
 #ifndef _KRONOS_ROBOT_HPP_
 #define _KRONOS_ROBOT_HPP_
@@ -40,6 +40,9 @@ namespace KRONOS {
             std::map<std::string, std::vector<std::string>> devicePairs;
             std::map<std::string, device_types> deviceType;
         public:
+            /*
+                @param env
+            */
             Robot(std::map<std::string, std::string>& env);
 
             std::map<std::string, std::string>& env;
