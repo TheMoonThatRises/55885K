@@ -4,11 +4,11 @@
 #define YGOAL 1
 #define motorJoystickRatio 1.574
 
-std::map<std::string, std::string> env {{"motorAcc", "0"}, {"maxAcc", "100"}, {"leftAcc", "0"}, {"rightAcc", "0"}};
+std::map<std::string, std::string> env {{"motorAcc", "0"}, {"maxAcc", "100"}, {"leftAcc", "0"}, {"rightAcc", "0"}, {"backAcc", "0"}};
 
 KRONOS::Robot robot(env);
 KRONOS::Controller controller(robot);
-KRONOS::Autonomous auton(robot, controller, {"fl200_fr200_bl200_br200_lf200_rf200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_ln800\ncl-200_ln200\nfl-100_fr-100_bl-100_br-100_ln2400\ncl200_ln200", "fl200_fr200_bl200_br200_lf200_rf200_kl200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_kl200_ln800\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln1000\ntk_vs_0_1_px_50_110_leftTank_rightTank_80_-1\nkl-200_ln1000\nfl200_fr100_bl200_br100_ln2000", "tk_vs_0_1_px_50_110_leftTank_rightTank_30_-1", ""}, {"midGoals", "allGoals", "blueGoal", "None"}, 0);
+KRONOS::Autonomous auton(robot, controller, {"cbm_leftTank_2\ncbm_rightTank_2\nfl200_fr200_bl200_br200_ln1500\ncl-200_ln300\nbkt_px_200_leftTank_-200_rightTank_-200\ncl200_ln300\ncbm_leftTank_0\ncbm_rightTank_0", "fl200_fr200_bl200_br200_lf200_rf200_kl200_ln700\nfl200_fr200_bl200_br200_lf-200_rf-200_kl200_ln800\ncl\nfl-200_fr-200_bl-200_br-200_kl200_lf20_rf20_ln1000\ntk_vs_0_1_px_50_110_leftTank_rightTank_80_-1\nkl-200_ln1000\nfl200_fr100_bl200_br100_ln2000", "tk_vs_0_1_px_50_110_leftTank_rightTank_30_-1", ""}, {"midGoals", "allGoals", "blueGoal", "None"}, 0);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -99,8 +99,28 @@ void initialize() {
 		})
 
 		// Linking backlift movement to right back buttons
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_R1, []() { robot.getMotor("backLift").move_velocity(-80); }, []() { robot.getMotor("backLift").move_velocity(0); })
-		.linkDigital(pros::E_CONTROLLER_DIGITAL_R2, []() { robot.getMotor("backLift").move_velocity(80); }, []() { robot.getMotor("backLift").move_velocity(0); })
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_R1, [&]() {
+			if (std::stoi(robot.env.at("backAcc")) > -std::stoi(robot.env.at("maxAcc")))
+					robot.env.at("backAcc") = Util::addNumberString(robot.env.at("backAcc"), -20);
+
+			robot.getMotor("backLift").move_velocity(std::stoi(robot.env.at("backAcc")));
+		}, [&]() {
+			if (std::stoi(robot.env.at("backAcc")) < 0)
+					robot.env.at("backAcc") = Util::addNumberString(robot.env.at("backAcc"), 5);
+
+			robot.getMotor("backLift").move_velocity(std::stoi(robot.env.at("backAcc")));
+		})
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_R2, [&]() {
+			if (std::stoi(robot.env.at("backAcc")) < std::stoi(robot.env.at("maxAcc")))
+					robot.env.at("backAcc") = Util::addNumberString(robot.env.at("backAcc"), 20);
+
+			robot.getMotor("backLift").move_velocity(std::stoi(robot.env.at("backAcc")));
+		}, [&]() {
+			if (std::stoi(robot.env.at("backAcc")) > 0)
+					robot.env.at("backAcc") = Util::addNumberString(robot.env.at("backAcc"), -5);
+
+			robot.getMotor("backLift").move_velocity(std::stoi(robot.env.at("backAcc")));
+		})
 
 		.linkDigital(pros::E_CONTROLLER_DIGITAL_B, []() {
 			controller.setControllerText("Resetting Fourbar");
@@ -136,10 +156,14 @@ void initialize() {
 				else
 					robot.getMotor("claw").move_absolute(0, 100);
 
-				if ((robot.getMotor("claw").get_position() >= -10 && robot.getMotor("claw").get_position() <= 30 && env.at(0) == "up") || (robot.getMotor("claw").get_position() <= -160 && robot.getMotor("claw").get_position() >= 140 && env.at(0) == "down"))
+				if ((robot.getMotor("claw").get_position() >= -10 && robot.getMotor("claw").get_position() <= 30 && env.at(0) == "up") || (robot.getMotor("claw").get_position() <= -160 && robot.getMotor("claw").get_position() >= -140 && env.at(0) == "down"))
 					robot.queue.removeQueue("claw");
 			}, {(robot.getMotor("claw").get_position() > -100) ? "down" : "up"}));
-		}, nullptr); // Linking claw to button y
+		}, nullptr) // Linking claw to button y
+
+		.linkDigital(pros::E_CONTROLLER_DIGITAL_X, []() {
+			robot.queue.cleanQueue();
+		}, nullptr); // Linking clear queue with button x
 
 	robot
 		.getVision("vision")
