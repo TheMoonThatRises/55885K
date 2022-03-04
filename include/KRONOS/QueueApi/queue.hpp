@@ -10,7 +10,16 @@ class QueueManager {
     public:
         ~QueueManager();
         void runQueue();
+
+        /*
+            @param priority
+            @param queueItem
+        */
         bool addQueue(const int& priority, QueueItem queueItem);
+
+        /*
+            @param id
+        */
         bool removeQueue(const std::string& id);
         bool cleanQueue();
 };

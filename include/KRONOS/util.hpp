@@ -11,7 +11,18 @@ class Util {
             @return
         */
         static std::vector<std::string> splitString(const std::string& str, const std::string& sep);
+
+        /*
+            @param str
+            @param num
+        */
         static std::string addNumberString(const std::string& str, const int& num);
+
+        /*
+            @param str
+            @param num
+        */
+        static std::string addNumberString(const std::string& str, const std::string& num);
 };
 
 #endif
