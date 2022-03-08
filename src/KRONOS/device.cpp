@@ -25,3 +25,4 @@ template class Device<Piston>;
 template class Device<Motor>;
 template class Device<Proximity>;
 template class Device<Vision>;
+template class Device<pros::Optical>;
