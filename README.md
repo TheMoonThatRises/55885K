@@ -33,6 +33,8 @@ Code for vex robotics team 55885K-21-22
 
     Proximity Sensor: 4
 
+    Secondary Proximity Sensor: 18
+
     Motor Claw: 19
 
     Select Auton Button: B

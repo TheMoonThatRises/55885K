@@ -56,6 +56,10 @@ Robot& Robot::addVision(const Device<Vision>& vision) {
     return addType(visions, vision);
 }
 
+Robot& Robot::addOptical(const Device<pros::Optical>& optical) {
+    return addType(opticals, optical);
+}
+
 Robot& Robot::addButton(const std::string& name, const pros::ADIDigitalIn& button) {
     buttons.insert({name, button});
 
@@ -76,6 +80,10 @@ Proximity& Robot::getProximity(const std::string& name) {
 
 Vision& Robot::getVision(const std::string& name) {
     return getType(visions, name);
+}
+
+pros::Optical& Robot::getOptical(const std::string& name) {
+    return getType(opticals, name);
 }
 
 device_types Robot::getDeviceType(const std::string& callsign) {
@@ -135,7 +143,7 @@ void Robot::followObject(Vision& vision, const int32_t& size, const int32_t sig,
         else if (distance < minDistance && distance > 0 && YGoal.signature == 1)
             break;
 
-        while(YGoal.signature != 1 || (xPos < 40 && xPos > 60)) {
+        while(YGoal.signature != 1 || (xPos > 40 && xPos < 60)) {
             setMotorsSpeed(leftChassis, -speed * turnDir);
             setMotorsSpeed(rightChassis, speed * turnDir);
             YGoal = vision.get_by_sig(size, sig);

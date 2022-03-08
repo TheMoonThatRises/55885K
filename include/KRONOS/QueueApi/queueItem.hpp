@@ -14,7 +14,7 @@ class QueueItem {
             @param run
             @param env
         */
-        QueueItem(const std::string& id, const queueFunction run, const std::vector<std::string>& env);
+        QueueItem(std::string  id, queueFunction  run, std::vector<std::string>  env);
         std::string getId();
         bool runFunction();
 };

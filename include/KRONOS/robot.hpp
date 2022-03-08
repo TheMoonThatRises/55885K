@@ -36,6 +36,7 @@ namespace KRONOS {
             std::vector<Device<Piston>> pistons;
             std::vector<Device<Proximity>> proximities;
             std::vector<Device<Vision>> visions;
+            std::vector<Device<pros::Optical>> opticals;
             std::map<std::string, pros::ADIDigitalIn> buttons;
             std::map<std::string, std::vector<std::string>> devicePairs;
             std::map<std::string, device_types> deviceType;
@@ -88,6 +89,14 @@ namespace KRONOS {
            */
             Robot& addVision(const Device<Vision>& vision);
 
+           /*
+                Adds optical sensor to robot.
+
+                @param optical
+                @return Allows you to train functions together.
+           */
+            Robot& addOptical(const Device<pros::Optical>& optical);
+
             /*
                 Adds button to robot.
 
@@ -137,6 +146,14 @@ namespace KRONOS {
                 @return Vision sensor that you called for.
             */
             Vision& getVision(const std::string& name);
+
+            /*
+                Returns the optical sensor by callsign or name.
+
+                @param name
+                @return Optical sensor that you called for.
+            */
+            pros::Optical& getOptical(const std::string& name);
 
             /*
                 Gets device type of device assigned to callsign.

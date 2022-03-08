@@ -3,11 +3,11 @@
 
 using namespace KRONOS;
 
-Autonomous::Autonomous(Robot& robot, Controller& controller, const std::vector<std::string>& autons, const std::vector<std::string>& autonToString, int defaultAuton):
+Autonomous::Autonomous(Robot& robot, Controller& controller, std::vector<std::string>  autons, std::vector<std::string>  autonToString, int defaultAuton):
     robot(robot),
     controller(controller),
-    autons (autons),
-    autonToString (autonToString),
+    autons (std::move(autons)),
+    autonToString (std::move(autonToString)),
     auton(defaultAuton)
 {
 
@@ -15,6 +15,7 @@ Autonomous::Autonomous(Robot& robot, Controller& controller, const std::vector<s
 
 void Autonomous::selectAuton() {
     bool isSelected = false;
+    controller.setControllerText("Selecting auton < " + autonToString.at(auton));
 
     while (!isSelected) {
         if (robot.getButton("select").get_value()) {

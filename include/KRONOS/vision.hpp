@@ -11,7 +11,7 @@ namespace KRONOS {
             /*
                 @param port
             */
-            Vision(const int8_t& port);
+            explicit Vision(const int8_t& port);
 
             /*
                 Save a vision signature to the vision sensor.

@@ -11,7 +11,7 @@ namespace KRONOS {
             /*
                 @param port
             */
-            Proximity(const int8_t& port);
+            explicit Proximity(const int8_t& port);
     };
 }
 
