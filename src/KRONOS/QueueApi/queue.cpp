@@ -5,30 +5,34 @@ QueueManager::~QueueManager() {
 }
 
 void QueueManager::runQueue() {
-    for (int priority = 0; priority < queue.size(); ++priority)
-        queue.at(priority).runFunction();
+        for (int priority = 0; priority < queue.size(); ++priority)
+            try {
+                std::cout << priority << std::endl;
+                queue.at(priority).runFunction();
+            } catch (std::exception& exception) {
+                std::cout << exception.what() << " -- " << std::string(LOCATION) << std::endl;
+            }
 }
 
 bool QueueManager::addQueue(const int& priority, QueueItem queueItem) {
     try {
         bool containsId = false;
 
-        for (auto [priority, item] : queue)
+        for (auto& [priority, item] : queue)
             if (item.getId() == queueItem.getId())
                 removeQueue(item.getId());
 
         if (priority > queue.size())
-            queue.insert({queue.size(), queueItem});
+            queue.insert({queue.size(), std::move(queueItem)});
         else {
             for (int pos = priority; pos < queue.size(); ++pos) {
-                auto item = queue.extract(pos);
-                item.key() = pos + 1;
-                queue.insert(std::move(item));
+                queue.insert({pos + 1, std::move(queue.at(pos))});
+                removeQueue(queue.at(pos).getId());
             }
-            queue.insert({priority, queueItem});
+            queue.insert({priority, std::move(queueItem)});
         }
         return true;
-    } catch (std::exception exception) {
+    } catch (std::exception& exception) {
         return false;
     }
 }
@@ -48,7 +52,7 @@ bool QueueManager::removeQueue(const std::string& id) {
             }
 
         return true;
-    } catch (std::exception exception) {
+    } catch (std::exception& exception) {
         return false;
     }
 }
@@ -57,7 +61,7 @@ bool QueueManager::cleanQueue() {
     try {
         queue.clear();
         return queue.empty();
-    } catch (std::exception exception) {
+    } catch (std::exception& exception) {
         return false;
     }
 }

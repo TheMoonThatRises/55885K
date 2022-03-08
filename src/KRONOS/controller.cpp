@@ -22,11 +22,11 @@ void Controller::setControllerText(const std::string& text) {
     std::cout << text << std::endl;
 }
 
-Controller& Controller::linkDigital(const pros::controller_digital_e_t& control, const function action, const function idle) {
+Controller& Controller::linkDigital(const pros::controller_digital_e_t& control, const function& action, const function& idle) {
     return link(digitalLink, control, action, idle);
 }
 
-Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const function action, const function idle) {
+Controller& Controller::linkAnalog(const pros::controller_analog_e_t& control, const function& action, const function& idle) {
     return link(analogLink, control, action, idle);
 }
 
@@ -34,7 +34,6 @@ void Controller::listener() {
     std::vector<int> activeButtons;
 
     robot.queue.runQueue();
-
 
     for (const Device<Motor>& motor : robot.getMotorVector())
         // if (motor.device.is_over_temp()) {
