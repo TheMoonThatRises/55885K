@@ -1,12 +1,6 @@
 name: Pros Make
 
-on:
-  pull_request:
-    branches:
-        - 'stable'
-  push:
-    branches:
-      - 'stable'
+on: [push, pull_request]
 
 jobs:
   buildPros:

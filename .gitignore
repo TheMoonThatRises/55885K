@@ -16,5 +16,8 @@ temp.errors
 .d/
 
 # IDE files
-.DS_Store
+.vscode
 .idea
+
+# System files
+.DS_Store
