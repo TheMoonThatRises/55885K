@@ -1,1 +1,3 @@
-# Vex Robotics Team 55885K (KRONOS)
+# Vex Robotics Team 55885K Source Code (KRONOS)
+
+## Standards
