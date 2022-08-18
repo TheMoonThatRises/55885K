@@ -1,4 +1,7 @@
-#include "kronos.h"
+#include <iostream>
+
+#include "kronos.hpp"
+#include "main.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -7,14 +10,14 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	std::cout << "Initilizing Robot..." << std::endl;
+	std::cout << "Initializing Robot..." << std::endl;
 
   /*
-    Add initilization code here
+    Add initialization code here
     Includes global variables, robot helper classes, etc
   */
 
-  std::cout << "Finish initilizing Robot..." << std::endl;
+  std::cout << "Finish initializing Robot..." << std::endl;
 }
 
 /**
