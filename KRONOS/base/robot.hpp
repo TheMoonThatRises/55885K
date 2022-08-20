@@ -15,13 +15,12 @@ namespace KRONOS {
       /*
         Adds a device to the robot
 
-        @param name Name of the device
-        @param device
+        @param name Name to pair with the device
+        @param device Device to set
 
         @return Self class
       */
-      template <class D>
-      inline Robot& addDevice(const std::string &name, const D &device) {
+      inline Robot& addDevice(const std::string &name, IOKParent *device) {
         set(name, device);
 
         return *this;
