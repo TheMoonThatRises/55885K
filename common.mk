@@ -3,8 +3,9 @@ DEVICE=VEX EDR V5
 
 MFLAGS=-mcpu=cortex-a9 -mfpu=neon-fp16 -mfloat-abi=softfp -Os -g
 CUSTOM_LIBRARIES=-IKRONOS # Tell compiler location of custom libraries
+CUSTOM_FLAGS=-flto -O3 # Compile optimization
 CPPFLAGS=-D_POSIX_THREADS -D_UNIX98_THREAD_MUTEX_ATTRIBUTES $(CUSTOM_LIBRARIES)
-GCCFLAGS=-ffunction-sections -fdata-sections -fdiagnostics-color -funwind-tables
+GCCFLAGS=-ffunction-sections -fdata-sections -fdiagnostics-color -funwind-tables $(CUSTOM_FLAGS)
 
 WARNFLAGS+=-Wno-psabi
 
