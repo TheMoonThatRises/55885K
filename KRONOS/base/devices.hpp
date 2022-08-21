@@ -38,7 +38,7 @@ namespace KRONOS {
       /*
         Gets the enum type of the class
       */
-      inline device_types classname() { return _type; }
+      inline virtual device_types classname() { return _type; }
   };
 
   class Button : public pros::ADIDigitalIn, public IOKParent {
