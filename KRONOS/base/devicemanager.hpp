@@ -36,7 +36,7 @@ namespace KRONOS {
         @return The device requested
       */
       inline IOKParent* get(const std::string &name) {
-        return devices.at(name);
+        return devices.find(name) != devices.end() ? devices.at(name) : nullptr;
       }
 
       /*
@@ -46,12 +46,12 @@ namespace KRONOS {
 
         @return A vector of devices
       */
-      inline std::vector<IOKParent*> valuesByKeys(const std::vector<std::string> &dnames) {
-        std::vector<IOKParent*> filtered;
+      inline std::vector<std::pair<std::string, IOKParent*>> valuesByKeys(const std::vector<std::string> &dnames) {
+        std::vector<std::pair<std::string, IOKParent*>> filtered;
 
-        for (auto [key, value] : devices)
-          if (std::find(dnames.begin(), dnames.end(), key) != dnames.end())
-            filtered.push_back(value);
+        for (const std::string &name : dnames)
+          if (get(name))
+            filtered.push_back({name, get(name)});
 
         return filtered;
       }
