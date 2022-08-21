@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "TeamK-VexRobot",
+        "project_name": "55885K",
         "target": "v5",
         "templates": {
             "kernel": {
