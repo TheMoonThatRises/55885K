@@ -7,7 +7,10 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
-#include "devicemanager.hpp"
+#include "base/devicemanager.hpp"
+#include "pros/rtos.hpp"
+
+#include <functional>
 
 namespace KRONOS {
   class Robot : public DeviceManager {
@@ -24,6 +27,31 @@ namespace KRONOS {
         set(name, device);
 
         return *this;
+      }
+
+      /*
+        Gets device stored
+
+        @param name Name of sign of the device
+
+        @return The device requested
+      */
+      inline IOKParent* getDevice(const std::string &name) {
+        return get(name);
+      }
+
+      /*
+        Manipulate groups of devices at the same time with the same command
+
+        @param dnames Vector of names for devices
+        @param manipFunc Function call that controls the device
+        @param delay Delay after the manipDevices has ran
+      */
+      inline void manipDevices(const std::vector<std::string> &dnames, std::function<void(std::pair<std::string, IOKParent*>)> manipFunc, int delay = 50) {
+        for (std::pair<std::string, IOKParent*> device : valuesByKeys(dnames))
+          manipFunc(device);
+
+        pros::delay(delay);
       }
   };
 }
