@@ -1,5 +1,5 @@
 /*
-  @file base/devicestructs.hpp
+  @file assets/devicestructs.hpp
 
   Device parameters
 */
