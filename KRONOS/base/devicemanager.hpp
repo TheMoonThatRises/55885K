@@ -16,7 +16,7 @@
 namespace KRONOS {
   class DeviceManager {
     private:
-      std::map<std::string, IOKParent*> devices;
+      std::map<std::string, AbstractDevice*> devices;
     protected:
       /*
         Sets device with name tag
@@ -24,7 +24,7 @@ namespace KRONOS {
         @param name Name to pair with the device
         @param device Device to set
       */
-      inline void set(const std::string &name, IOKParent *device) {
+      inline void set(const std::string &name, AbstractDevice *device) {
         devices.insert(std::make_pair(name, device));
       }
 
@@ -35,7 +35,7 @@ namespace KRONOS {
 
         @return The device requested
       */
-      inline IOKParent* get(const std::string &name) {
+      inline AbstractDevice* get(const std::string &name) {
         return devices.find(name) != devices.end() ? devices.at(name) : nullptr;
       }
 
@@ -46,8 +46,8 @@ namespace KRONOS {
 
         @return A vector of devices
       */
-      inline std::vector<std::pair<std::string, IOKParent*>> valuesByKeys(const std::vector<std::string> &dnames) {
-        std::vector<std::pair<std::string, IOKParent*>> filtered;
+      inline std::vector<std::pair<std::string, AbstractDevice*>> valuesByKeys(const std::vector<std::string> &dnames) {
+        std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
         for (const std::string &name : dnames)
           if (get(name))
