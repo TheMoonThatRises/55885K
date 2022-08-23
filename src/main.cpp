@@ -25,7 +25,7 @@ void initialize() {
     .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
     .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
     
-    .addDevice("mcontroller", new KRONOS::Controller());
+    .addDevice("mcontroller", new KRONOS::Controller({}));
 
   std::cout << "Finish initializing Robot..." << std::endl;
 }

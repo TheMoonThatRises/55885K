@@ -45,7 +45,7 @@ namespace KRONOS {
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
     public:
-      inline explicit Button(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::ADIDigitalIn(device.port), AbstractDevice(BUTTON) {};
+      inline explicit Button(const AbstractDeviceStruct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(BUTTON) {};
   };
 
   class Controller : public pros::Controller, public AbstractDevice {
@@ -55,7 +55,7 @@ namespace KRONOS {
       /*
         @param id Master or partner controller
       */
-      inline explicit Controller(const ControllerStruct &controller=ControllerStruct()) : pros::Controller(controller.id), AbstractDevice(CONTROLLER), _id(controller.id) {};
+      inline explicit Controller(const ControllerStruct &controller) : pros::Controller(controller.id), AbstractDevice(CONTROLLER), _id(controller.id) {};
 
       /*
         Get controller id
@@ -80,7 +80,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device=MotorStruct()) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR) {
         set_brake_mode(device.brakemode);
       };
   };
@@ -92,7 +92,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Piston(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::ADIDigitalOut(device.port), AbstractDevice(PISTON), _value(false) {};
+      inline explicit Piston(const AbstractDeviceStruct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(PISTON), _value(false) {};
 
       /*
         @param setValue
@@ -112,7 +112,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Proximity(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::Distance(device.port), AbstractDevice(PROXIMITY) {};
+      inline explicit Proximity(const AbstractDeviceStruct &device) : pros::Distance(device.port), AbstractDevice(PROXIMITY) {};
   };
 
   class Vision : pros::Vision, public AbstractDevice {
