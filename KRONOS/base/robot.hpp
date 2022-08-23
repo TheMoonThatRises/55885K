@@ -23,7 +23,7 @@ namespace KRONOS {
 
         @return Self class
       */
-      inline Robot& addDevice(const std::string &name, IOKParent *device) {
+      inline Robot& addDevice(const std::string &name, AbstractDevice *device) {
         set(name, device);
 
         return *this;
@@ -36,7 +36,7 @@ namespace KRONOS {
 
         @return The device requested
       */
-      inline IOKParent* getDevice(const std::string &name) {
+      inline AbstractDevice* getDevice(const std::string &name) {
         return get(name);
       }
 
@@ -47,8 +47,8 @@ namespace KRONOS {
         @param manipFunc Function call that controls the device
         @param delay Delay after the manipDevices has ran
       */
-      inline void manipDevices(const std::vector<std::string> &dnames, std::function<void(std::pair<std::string, IOKParent*>)> manipFunc, int delay = 50) {
-        for (std::pair<std::string, IOKParent*> device : valuesByKeys(dnames))
+      inline void manipDevices(const std::vector<std::string> &dnames, std::function<void(std::pair<std::string, AbstractDevice*>)> manipFunc, int delay = 50) {
+        for (std::pair<std::string, AbstractDevice*> device : valuesByKeys(dnames))
           manipFunc(device);
 
         pros::delay(delay);

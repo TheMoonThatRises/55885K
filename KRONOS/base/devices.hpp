@@ -10,6 +10,8 @@
 #include <iostream>
 #include <map>
 
+#include "base/devicestructs.hpp"
+
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
 #include "pros/misc.hpp"
@@ -26,14 +28,14 @@ namespace KRONOS {
     VISION
   };
 
-  class IOKParent {
+  class AbstractDevice {
     protected:
       device_types _type;
     public:
       /*
         @param device
       */
-      inline explicit IOKParent(const device_types &device) : _type(device) {};
+      inline explicit AbstractDevice(const device_types &device) : _type(device) {};
 
       /*
         Gets the enum type of the class
@@ -41,19 +43,19 @@ namespace KRONOS {
       inline virtual device_types classname() { return _type; }
   };
 
-  class Button : public pros::ADIDigitalIn, public IOKParent {
+  class Button : public pros::ADIDigitalIn, public AbstractDevice {
     public:
-      inline explicit Button(const int8_t &port) : pros::ADIDigitalIn(port), IOKParent(BUTTON) {};
+      inline explicit Button(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::ADIDigitalIn(device.port), AbstractDevice(BUTTON) {};
   };
 
-  class Controller : public pros::Controller, public IOKParent {
+  class Controller : public pros::Controller, public AbstractDevice {
     protected:
       pros::controller_id_e_t _id;
     public:
       /*
         @param id Master or partner controller
       */
-      inline explicit Controller(const pros::controller_id_e_t &id = pros::E_CONTROLLER_MASTER) : pros::Controller(id), IOKParent(CONTROLLER), _id(id) {};
+      inline explicit Controller(const ControllerStruct &controller=ControllerStruct()) : pros::Controller(controller.id), AbstractDevice(CONTROLLER), _id(controller.id) {};
 
       /*
         Get controller id
@@ -73,24 +75,24 @@ namespace KRONOS {
       }
   };
 
-  class Motor : public pros::Motor, public IOKParent {
+  class Motor : public pros::Motor, public AbstractDevice {
     public:
       /*
         @param port
       */
-      inline explicit Motor(const int8_t &port, const pros::motor_gearset_e_t &gearset, const bool &reverse, const pros::motor_encoder_units_e_t &encoder, const pros::motor_brake_mode_e_t &brakemode) : pros::Motor(port, gearset, reverse, encoder), IOKParent(MOTOR) {
-        set_brake_mode(brakemode);
+      inline explicit Motor(const MotorStruct &device=MotorStruct()) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR) {
+        set_brake_mode(device.brakemode);
       };
   };
 
-  class Piston : public pros::ADIDigitalOut, public IOKParent {
+  class Piston : public pros::ADIDigitalOut, public AbstractDevice {
     protected:
       bool _value;
     public:
       /*
         @param port
       */
-      inline explicit Piston(const char &port) : pros::ADIDigitalOut(port), IOKParent(PISTON), _value(false) {};
+      inline explicit Piston(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::ADIDigitalOut(device.port), AbstractDevice(PISTON), _value(false) {};
 
       /*
         @param setValue
@@ -105,22 +107,22 @@ namespace KRONOS {
       inline bool value() const { return _value; }
   };
 
-  class Proximity : public pros::Distance, public IOKParent {
+  class Proximity : public pros::Distance, public AbstractDevice {
     public:
       /*
         @param port
       */
-      inline explicit Proximity(const int8_t &port) : pros::Distance(port), IOKParent(PROXIMITY) {};
+      inline explicit Proximity(const AbstractDeviceStruct &device=AbstractDeviceStruct()) : pros::Distance(device.port), AbstractDevice(PROXIMITY) {};
   };
 
-  class Vision : pros::Vision, public IOKParent {
+  class Vision : pros::Vision, public AbstractDevice {
     protected:
       std::map<int, pros::vision_signature_s_t> _signatures;
     public:
       /*
         @param port
       */
-      inline explicit Vision(const int8_t &port) : pros::Vision(port), IOKParent(VISION) {};
+      inline explicit Vision(const AbstractDeviceStruct &device) : pros::Vision(device.port), AbstractDevice(VISION) {};
 
       /*
         Save a vision signature to the vision sensor.
