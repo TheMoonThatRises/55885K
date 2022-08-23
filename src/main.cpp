@@ -3,6 +3,8 @@
 #include "kronos.hpp"
 #include "main.h"
 
+KRONOS::Robot robot;
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -16,6 +18,14 @@ void initialize() {
     Add initialization code here
     Includes global variables, robot helper classes, etc
   */
+
+  robot
+    .addDevice("topleft", new KRONOS::Motor({.port=1}))
+    .addDevice("topright", new KRONOS::Motor({.port=2}))
+    .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
+    .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
+    
+    .addDevice("mcontroller", new KRONOS::Controller());
 
   std::cout << "Finish initializing Robot..." << std::endl;
 }
@@ -75,6 +85,12 @@ void autonomous() {
  */
 void opcontrol() {
 	while (true) {
+    int analogyleft = dynamic_cast<KRONOS::Controller*>(robot.getDevice("mcontroller"))->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    if (analogyleft)
+      robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"}, [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+        dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity(analogyleft);
+      }, 0);
+
 		pros::delay(20); // Always have a pros::delay in a while (true) loop
 	}
 }
