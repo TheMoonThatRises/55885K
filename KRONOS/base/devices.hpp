@@ -10,7 +10,7 @@
 #include <iostream>
 #include <map>
 
-#include "base/devicestructs.hpp"
+#include "assets/devicestructs.hpp"
 
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
@@ -40,7 +40,7 @@ namespace KRONOS {
       /*
         Gets the enum type of the class
       */
-      inline virtual device_types classname() { return _type; }
+      inline virtual device_types classname() const { return _type; }
   };
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
@@ -60,7 +60,7 @@ namespace KRONOS {
       /*
         Get controller id
       */
-      inline pros::controller_id_e_t id() { return _id; }
+      inline pros::controller_id_e_t id() const { return _id; }
 
       /*
         Sets the controllers display screen text
