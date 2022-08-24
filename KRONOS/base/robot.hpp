@@ -7,13 +7,14 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
-#include "base/devicemanager.hpp"
+#include "base/managers/controllermanager.hpp"
+#include "base/managers/devicemanager.hpp"
 #include "pros/rtos.hpp"
 
 #include <functional>
 
 namespace KRONOS {
-  class Robot : public DeviceManager {
+  class Robot : public DeviceManager, public ControllerManager {
     public:
       /*
         Adds a device to the robot
@@ -24,7 +25,20 @@ namespace KRONOS {
         @return Self class
       */
       inline Robot& addDevice(const std::string &name, AbstractDevice *device) {
-        set(name, device);
+        setDevice(name, device);
+
+        return *this;
+      }
+
+      /*
+        Adds a controller to the robot
+
+        @param controller Controller to set
+
+        @return Self class
+      */
+      inline Robot& addDevice(Controller *controller) {
+        addController(controller);
 
         return *this;
       }
@@ -37,7 +51,7 @@ namespace KRONOS {
         @return The device requested
       */
       inline AbstractDevice* getDevice(const std::string &name) {
-        return get(name);
+        return getDevice(name);
       }
 
       /*
