@@ -55,6 +55,37 @@ namespace KRONOS {
       }
 
       /*
+        Sets analog link for listener to listen 
+        
+        @param method Controller analog input
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline void addControllerLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
+        addLink(method, function, controller);
+      }
+      
+      /*
+        Sets digital link for listener to listen to
+
+        @param method Controller analog input
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline void addControllerLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
+        addLink(method, function, controller);
+      }
+
+      /*
+        Listens to controller events
+      */
+      inline Robot& controllerListener() {
+        listener();
+
+        return *this;
+      }
+
+      /*
         Manipulate groups of devices at the same time with the same command
 
         @param dnames Vector of names for devices
