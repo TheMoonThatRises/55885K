@@ -27,7 +27,7 @@ void initialize() {
     
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
     
-    .addLink(pros::E_CONTROLLER_ANALOG_LEFT_Y, 
+    .addControllerLink(pros::E_CONTROLLER_ANALOG_LEFT_Y, 
       [&](const int &analogyleft) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
@@ -95,7 +95,7 @@ void autonomous() {
  */
 void opcontrol() {
 	while (true) {
-    robot.listener();
+    robot.controllerListener();
 
 		pros::delay(20); // Always have a pros::delay in a while (true) loop
 	}

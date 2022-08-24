@@ -35,23 +35,27 @@ namespace KRONOS {
         else
           controllers[partner] = controller;
       }
-    public:
+
       /*
         Sets analog link for listener to listen to
-      */
-      inline ControllerManager& addLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
-        analogLink.insert({{method, controller}, function});
 
-        return *this;
+        @param method Controller analog input
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline void addLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
+        analogLink.insert({{method, controller}, function});
       }
       
       /*
         Sets digital link for listener to listen to
+        
+        @param method Controller analog input
+        @param function Function to run
+        @param controller Which controller input to read
       */
-      inline ControllerManager& addLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
+      inline void addLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
         digitalLink.insert({{method, controller}, function});
-
-        return *this;
       }
 
       /*

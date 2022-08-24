@@ -25,7 +25,7 @@ namespace KRONOS {
         @param device Device to set
       */
       inline virtual void setDevice(const std::string &name, AbstractDevice *device) {
-        devices.insert(std::make_pair(name, device));
+        devices.insert({name, device});
       }
 
       /*
