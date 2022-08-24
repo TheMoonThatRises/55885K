@@ -25,7 +25,17 @@ void initialize() {
     .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
     .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
     
-    .addDevice("mcontroller", new KRONOS::Controller({}));
+    .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
+    
+    .addLink(pros::E_CONTROLLER_ANALOG_LEFT_Y, 
+      [&](const int &analogyleft) {
+        robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
+          [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+            dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity(analogyleft);
+          }
+        );
+      }
+    );
 
   std::cout << "Finish initializing Robot..." << std::endl;
 }
@@ -85,11 +95,7 @@ void autonomous() {
  */
 void opcontrol() {
 	while (true) {
-    int analogyleft = dynamic_cast<KRONOS::Controller*>(robot.getDevice("mcontroller"))->get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    if (analogyleft)
-      robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"}, [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-        dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity(analogyleft);
-      }, 0);
+    robot.listener();
 
 		pros::delay(20); // Always have a pros::delay in a while (true) loop
 	}
