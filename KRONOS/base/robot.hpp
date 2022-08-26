@@ -61,8 +61,10 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addControllerLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
+      inline Robot& addControllerLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
         addLink(method, function, controller);
+        
+        return *this;
       }
       
       /*
@@ -72,8 +74,10 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addControllerLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
+      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
         addLink(method, function, controller);
+
+        return *this;
       }
 
       /*
