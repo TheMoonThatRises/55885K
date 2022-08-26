@@ -24,7 +24,7 @@ namespace KRONOS {
         @param name Name to pair with the device
         @param device Device to set
       */
-      inline virtual void setDevice(const std::string &name, AbstractDevice *device) {
+      inline void set(const std::string &name, AbstractDevice *device) {
         devices.insert({name, device});
       }
 
@@ -35,7 +35,7 @@ namespace KRONOS {
 
         @return The device requested
       */
-      inline virtual AbstractDevice* getDevice(const std::string &name) {
+      inline AbstractDevice* get(const std::string &name) {
         return devices.find(name) != devices.end() ? devices.at(name) : nullptr;
       }
 
@@ -50,8 +50,8 @@ namespace KRONOS {
         std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
         for (const std::string &name : dnames)
-          if (getDevice(name))
-            filtered.push_back({name, getDevice(name)});
+          if (get(name))
+            filtered.push_back({name, get(name)});
 
         return filtered;
       }
