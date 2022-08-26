@@ -25,7 +25,7 @@ namespace KRONOS {
         @return Self class
       */
       inline Robot& addDevice(const std::string &name, AbstractDevice *device) {
-        setDevice(name, device);
+        set(name, device);
 
         return *this;
       }
@@ -51,7 +51,7 @@ namespace KRONOS {
         @return The device requested
       */
       inline AbstractDevice* getDevice(const std::string &name) {
-        return getDevice(name);
+        return get(name);
       }
 
       /*
