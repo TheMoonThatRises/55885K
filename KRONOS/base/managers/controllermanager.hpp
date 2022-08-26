@@ -62,10 +62,10 @@ namespace KRONOS {
         Listens to controller events
       */
       inline void listener() {
-        for (auto &[key, function] : analogLink)
+        for (const auto &[key, function] : analogLink)
           function(controllers[key.second]->get_analog(key.first));
 
-        for (auto &[key, function] : digitalLink)
+        for (const auto &[key, function] : digitalLink)
           if (controllers[key.second]->get_digital(key.first))
             function();
       }
