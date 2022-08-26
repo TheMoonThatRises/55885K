@@ -35,6 +35,15 @@ void initialize() {
           }
         );
       }
+    )
+    .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X, 
+      [&](const int &analogxright) {
+        robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
+          [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+            dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity((motor.first == "topleft" || motor.first == "bottomright") ? analogxright : -analogxright);
+          }
+        );
+      }
     );
 
   std::cout << "Finish initializing Robot..." << std::endl;
