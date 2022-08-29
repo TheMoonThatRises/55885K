@@ -31,23 +31,19 @@ void initialize() {
       [&](const int &analogyleft) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-	    KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	    // if (pmotor->get_target_velocity() == 0) {
-	      pmotor->setTarget(analogyleft);
-	    // }
+	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
+	          pmotor->setTarget(analogyleft);
           }
         );
       }
-		       )
+		)
     .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X, 
       [&](const int &analogxright) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-	    KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	    // if (pmotor->get_target_velocity() == 0) {
-	      pmotor->setTarget(pmotor->is_reversed() ? analogxright : -analogxright);
-	    // }
-	  }
+	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
+	          pmotor->setTarget(pmotor->is_reversed() ? analogxright : -analogxright);
+	        }
         );
       }
     );

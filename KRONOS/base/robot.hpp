@@ -81,12 +81,12 @@ namespace KRONOS {
       }
 
       /*
-	@param function
+	      @param function
       */
       inline Robot &addControllerLink(std::function<void()> function) {
-	addLink(function);
+        addLink(function);
 
-	return *this;
+        return *this;
       }
 
       /*
