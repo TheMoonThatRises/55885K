@@ -87,18 +87,18 @@ namespace KRONOS {
       };
 
       /*
-	@param target
+	      @param target
       */
       inline void setTarget(const int &target) {
-	_target = (target - _target) / 2
+	      _target = (target - _target) / 2;
       }
 
       /*
        
       */
-    inline void moveTarget() {
-      move_velocity(_target);
-    }
+      inline void moveTarget() {
+        move_velocity(_target);
+      }
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {

@@ -60,10 +60,10 @@ namespace KRONOS {
       }
 
       /*
-	@param function
+	      @param function
       */
       inline void addLink(std::function<void()> function) {
-	voidLink.push_back(function);
+	      voidLinks.push_back(function);
       }
 
       /*
@@ -77,8 +77,8 @@ namespace KRONOS {
           if (controllers[key.second]->get_digital(key.first))
             function();
 
-	for (const auto function : voidLink)
-	  function();
+        for (const auto function : voidLinks)
+          function();
       }
   };
 }
