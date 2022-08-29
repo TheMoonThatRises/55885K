@@ -21,31 +21,37 @@ void initialize() {
 
   robot
     .addDevice("topleft", new KRONOS::Motor({.port=1}))
-    .addDevice("topright", new KRONOS::Motor({.port=2}))
+    .addDevice("topright", new KRONOS::Motor({.port=5}))
     .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
     .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
     
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
-    
+
     .addControllerLink(pros::E_CONTROLLER_ANALOG_LEFT_Y, 
       [&](const int &analogyleft) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-            dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity(analogyleft);
+	    KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
+	    // if (pmotor->get_target_velocity() == 0) {
+	      pmotor->setTarget(analogyleft);
+	    // }
           }
         );
       }
-    )
+		       )
     .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X, 
       [&](const int &analogxright) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-            dynamic_cast<KRONOS::Motor*>(motor.second)->move_velocity((motor.first == "topleft" || motor.first == "bottomright") ? analogxright : -analogxright);
-          }
+	    KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
+	    // if (pmotor->get_target_velocity() == 0) {
+	      pmotor->setTarget(pmotor->is_reversed() ? analogxright : -analogxright);
+	    // }
+	  }
         );
       }
     );
-
+  
   std::cout << "Finish initializing Robot..." << std::endl;
 }
 
