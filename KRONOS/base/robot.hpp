@@ -81,6 +81,15 @@ namespace KRONOS {
       }
 
       /*
+	@param function
+      */
+      inline Robot &addControllerLink(std::function<void()> function) {
+	addLink(function);
+
+	return *this;
+      }
+
+      /*
         Listens to controller events
       */
       inline Robot& controllerListener() {

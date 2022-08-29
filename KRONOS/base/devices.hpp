@@ -76,13 +76,29 @@ namespace KRONOS {
   };
 
   class Motor : public pros::Motor, public AbstractDevice {
+    protected:
+      int _target;
     public:
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR), _target(0) {
         set_brake_mode(device.brakemode);
       };
+
+      /*
+	@param target
+      */
+      inline void setTarget(const int &target) {
+	_target = (target - _target) / 2
+      }
+
+      /*
+       
+      */
+    inline void moveTarget() {
+      move_velocity(_target);
+    }
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {

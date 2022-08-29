@@ -23,6 +23,7 @@ namespace KRONOS {
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(int)>> analogLink;
       std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void()>> digitalLink;
+      std::vector<std::function<void()>> voidLinks;
     protected:
       /*
         Set controller
@@ -59,6 +60,13 @@ namespace KRONOS {
       }
 
       /*
+	@param function
+      */
+      inline void addLink(std::function<void()> function) {
+	voidLink.push_back(function);
+      }
+
+      /*
         Listens to controller events
       */
       inline void listener() {
@@ -68,6 +76,9 @@ namespace KRONOS {
         for (const auto &[key, function] : digitalLink)
           if (controllers[key.second]->get_digital(key.first))
             function();
+
+	for (const auto function : voidLink)
+	  function();
       }
   };
 }
