@@ -87,6 +87,8 @@ namespace KRONOS {
       };
 
       /*
+        Set the target move velocity of the motor
+
 	      @param target
       */
       inline void setTarget(const int &target) {
@@ -94,7 +96,7 @@ namespace KRONOS {
       }
 
       /*
-       
+        Moves motor to target velocity
       */
       inline void moveTarget() {
         move_velocity(_target);
