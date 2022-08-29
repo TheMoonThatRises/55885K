@@ -46,6 +46,15 @@ void initialize() {
 	        }
         );
       }
+    )
+    
+    .addControllerLink([&]() {
+      robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
+        [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+            dynamic_cast<KRONOS::Motor*>(motor.second)->moveTarget();
+          }
+        );
+      }
     );
   
   std::cout << "Finish initializing Robot..." << std::endl;
