@@ -15,7 +15,12 @@
 
 namespace KRONOS {
   class Robot : public DeviceManager, public ControllerManager {
+    protected:
+      int _delay;
     public:
+      inline explicit Robot() : _delay(MSDELAY) {};
+      inline Robot(int const &delay) : _delay(delay) {};
+
       /*
         Adds a device to the robot
 
