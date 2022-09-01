@@ -32,7 +32,7 @@ void initialize() {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
 	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	          pmotor->setTarget(analogyleft);
+	          pmotor->safe_move_velocity(analogyleft);
           }
         );
       }
@@ -42,17 +42,8 @@ void initialize() {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
 	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	          pmotor->setTarget(pmotor->is_reversed() ? analogxright : -analogxright);
+	          pmotor->safe_move_velocity(pmotor->is_reversed() ? analogxright : -analogxright);
 	        }
-        );
-      }
-    )
-    
-    .addControllerLink([&]() {
-      robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
-        [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-            dynamic_cast<KRONOS::Motor*>(motor.second)->moveTarget();
-          }
         );
       }
     );
@@ -117,6 +108,6 @@ void opcontrol() {
 	while (true) {
     robot.controllerListener();
 
-		pros::delay(20); // Always have a pros::delay in a while (true) loop
+		pros::delay(MSDELAY); // Always have a pros::delay in a while (true) loop
 	}
 }

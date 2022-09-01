@@ -10,6 +10,7 @@
 #include <iostream>
 #include <map>
 
+#include "assets/util.hpp"
 #include "assets/devicestructs.hpp"
 
 #include "pros/adi.hpp"
@@ -34,6 +35,7 @@ namespace KRONOS {
     public:
       /*
         @param device
+        @param delay
       */
       inline explicit AbstractDevice(const device_types &device) : _type(device) {};
 
@@ -77,29 +79,29 @@ namespace KRONOS {
 
   class Motor : public pros::Motor, public AbstractDevice {
     protected:
-      int _target;
+      bool _lock;
+      int _lockdelay;
+      long _lmovetime;
     public:
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR), _target(0) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR), _lockdelay(device.lockdelay), _lock(device.lock), _lmovetime(KUTIL::sinceEpoch()) {
         set_brake_mode(device.brakemode);
       };
 
-      /*
-        Set the target move velocity of the motor
-
-	      @param target
-      */
-      inline void setTarget(const int &target) {
-	      _target = (target - _target) / 2;
+      inline void toggleLock() {
+        _lock = !_lock;
       }
 
       /*
-        Moves motor to target velocity
+        @param velocity
       */
-      inline void moveTarget() {
-        move_velocity(_target);
+      inline void safe_move_velocity(const int &velocity) {
+        if (!_lock || (_lock && (KUTIL::sinceEpoch() - _lmovetime) >= _lockdelay)) {
+          move_velocity(velocity * JOYSTICK_MOTOR_RATIO);
+          _lmovetime = KUTIL::sinceEpoch();
+        }
       }
   };
 
