@@ -7,6 +7,8 @@
 #ifndef _DEVICESTRUCTS_HPP_
 #define _DEVICESTRUCTS_HPP_
 
+#include "assets/util.hpp"
+
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
 
@@ -26,7 +28,7 @@ namespace KRONOS {
     pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
     pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
     bool lock = true;
-    int lockdelay = 50;
+    int lockdelay = MSDELAY;
   };
 }
 

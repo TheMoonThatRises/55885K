@@ -31,8 +31,7 @@ void initialize() {
       [&](const int &analogyleft) {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	          pmotor->safe_move_velocity(analogyleft);
+	          dynamic_cast<KRONOS::Motor*>(motor.second)->safe_move_velocity(analogyleft);
           }
         );
       }
@@ -42,7 +41,7 @@ void initialize() {
         robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
           [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
 	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	          pmotor->safe_move_velocity(pmotor->is_reversed() ? analogxright : -analogxright);
+	          pmotor->safe_move_velocity(pmotor->is_reversed() ? -analogxright : analogxright);
 	        }
         );
       }
