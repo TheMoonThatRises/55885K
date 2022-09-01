@@ -10,8 +10,8 @@
 #include <iostream>
 #include <map>
 
-#include "assets/util.hpp"
 #include "assets/devicestructs.hpp"
+#include "assets/util.hpp"
 
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
@@ -81,12 +81,12 @@ namespace KRONOS {
     protected:
       bool _lock;
       int _lockdelay;
-      long _lmovetime;
+      std::chrono::high_resolution_clock::time_point _lmovetime;
     public:
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR), _lockdelay(device.lockdelay), _lock(device.lock), _lmovetime(KUTIL::sinceEpoch()) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(MOTOR), _lockdelay(device.lockdelay), _lock(device.lock) {
         set_brake_mode(device.brakemode);
       };
 
@@ -98,9 +98,24 @@ namespace KRONOS {
         @param velocity
       */
       inline void safe_move_velocity(const int &velocity) {
-        if (!_lock || (_lock && (KUTIL::sinceEpoch() - _lmovetime) >= _lockdelay)) {
-          move_velocity(velocity * JOYSTICK_MOTOR_RATIO);
-          _lmovetime = KUTIL::sinceEpoch();
+        if (get_target_velocity() == 0 && velocity == 0)
+          return;
+        else {
+          bool move = !_lock;
+
+          if (_lock) {
+            auto runTime = KUTIL::sinceEpoch();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(_lmovetime - KUTIL::sinceEpoch()).count();
+            if (elapsed >= _lockdelay) {
+              move = true;
+
+              if (velocity != 0)
+                _lmovetime = runTime;
+            }
+          }
+
+          if (move)
+            move_velocity(velocity * JOYSTICK_MOTOR_RATIO);
         }
       }
   };

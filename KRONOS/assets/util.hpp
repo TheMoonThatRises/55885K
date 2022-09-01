@@ -10,11 +10,14 @@
 #include <chrono>
 
 namespace KUTIL {
+  #define MSDELAY 50.0
+  #define JOYSTICK_MOTOR_RATIO 1.5748031496
+
   /*
     Get time since epoch in milliseconds
   */
-  inline long sinceEpoch() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).time_since_epoch()).count();
+  inline std::chrono::high_resolution_clock::time_point sinceEpoch() {
+    return std::chrono::high_resolution_clock::now();
   }
 }
 
