@@ -21,9 +21,9 @@ void initialize() {
 
   robot
     .addDevice("topleft", new KRONOS::Motor({.port=1}))
-    .addDevice("topright", new KRONOS::Motor({.port=5}))
+    .addDevice("topright", new KRONOS::Motor({.port=5, .face=KRONOS::K_EAST}))
     .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
-    .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
+    .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_EAST}))
 
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
