@@ -16,7 +16,7 @@
 namespace KRONOS {
   class DeviceManager {
     private:
-      std::map<std::string, AbstractDevice*> devices;
+      std::map<std::string, AbstractDevice*> _devices;
     protected:
       /*
         Sets device with name tag
@@ -25,18 +25,7 @@ namespace KRONOS {
         @param device Device to set
       */
       inline void set(const std::string &name, AbstractDevice *device) {
-        devices.insert({name, device});
-      }
-
-      /*
-        Gets device stored
-
-        @param name Name of sign of the device
-
-        @return The device requested
-      */
-      inline AbstractDevice* get(const std::string &name) {
-        return devices.find(name) != devices.end() ? devices.at(name) : nullptr;
+        _devices.insert({name, device});
       }
 
       /*
@@ -50,10 +39,37 @@ namespace KRONOS {
         std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
         for (const std::string &name : dnames)
-          if (get(name))
-            filtered.push_back({name, get(name)});
+          if (getDevice(name))
+            filtered.emplace_back(name, getDevice(name));
 
         return filtered;
+      }
+    public:
+      /*
+        Gets device stored
+
+        @param name Name of sign of the device
+
+        @return The device requested
+      */
+      inline AbstractDevice* getDevice(const std::string &name) {
+        return _devices.find(name) != _devices.end() ? _devices.at(name) : nullptr;
+      }
+
+      /*
+        Get multiple devices by a vector
+
+        @param devices Vector of device names
+
+        @return A vector of AbstractDevice pointers
+      */
+      inline std::vector<AbstractDevice*> getMultipleDevices(const std::vector<std::string> &devices) {
+        std::vector<AbstractDevice*> deviceVector;
+
+        for (const std::string &device : devices)
+          deviceVector.push_back(getDevice(device));
+
+        return deviceVector;
       }
   };
 }
