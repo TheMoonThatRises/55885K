@@ -12,7 +12,7 @@ KRONOS::Robot robot;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	std::cout << "Initializing Robot..." << std::endl;
+  std::cout << "Initializing Robot..." << std::endl;
 
   /*
     Add initialization code here
@@ -24,29 +24,35 @@ void initialize() {
     .addDevice("topright", new KRONOS::Motor({.port=5}))
     .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
     .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
-    
+
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
-    .addControllerLink(pros::E_CONTROLLER_ANALOG_LEFT_Y, 
-      [&](const int &analogyleft) {
-        robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
-          [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-	          dynamic_cast<KRONOS::Motor*>(motor.second)->safe_move_velocity(analogyleft);
-          }
-        );
-      }
-		)
-    .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X, 
-      [&](const int &analogxright) {
-        robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
-          [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-	          KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-	          pmotor->safe_move_velocity(pmotor->is_reversed() ? -analogxright : analogxright);
-	        }
-        );
-      }
-    );
-  
+    .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
+
+    .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_RIGHT_X, pros::E_CONTROLLER_ANALOG_RIGHT_Y}, [&](const std::vector<double> &analogs) {
+      robot.moveChassis(analogs[0], analogs[1], analogs[2]);
+    });
+
+    // .addControllerLink(pros::E_CONTROLLER_ANALOG_LEFT_Y,
+    //   [&](const double &analogyleft) {
+    //     robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
+    //       [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+    //         dynamic_cast<KRONOS::Motor*>(motor.second)->safe_move_velocity(analogyleft);
+    //       }
+    //     );
+    //   }
+    // )
+    // .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X,
+    //   [&](const double &analogxright) {
+    //     robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
+    //       [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
+    //         KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
+    //         pmotor->safe_move_velocity(pmotor->is_reversed() ? -analogxright : analogxright);
+    //       }
+    //     );
+    //   }
+    // );
+
   std::cout << "Finish initializing Robot..." << std::endl;
 }
 
@@ -104,9 +110,9 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	while (true) {
+  while (true) {
     robot.controllerListener();
 
-		pros::delay(MSDELAY); // Always have a pros::delay in a while (true) loop
-	}
+    pros::delay(MSDELAY); // Always have a pros::delay in a while (true) loop
+  }
 }
