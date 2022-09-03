@@ -7,20 +7,17 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
+#include "base/managers/chassismanager.hpp"
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
+
 #include "pros/rtos.hpp"
 
 #include <functional>
 
 namespace KRONOS {
-  class Robot : public DeviceManager, public ControllerManager {
-    protected:
-      int _delay;
+  class Robot : public DeviceManager, public ControllerManager, public ChassisManager {
     public:
-      inline explicit Robot() : _delay(MSDELAY) {};
-      inline Robot(int const &delay) : _delay(delay) {};
-
       /*
         Adds a device to the robot
 
@@ -49,29 +46,58 @@ namespace KRONOS {
       }
 
       /*
-        Gets device stored
+        Set chassis motors
 
-        @param name Name of sign of the device
-
-        @return The device requested
+        @param motors Vector of motor pointer
       */
-      inline AbstractDevice* getDevice(const std::string &name) {
-        return get(name);
+      inline Robot& setChassisMotors(const std::vector<Motor*> &motors) {
+        setChassis(motors);
+
+        return *this;
       }
 
       /*
-        Sets analog link for listener to listen 
-        
+        Set chassis motors
+
+        @param motors Vector of abstract device pointer
+      */
+      inline Robot& setChassisMotors(const std::vector<AbstractDevice*> &devices) {
+        std::vector<Motor*> motors;
+
+        for (AbstractDevice *device : devices)
+          motors.push_back(dynamic_cast<Motor*>(device));
+
+        setChassis(motors);
+
+        return *this;
+      }
+
+      /*
+        Sets analog link for listener to listen
+
         @param method Controller analog input
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const pros::controller_analog_e_t &method, std::function<void(int)> function, const controller_type &controller=master) {
+      inline Robot& addControllerLink(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
         addLink(method, function, controller);
-        
+
         return *this;
       }
-      
+
+      /*
+        Sets analog links for listener to listen to
+
+        @param methods Multiple controller analog input
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline Robot& addControllerLink(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
+        addLink(methods, function, controller);
+
+        return *this;
+      }
+
       /*
         Sets digital link for listener to listen to
 
@@ -79,7 +105,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, std::function<void()> function, const controller_type &controller=master) {
+      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, const std::function<void()>& function, const controller_type &controller=master) {
         addLink(method, function, controller);
 
         return *this;
@@ -88,7 +114,7 @@ namespace KRONOS {
       /*
 	      @param function
       */
-      inline Robot &addControllerLink(std::function<void()> function) {
+      inline Robot &addControllerLink(const std::function<void()>& function) {
         addLink(function);
 
         return *this;
@@ -110,8 +136,8 @@ namespace KRONOS {
         @param manipFunc Function call that controls the device
         @param delay Delay after the manipDevices has ran
       */
-      inline void manipDevices(const std::vector<std::string> &dnames, std::function<void(std::pair<std::string, AbstractDevice*>)> manipFunc, int delay = 50) {
-        for (std::pair<std::string, AbstractDevice*> device : valuesByKeys(dnames))
+      inline void manipDevices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manipFunc, int delay = 50) {
+        for (const std::pair<std::string, AbstractDevice*> &device : valuesByKeys(dnames))
           manipFunc(device);
 
         pros::delay(delay);
