@@ -20,10 +20,12 @@ void initialize() {
   */
 
   robot
-    .addDevice("topleft", new KRONOS::Motor({.port=1}))
-    .addDevice("topright", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHEAST}))
-    .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
-    .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
+    .addDevice("topright", new KRONOS::Motor({.port=4, .reverse=true}))
+    .addDevice("topleft", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHWEST}))
+    .addDevice("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
+    .addDevice("bottomleft", new KRONOS::Motor({.port=1}))
+
+    .addDevice("roller", new KRONOS::Motor({.port=14}))
 
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
@@ -31,6 +33,13 @@ void initialize() {
 
     .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
       robot.moveChassis(analogs[0], analogs[1], analogs[2] / 1.8);
+    })
+
+    .addControllerLink({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
+      bool bvalue = values.at(0) || values.at(1),
+           cvalue = values.at(0);
+
+      dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"))->move_velocity(bvalue ? (cvalue ? 100 : -100) : 0);
     });
 
   std::cout << "Finish initializing Robot..." << std::endl;
