@@ -30,7 +30,7 @@ void initialize() {
     .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
 
     .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
-      robot.moveChassis(analogs[0], analogs[1], analogs[2]);
+      robot.moveChassis(analogs[0], analogs[1], analogs[2] / 1.8);
     });
 
   std::cout << "Finish initializing Robot..." << std::endl;

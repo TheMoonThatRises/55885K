@@ -38,8 +38,8 @@ namespace KRONOS {
           std::vector<device_face> reverseStrafe {K_NORTHEAST, K_SOUTHWEST};
 
           double mturn = motor->is_reversed() ? -turn : turn;
-          double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? -strafe : strafe;
-          motor->move_velocity(straight + mstrafe + mturn);
+          double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? strafe : -strafe;
+          motor->move_velocity((straight + mstrafe + mturn) * JOYSTICK_MOTOR_RATIO);
         }
       }
   };
