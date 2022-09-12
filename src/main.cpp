@@ -20,38 +20,18 @@ void initialize() {
   */
 
   robot
-    .addDevice("topleft", new KRONOS::Motor({.port=1, .face=KRONOS::K_NORTH}))
-    .addDevice("topright", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTH}))
-    .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true}))
+    .addDevice("topleft", new KRONOS::Motor({.port=1}))
+    .addDevice("topright", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHEAST}))
+    .addDevice("bottomleft", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
     .addDevice("bottomright", new KRONOS::Motor({.port=4, .reverse=true}))
 
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
 
-    .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_RIGHT_X, pros::E_CONTROLLER_ANALOG_RIGHT_Y}, [&](const std::vector<double> &analogs) {
-      robot.moveChassis(analogs[0], analogs[2], analogs[1]);
+    .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
+      robot.moveChassis(analogs[0], analogs[1], analogs[2]);
     });
-
-    // .addControllerLink(pros::E_CONTROLLER_ANALOG_LEFT_Y,
-    //   [&](const double &analogyleft) {
-    //     robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
-    //       [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-    //         dynamic_cast<KRONOS::Motor*>(motor.second)->safe_move_velocity(analogyleft);
-    //       }
-    //     );
-    //   }
-    // )
-    // .addControllerLink(pros::E_CONTROLLER_ANALOG_RIGHT_X,
-    //   [&](const double &analogxright) {
-    //     robot.manipDevices({"topleft", "topright", "bottomleft", "bottomright"},
-    //       [&](std::pair<std::string, KRONOS::AbstractDevice*> motor) {
-    //         KRONOS::Motor* pmotor = dynamic_cast<KRONOS::Motor*>(motor.second);
-    //         pmotor->safe_move_velocity(pmotor->is_reversed() ? -analogxright : analogxright);
-    //       }
-    //     );
-    //   }
-    // );
 
   std::cout << "Finish initializing Robot..." << std::endl;
 }
