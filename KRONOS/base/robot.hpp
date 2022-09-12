@@ -105,7 +105,20 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, const std::function<void()>& function, const controller_type &controller=master) {
+      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
+        addLink(method, function, controller);
+
+        return *this;
+      }
+
+      /*
+        Sets digital links for listener to listen to
+
+        @param method Controller analog inputs
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline Robot& addControllerLink(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
         addLink(method, function, controller);
 
         return *this;

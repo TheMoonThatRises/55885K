@@ -21,7 +21,8 @@ namespace KRONOS {
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
       std::map<std::pair<std::vector<pros::controller_analog_e_t>, controller_type>, std::function<void(std::vector<double>)>> _multiAnalogLink;
-      std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void()>> _digitalLink;
+      std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void(bool)>> _digitalLink;
+      std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
       std::vector<std::function<void()>> voidLinks;
     protected:
       /*
@@ -65,8 +66,19 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addLink(const pros::controller_digital_e_t &method, const std::function<void()>& function, const controller_type &controller=master) {
+      inline void addLink(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
         _digitalLink.insert({{method, controller}, function});
+      }
+
+      /*
+        Sets digital links for listener to listen to
+
+        @param method Controller analog inputs
+        @param function Function to run
+        @param controller Which controller input to read
+      */
+      inline void addLink(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
+        _multiDigitalLink.insert({{method, controller}, function});
       }
 
       /*
@@ -93,8 +105,16 @@ namespace KRONOS {
         }
 
         for (const auto &[key, function] : _digitalLink)
-          if (controllers[key.second]->get_digital(key.first))
-            function();
+          function(controllers[key.second]->get_digital(key.first));
+
+        for (const auto &[key, function] : _multiDigitalLink) {
+          std::vector<bool> digitals;
+
+          for (const pros::controller_digital_e_t &digital : key.first)
+            digitals.push_back(controllers[key.second]->get_digital(digital));
+
+          function(digitals);
+        }
 
         for (const auto &function : voidLinks)
           function();
