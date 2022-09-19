@@ -39,7 +39,7 @@ void initialize() {
       bool bvalue = values.at(0) || values.at(1),
            cvalue = values.at(0);
 
-      dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"))->move_velocity(bvalue ? (cvalue ? 100 : -100) : 0);
+      dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"))->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
     });
 
   std::cout << "Finish initializing Robot..." << std::endl;
