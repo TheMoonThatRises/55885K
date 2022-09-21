@@ -57,6 +57,21 @@ namespace KRONOS {
       }
 
       /*
+        Gets device stored
+
+        @param port Port device is on
+
+        @return The device requested
+      */
+      inline AbstractDevice* getDevice(const char &port) {
+        for (const auto [name, device] : _devices)
+          if (device->port() == port)
+            return device;
+
+        return nullptr;
+      }
+
+      /*
         Get multiple devices by a vector
 
         @param devices Vector of device names
