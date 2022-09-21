@@ -4,6 +4,7 @@
 #include "main.h"
 
 KRONOS::Robot robot;
+KPlugins::AutonReader auton(&robot, {{"test", std::vector<unsigned char>(std::begin(KPlugins::Resources::test_kac), std::end(KPlugins::Resources::test_kac))}});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -66,6 +67,8 @@ void competition_initialize() {
     Initilize autonomous selector here
     Make sure to have a while (true) loop to select auton, and a way to break out of the loop
   */
+
+  auton.selectAuton();
 }
 
 /**
@@ -83,6 +86,8 @@ void autonomous() {
   /*
     Run autonomous code here
   */
+
+  auton.runAuton();
 }
 
 /**
