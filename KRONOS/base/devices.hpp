@@ -24,12 +24,13 @@ namespace KRONOS {
     protected:
       device_types _type;
       device_face _face;
+      char _port;
     public:
       /*
         @param device
         @param delay
       */
-      inline explicit AbstractDevice(const device_types &device, const device_face &face) : _type(device), _face(face) {};
+      inline explicit AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {};
 
       /*
         Gets the enum type of the class
@@ -37,14 +38,19 @@ namespace KRONOS {
       inline virtual device_types classname() const { return _type; }
 
       /*
-        Get direction motor is facing
+        Get direction device is facing
       */
       inline virtual device_face facing() const { return _face; }
+
+      /*
+        Get port device is connected to
+      */
+      inline virtual char port() const { return _port; }
   };
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
     public:
-      inline explicit Button(const AbstractDeviceStruct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face) {};
+      inline explicit Button(const AbstractDeviceStruct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face, device.port) {};
   };
 
   class Controller : public pros::Controller, public AbstractDevice {
@@ -54,7 +60,7 @@ namespace KRONOS {
       /*
         @param id Master or partner controller
       */
-      inline explicit Controller(const ControllerStruct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE), _id(controller.id) {};
+      inline explicit Controller(const ControllerStruct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE, '\0'), _id(controller.id) {};
 
       /*
         Get controller id
@@ -83,7 +89,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(K_MOTOR, device.face), _lockdelay(device.lockdelay), _lock(device.lock) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(K_MOTOR, device.face, device.port), _lockdelay(device.lockdelay), _lock(device.lock) {
         set_brake_mode(device.brakemode);
       };
 
@@ -122,7 +128,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Piston(const AbstractDeviceStruct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(K_PISTON, device.face), _value(false) {};
+      inline explicit Piston(const AbstractDeviceStruct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(K_PISTON, device.face, device.port), _value(false) {};
 
       /*
         @param setValue
@@ -142,7 +148,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Proximity(const AbstractDeviceStruct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face) {};
+      inline explicit Proximity(const AbstractDeviceStruct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face, device.port) {};
   };
 
   class Vision : pros::Vision, public AbstractDevice {
@@ -152,7 +158,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Vision(const AbstractDeviceStruct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face) {};
+      inline explicit Vision(const AbstractDeviceStruct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
 
       /*
         Save a vision signature to the vision sensor.
