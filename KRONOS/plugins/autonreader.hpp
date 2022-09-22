@@ -1,7 +1,7 @@
 /*
   @file plugin/autonreader.hpp
 
-  Reads autonomous hex file for KRONOS
+  Reads autonomous byte code for KRONOS
 */
 
 #ifndef _AUTONREADER_HPP_
