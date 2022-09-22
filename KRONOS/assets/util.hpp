@@ -9,8 +9,8 @@
 
 #include <chrono>
 
-namespace KUTIL {
-  #define MSDELAY 50.0
+namespace KUtil {
+  #define MSDELAY 20.0
   #define JOYSTICK_MOTOR_RATIO 1.5748031496
 
   /*

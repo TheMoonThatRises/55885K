@@ -105,8 +105,8 @@ namespace KRONOS {
           bool move = !_lock;
 
           if (_lock) {
-            auto runTime = KUTIL::sinceEpoch();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(_lmovetime - KUTIL::sinceEpoch()).count();
+            auto runTime = KUtil::sinceEpoch();
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(_lmovetime - KUtil::sinceEpoch()).count();
             if (elapsed >= _lockdelay) {
               move = true;
 
