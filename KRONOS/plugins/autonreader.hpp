@@ -10,10 +10,12 @@
 class AutonReader {
   private:
     enum mnemonics {
-      setv, setp, slep = 0x02
+      mtrv, mtrb, chsp, slep = 0x03
     };
 
     std::vector<char> ports {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 'A', 'B', 'C', 'D', 'E', 'F'};
+
+    std::vector<pros::motor_brake_mode_e_t> brakemodes { pros::E_MOTOR_BRAKE_BRAKE, pros::E_MOTOR_BRAKE_COAST, pros::E_MOTOR_BRAKE_HOLD };
 
     short littleEndian(const std::vector<unsigned char> &bytes, const int &start) {
       return (bytes[start + 1] << 8) | bytes[start];
@@ -41,12 +43,16 @@ class AutonReader {
 
       for (auto i = 0; i < bytes.size(); ++i) {
         switch (bytes[i]) {
-          case setv:
+          case mtrv:
             std::cout << "Setting motor port p" << hexToInt(bytes[i + 1]) << " to velocity " << littleEndian(bytes, i + 2) << std::endl;
             dynamic_cast<KRONOS::Motor*>(_robot->getDevice(ports.at(hexToInt(bytes[i + 1]))))->move_velocity(littleEndian(bytes, i + 2));
             i += 3;
             break;
-          case setp:
+          case mtrb:
+            dynamic_cast<KRONOS::Motor*>(_robot->getDevice(ports.at(hexToInt(bytes[i + 1]))))->set_brake_mode(brakemodes.at(hexToInt(bytes[i + 2])));
+            i += 2;
+            break;
+          case chsp:
             std::cout << "Moving robot to location " << littleEndian(bytes, i + 1) << ", " << littleEndian(bytes, i + 3) << " at velocity " << littleEndian(bytes, i + 5) << std::endl;
             i += 6;
             break;
