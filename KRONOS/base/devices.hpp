@@ -10,10 +10,13 @@
 #include "assets/devicestructs.hpp"
 #include "assets/util.hpp"
 
+#include "base/extenders/pid.hpp"
+
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
+#include "pros/optical.hpp"
 #include "pros/vision.hpp"
 
 #include <iostream>
@@ -53,6 +56,11 @@ namespace KRONOS {
       inline explicit Button(const AbstractDeviceStruct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face, device.port) {};
   };
 
+  class Color : public pros::Optical, public AbstractDevice {
+    public:
+      inline explicit Color(const AbstractDeviceStruct &device) : pros::Optical(device.port), AbstractDevice(K_COLOR, device.face, device.port) {};
+  };
+
   class Controller : public pros::Controller, public AbstractDevice {
     protected:
       pros::controller_id_e_t _id;
@@ -80,44 +88,26 @@ namespace KRONOS {
       }
   };
 
-  class Motor : public pros::Motor, public AbstractDevice {
-    protected:
-      bool _lock;
-      int _lockdelay;
-      std::chrono::high_resolution_clock::time_point _lmovetime;
+  class Motor : public pros::Motor, public KPID::PID, public AbstractDevice {
     public:
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), AbstractDevice(K_MOTOR, device.face, device.port), _lockdelay(device.lockdelay), _lock(device.lock) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit), AbstractDevice(K_MOTOR, device.face, device.port) {
         set_brake_mode(device.brakemode);
       };
 
-      inline void toggleLock() { _lock = !_lock; }
-
       /*
-        @param velocity
+        Moves the motor to the target location
+
+        @param target Target position of the motor
       */
-      inline void safe_move_velocity(const double &velocity) {
-        if (get_target_velocity() == 0 && velocity == 0 || (get_target_velocity() != 0 && velocity == 0))
-          return;
-        else {
-          bool move = !_lock;
+      inline bool move_pid(const double &target, const bool &init = false) {
+        const double velocity = pid(target, get_position(), init);
 
-          if (_lock) {
-            auto runTime = KUtil::sinceEpoch();
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(_lmovetime - KUtil::sinceEpoch()).count();
-            if (elapsed >= _lockdelay) {
-              move = true;
+        move_velocity(velocity);
 
-              if (velocity != 0)
-                _lmovetime = runTime;
-            }
-          }
-
-          if (move)
-            move_velocity(velocity * JOYSTICK_MOTOR_RATIO);
-        }
+        return !velocity;
       }
   };
 
