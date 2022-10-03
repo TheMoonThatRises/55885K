@@ -16,8 +16,21 @@
 #include <functional>
 
 namespace KRONOS {
+  enum side_color {
+    RED, GREEN
+  };
+
   class Robot : public DeviceManager, public ControllerManager, public ChassisManager {
+    protected:
+      const side_color _color;
     public:
+      inline explicit Robot(const side_color &color) : _color(color) {}
+
+      /*
+        Get color side the robot is on
+      */
+      inline side_color side() const { return _color; }
+
       /*
         Adds a device to the robot
 
