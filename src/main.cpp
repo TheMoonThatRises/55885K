@@ -3,7 +3,7 @@
 #include "kronos.hpp"
 #include "main.h"
 
-KRONOS::Robot robot;
+KRONOS::Robot robot(KRONOS::RED);
 KPlugins::AutonReader auton(&robot, {{"test", std::vector<unsigned char>(std::begin(KPlugins::Resources::test_kac), std::end(KPlugins::Resources::test_kac))}});
 
 /**
@@ -28,6 +28,8 @@ void initialize() {
 
     .addDevice("roller", new KRONOS::Motor({.port=14}))
 
+    .addDevice("color", new KRONOS::Color({.port=18}))
+
     .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
@@ -40,7 +42,15 @@ void initialize() {
       bool bvalue = values.at(0) || values.at(1),
            cvalue = values.at(0);
 
-      dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"))->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
+      KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"));
+
+      pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.getDevice("color"))->get_raw();
+
+      if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
+        motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
+      } else {
+
+      }
     });
 
   std::cout << "Finish initializing Robot..." << std::endl;
