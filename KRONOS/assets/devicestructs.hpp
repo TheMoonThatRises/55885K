@@ -9,12 +9,15 @@
 
 #include "assets/util.hpp"
 
+#include "base/extenders/pid.hpp"
+
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
 
 namespace KRONOS {
   enum device_types {
     K_BUTTON,
+    K_COLOR,
     K_CONTROLLER,
     K_MOTOR,
     K_PISTON,
@@ -53,6 +56,8 @@ namespace KRONOS {
     bool lock = true;
     int lockdelay = MSDELAY;
     device_face face = K_NORTH;
+
+    KPID::pid_exit_conditions pidexit = KPID::pid_exit_conditions::error;
   };
 }
 
