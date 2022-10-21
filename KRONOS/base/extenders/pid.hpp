@@ -4,6 +4,9 @@
   PID class for KRONOS
 */
 
+#ifndef _PID_HPP_
+#define _PID_HPP_
+
 namespace KPID {
   enum pid_exit_conditions {
     error, time
@@ -40,3 +43,5 @@ namespace KPID {
       inline explicit PID(const pid_exit_conditions &exitcondition) : _exitcondition(exitcondition) {}
   };
 }
+
+#endif
