@@ -31,16 +31,16 @@ namespace KRONOS {
       /*
         Get all devices by a vector of keys
 
-        @param dnames Vector of keys
+        @param dnames Vector of device keys
 
         @return A vector of devices
       */
-      inline std::vector<std::pair<std::string, AbstractDevice*>> valuesByKeys(const std::vector<std::string> &dnames) {
+      inline std::vector<std::pair<std::string, AbstractDevice*>> devices_by_key(const std::vector<std::string> &dnames) {
         std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
         for (const std::string &name : dnames)
-          if (getDevice(name))
-            filtered.emplace_back(name, getDevice(name));
+          if (get_device(name))
+            filtered.emplace_back(name, get_device(name));
 
         return filtered;
       }
@@ -52,7 +52,7 @@ namespace KRONOS {
 
         @return The device requested
       */
-      inline AbstractDevice* getDevice(const std::string &name) {
+      inline AbstractDevice* get_device(const std::string &name) {
         return _devices.find(name) != _devices.end() ? _devices.at(name) : nullptr;
       }
 
@@ -63,7 +63,7 @@ namespace KRONOS {
 
         @return The device requested
       */
-      inline AbstractDevice* getDevice(const char &port) {
+      inline AbstractDevice* get_device(const char &port) {
         for (const auto [name, device] : _devices)
           if (device->port() == port)
             return device;
@@ -78,11 +78,11 @@ namespace KRONOS {
 
         @return A vector of AbstractDevice pointers
       */
-      inline std::vector<AbstractDevice*> getMultipleDevices(const std::vector<std::string> &devices) {
+      inline std::vector<AbstractDevice*> get_multiple_devices(const std::vector<std::string> &devices) {
         std::vector<AbstractDevice*> deviceVector;
 
         for (const std::string &device : devices)
-          deviceVector.push_back(getDevice(device));
+          deviceVector.push_back(get_device(device));
 
         return deviceVector;
       }

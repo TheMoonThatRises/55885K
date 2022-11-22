@@ -20,39 +20,39 @@ void initialize() {
   */
 
   robot
-    .addDevice("topright", new KRONOS::Motor({.port=4, .reverse=true}))
-    .addDevice("topleft", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHWEST}))
-    .addDevice("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
-    .addDevice("bottomleft", new KRONOS::Motor({.port=1}))
+    .add_device("topright", new KRONOS::Motor({.port=4, .reverse=true}))
+    .add_device("topleft", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHWEST}))
+    .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .addDevice("roller", new KRONOS::Motor({.port=14}))
+    .add_device("roller", new KRONOS::Motor({.port=14}))
 
-    .addDevice("color", new KRONOS::Color({.port=18}))
+    .add_device("color", new KRONOS::Color({.port=18}))
 
-    .addDevice(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
+    .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
-    .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
+    .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
 
     // Create chassis listener
-    .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
-      robot.moveChassis(analogs[0], analogs[1], analogs[2] / 1.8);
+    .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
+      robot.move_chassis(analogs[0], analogs[1], analogs[2] / 1.8);
     })
 
     // Create claw listener
-    .addControllerLink({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
 
     });
 
-    // .addControllerLink()
+    // .add_controller_link()
 
     // Create roller listener
-    // .addControllerLink({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
+    // .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
     //   bool bvalue = values.at(0) || values.at(1),
     //        cvalue = values.at(0);
 
-    //   KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"));
+    //   KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.get_device("roller"));
 
-    //   pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.getDevice("color"))->get_raw();
+    //   pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.get_device("color"))->get_raw();
 
     //   if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
     //     motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
@@ -123,7 +123,7 @@ void autonomous() {
  */
 void opcontrol() {
   while (true) {
-    robot.controllerListener();
+    robot.controller_listener();
 
     pros::delay(MSDELAY); // Always have a pros::delay in a while (true) loop
   }
