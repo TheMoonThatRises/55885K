@@ -78,13 +78,13 @@ namespace KRONOS {
       /*
         Sets the controllers display screen text
 
-        @param text
+        @param text Text to display to controller screen
       */
       inline void setControllerText(const std::string &text) {
         pros::Controller::clear();
         pros::Controller::set_text(0, 0, text + "         ");
 
-        std::cout << text << std::endl;
+        std::cout << "Controller " << id() << ": " << text << std::endl;
       }
   };
 
@@ -102,8 +102,21 @@ namespace KRONOS {
 
         @param target Target position of the motor
       */
-      inline bool move_pid(const double &target) {
+      inline bool move_position_pid(const double &target) {
         const double velocity = KPID::PID::pid(target, get_position());
+
+        pros::Motor::move_velocity(velocity);
+
+        return !velocity;
+      }
+
+      /*
+        Moves the motor to the target velocity
+
+        @param target Target velocity of the motor
+      */
+      inline bool move_velocity_pid(const double &target) {
+        const double velocity = KPID::PID::pid(target, get_actual_velocity());
 
         pros::Motor::move_velocity(velocity);
 
