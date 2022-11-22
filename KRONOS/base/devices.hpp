@@ -93,7 +93,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit), AbstractDevice(K_MOTOR, device.face, device.port) {
+      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
         set_brake_mode(device.brakemode);
       };
 
@@ -102,8 +102,8 @@ namespace KRONOS {
 
         @param target Target position of the motor
       */
-      inline bool move_pid(const double &target, const bool &init = false) {
-        const double velocity = pid(target, get_position(), init);
+      inline bool move_pid(const double &target) {
+        const double velocity = pid(target, get_position());
 
         move_velocity(velocity);
 

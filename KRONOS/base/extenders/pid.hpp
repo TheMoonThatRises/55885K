@@ -12,35 +12,39 @@ namespace KPID {
     error, time
   };
 
+  struct pid_modifiables {
+    double errormargin = 0.1,
+           kP = 0.5,
+           kI = 0,
+           kD =0.4;
+  };
+
   class PID {
     protected:
       const pid_exit_conditions _exitcondition;
-      const double errormargin = 0.1,
-                   _kP = 0.5,
-                   _kI = 0,
-                   _kD = 0.4;
+      pid_modifiables _modifiables;
       double _previous;
 
       /*
         Get PID tuned value for target
 
         @param target Target position of the motor
+        @param current Current position of the motor
       */
-      inline double pid(const double &target, const double &current, const bool &init = false) {
-        if (init) {
-          _previous = 0;
-        }
+      inline double pid(const double &target, const double &current) {
+        const double output = (_modifiables.kP * (target - current)) + (_modifiables.kD * (_previous - current));
 
-        const double output = (_kP * (target - current)) + (_kD * (_previous - current));
+        _previous = current;
 
-        if (_exitcondition == error && output <= errormargin) {
+        if (_exitcondition == error && target - output <= _modifiables.errormargin) {
           return 0;
         } else {
           return output;
         }
       }
+
     public:
-      inline explicit PID(const pid_exit_conditions &exitcondition) : _exitcondition(exitcondition) {}
+      inline explicit PID(const pid_exit_conditions &exitcondition, const pid_modifiables &modifiables) : _exitcondition(exitcondition), _modifiables(modifiables) {}
   };
 }
 
