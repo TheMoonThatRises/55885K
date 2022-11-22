@@ -58,6 +58,7 @@ namespace KRONOS {
     device_face face = K_NORTH;
 
     KPID::pid_exit_conditions pidexit = KPID::pid_exit_conditions::error;
+    KPID::pid_modifiables pidmods = KPID::pid_modifiables();
   };
 }
 
