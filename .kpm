@@ -1,1 +1,1 @@
-{"autonomous": {"sources": ["autonreader.hpp"], "resources": ["autons.hpp"], "includes": ["fstream", "iterator", "map", "vector"]}, "kpm": {"sources": ["autonreader.hpp"], "resources": ["autons.hpp"], "includes": ["fstream", "iterator", "map", "vector"]}}
+{"kpm": {"sources": [], "resources": [], "includes": []}}
