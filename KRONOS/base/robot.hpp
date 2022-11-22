@@ -41,7 +41,7 @@ namespace KRONOS {
 
         @return Self class
       */
-      inline Robot& addDevice(const std::string &name, AbstractDevice *device) {
+      inline Robot& add_device(const std::string &name, AbstractDevice *device) {
         DeviceManager::set(name, device);
 
         return *this;
@@ -54,7 +54,7 @@ namespace KRONOS {
 
         @return Self class
       */
-      inline Robot& addDevice(Controller *controller) {
+      inline Robot& add_device(Controller *controller) {
         ControllerManager::add(controller);
 
         return *this;
@@ -65,7 +65,7 @@ namespace KRONOS {
 
         @param motors Vector of motor pointer
       */
-      inline Robot& setChassisMotors(const std::vector<Motor*> &motors) {
+      inline Robot& set_chassis_motors(const std::vector<Motor*> &motors) {
         ChassisManager::set(motors);
 
         return *this;
@@ -76,7 +76,7 @@ namespace KRONOS {
 
         @param motors Vector of abstract device pointer
       */
-      inline Robot& setChassisMotors(const std::vector<AbstractDevice*> &devices) {
+      inline Robot& set_chassis_motors(const std::vector<AbstractDevice*> &devices) {
         std::vector<Motor*> motors;
 
         for (AbstractDevice *device : devices)
@@ -94,7 +94,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
         ControllerManager::add(method, function, controller);
 
         return *this;
@@ -107,7 +107,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
         ControllerManager::add(methods, function, controller);
 
         return *this;
@@ -120,7 +120,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
         ControllerManager::add(method, function, controller);
 
         return *this;
@@ -133,7 +133,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline Robot& addControllerLink(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
         ControllerManager::add(method, function, controller);
 
         return *this;
@@ -142,7 +142,7 @@ namespace KRONOS {
       /*
 	      @param function
       */
-      inline Robot &addControllerLink(const std::function<void()>& function) {
+      inline Robot& add_controller_link(const std::function<void()>& function) {
         ControllerManager::add(function);
 
         return *this;
@@ -151,7 +151,7 @@ namespace KRONOS {
       /*
         Listens to controller events
       */
-      inline Robot& controllerListener() {
+      inline Robot& controller_listener() {
         ControllerManager::listener();
 
         return *this;
@@ -164,8 +164,8 @@ namespace KRONOS {
         @param manipFunc Function call that controls the device
         @param delay Delay after the manipDevices has ran
       */
-      inline void manipDevices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manipFunc, int delay = 50) {
-        for (const std::pair<std::string, AbstractDevice*> &device : valuesByKeys(dnames))
+      inline void manipulate_devices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manipFunc, int delay = 50) {
+        for (const std::pair<std::string, AbstractDevice*> &device : DeviceManager::devices_by_key(dnames))
           manipFunc(device);
 
         pros::delay(delay);
@@ -177,7 +177,7 @@ namespace KRONOS {
         @param name Name of auton
         @param auton Auton vector
       */
-      inline Robot& addAuton(const std::string &name, const std::vector<unsigned char> &auton) {
+      inline Robot& add_auton(const std::string &name, const std::vector<unsigned char> &auton) {
         KAuton::Auton::add(name, auton);
 
         return *this;

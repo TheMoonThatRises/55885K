@@ -53,12 +53,12 @@ namespace KRONOS {
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
     public:
-      inline explicit Button(const AbstractDeviceStruct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face, device.port) {};
+      inline explicit Button(const abstract_device_struct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face, device.port) {};
   };
 
   class Color : public pros::Optical, public AbstractDevice {
     public:
-      inline explicit Color(const AbstractDeviceStruct &device) : pros::Optical(device.port), AbstractDevice(K_COLOR, device.face, device.port) {};
+      inline explicit Color(const abstract_device_struct &device) : pros::Optical(device.port), AbstractDevice(K_COLOR, device.face, device.port) {};
   };
 
   class Controller : public pros::Controller, public AbstractDevice {
@@ -68,7 +68,7 @@ namespace KRONOS {
       /*
         @param id Master or partner controller
       */
-      inline explicit Controller(const ControllerStruct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE, '\0'), _id(controller.id) {};
+      inline explicit Controller(const controller_struct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE, '\0'), _id(controller.id) {};
 
       /*
         Get controller id
@@ -80,7 +80,7 @@ namespace KRONOS {
 
         @param text Text to display to controller screen
       */
-      inline void setControllerText(const std::string &text) {
+      inline void set_text(const std::string &text) {
         pros::Controller::clear();
         pros::Controller::set_text(0, 0, text + "         ");
 
@@ -93,7 +93,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
+      inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
         pros::Motor::set_brake_mode(device.brakemode);
       };
 
@@ -131,7 +131,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Piston(const AbstractDeviceStruct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(K_PISTON, device.face, device.port), _value(false) {};
+      inline explicit Piston(const abstract_device_struct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(K_PISTON, device.face, device.port), _value(false) {};
 
       /*
         @param setValue
@@ -153,7 +153,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Proximity(const AbstractDeviceStruct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face, device.port) {};
+      inline explicit Proximity(const abstract_device_struct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face, device.port) {};
   };
 
   class Vision : pros::Vision, public AbstractDevice {
@@ -163,7 +163,7 @@ namespace KRONOS {
       /*
         @param port
       */
-      inline explicit Vision(const AbstractDeviceStruct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
+      inline explicit Vision(const abstract_device_struct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
 
       /*
         Save a vision signature to the vision sensor.

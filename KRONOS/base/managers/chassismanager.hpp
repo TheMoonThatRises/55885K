@@ -33,7 +33,7 @@ namespace KRONOS {
         @param strafe
         @param turn
       */
-      inline void moveChassis(const double &straight, const double &strafe, const double &turn) {
+      inline void move_chassis(const double &straight, const double &strafe, const double &turn) {
         for (Motor *motor : _chassisMotors) {
           std::vector<device_face> reverseStrafe {K_NORTHWEST, K_SOUTHEAST};
 

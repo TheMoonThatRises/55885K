@@ -38,16 +38,16 @@ namespace KRONOS {
   };
 
 
-  struct AbstractDeviceStruct {
+  struct abstract_device_struct {
     uint8_t port = 1;
     device_face face = K_NORTH;
   };
 
-  struct ControllerStruct {
+  struct controller_struct {
     pros::controller_id_e_t id = pros::E_CONTROLLER_MASTER;
   };
 
-  struct MotorStruct {
+  struct motor_struct {
     uint8_t port = 1;
     pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_GREEN;
     bool reverse = false;
