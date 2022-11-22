@@ -4,7 +4,6 @@
 #include "main.h"
 
 KRONOS::Robot robot(KRONOS::RED);
-KPlugins::AutonReader auton(&robot, {{"test", std::vector<unsigned char>(std::begin(KPlugins::Resources::test_kac), std::end(KPlugins::Resources::test_kac))}});
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -34,24 +33,33 @@ void initialize() {
 
     .setChassisMotors(robot.getMultipleDevices({"topleft", "topright", "bottomleft", "bottomright"}))
 
+    // Create chassis listener
     .addControllerLink({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
       robot.moveChassis(analogs[0], analogs[1], analogs[2] / 1.8);
     })
 
-    .addControllerLink({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
-      bool bvalue = values.at(0) || values.at(1),
-           cvalue = values.at(0);
+    // Create claw listener
+    .addControllerLink({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
 
-      KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"));
-
-      pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.getDevice("color"))->get_raw();
-
-      if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
-        motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
-      } else {
-
-      }
     });
+
+    // .addControllerLink()
+
+    // Create roller listener
+    // .addControllerLink({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
+    //   bool bvalue = values.at(0) || values.at(1),
+    //        cvalue = values.at(0);
+
+    //   KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.getDevice("roller"));
+
+    //   pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.getDevice("color"))->get_raw();
+
+    //   if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
+    //     motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
+    //   } else {
+
+    //   }
+    // });
 
   std::cout << "Finish initializing Robot..." << std::endl;
 }
@@ -78,7 +86,7 @@ void competition_initialize() {
     Make sure to have a while (true) loop to select auton, and a way to break out of the loop
   */
 
-  auton.selectAuton();
+  // robot.selectAuton();
 }
 
 /**
@@ -97,7 +105,7 @@ void autonomous() {
     Run autonomous code here
   */
 
-  auton.runAuton();
+  // robot.runAuton();
 }
 
 /**
