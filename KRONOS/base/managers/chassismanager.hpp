@@ -16,13 +16,13 @@ namespace KRONOS {
   class ChassisManager {
     protected:
       std::vector<Motor*> _chassisMotors;
-    protected:
+
       /*
         Set chassis motors
 
         @param motors Vector of motor pointer
       */
-      inline void setChassis(const std::vector<Motor*> &motors) {
+      inline void set(const std::vector<Motor*> &motors) {
         _chassisMotors = motors;
       }
     public:

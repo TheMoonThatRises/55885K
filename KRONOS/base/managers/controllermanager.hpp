@@ -30,7 +30,7 @@ namespace KRONOS {
 
         @param controller Controller as AbstractDevice pointer
       */
-      inline void addController(Controller *controller) {
+      inline void add(Controller *controller) {
         if (controller->id() == pros::E_CONTROLLER_MASTER)
           controllers[master] = controller;
         else
@@ -44,7 +44,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addLink(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
+      inline void add(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
         _analogLink.insert({{method, controller}, function});
       }
 
@@ -55,7 +55,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addLink(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
+      inline void add(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
         _multiAnalogLink.insert({{methods, controller}, function});
       }
 
@@ -66,7 +66,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addLink(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
+      inline void add(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
         _digitalLink.insert({{method, controller}, function});
       }
 
@@ -77,14 +77,14 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void addLink(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
+      inline void add(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
         _multiDigitalLink.insert({{method, controller}, function});
       }
 
       /*
 	      @param function
       */
-      inline void addLink(const std::function<void()>& function) {
+      inline void add(const std::function<void()>& function) {
 	      voidLinks.push_back(function);
       }
 
