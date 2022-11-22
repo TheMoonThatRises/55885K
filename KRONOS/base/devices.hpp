@@ -81,8 +81,8 @@ namespace KRONOS {
         @param text
       */
       inline void setControllerText(const std::string &text) {
-        clear();
-        set_text(0, 0, text + "         ");
+        pros::Controller::clear();
+        pros::Controller::set_text(0, 0, text + "         ");
 
         std::cout << text << std::endl;
       }
@@ -94,7 +94,7 @@ namespace KRONOS {
         @param port
       */
       inline explicit Motor(const MotorStruct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
-        set_brake_mode(device.brakemode);
+        pros::Motor::set_brake_mode(device.brakemode);
       };
 
       /*
@@ -103,9 +103,9 @@ namespace KRONOS {
         @param target Target position of the motor
       */
       inline bool move_pid(const double &target) {
-        const double velocity = pid(target, get_position());
+        const double velocity = KPID::PID::pid(target, get_position());
 
-        move_velocity(velocity);
+        pros::Motor::move_velocity(velocity);
 
         return !velocity;
       }
@@ -129,7 +129,9 @@ namespace KRONOS {
 
         return _value;
       }
-      inline bool toggle() { return set_value(!_value); }
+
+      inline bool toggle() { return Piston::set_value(!_value); }
+
       inline bool value() const { return _value; }
   };
 

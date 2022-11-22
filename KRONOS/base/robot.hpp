@@ -7,6 +7,8 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
+#include "base/managers/autonmanager.hpp"
+
 #include "base/managers/chassismanager.hpp"
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
@@ -20,7 +22,7 @@ namespace KRONOS {
     RED, GREEN
   };
 
-  class Robot : public DeviceManager, public ControllerManager, public ChassisManager {
+  class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public KAuton::Auton {
     protected:
       const side_color _color;
     public:
@@ -40,7 +42,7 @@ namespace KRONOS {
         @return Self class
       */
       inline Robot& addDevice(const std::string &name, AbstractDevice *device) {
-        set(name, device);
+        DeviceManager::set(name, device);
 
         return *this;
       }
@@ -53,7 +55,7 @@ namespace KRONOS {
         @return Self class
       */
       inline Robot& addDevice(Controller *controller) {
-        addController(controller);
+        ControllerManager::add(controller);
 
         return *this;
       }
@@ -64,7 +66,7 @@ namespace KRONOS {
         @param motors Vector of motor pointer
       */
       inline Robot& setChassisMotors(const std::vector<Motor*> &motors) {
-        setChassis(motors);
+        ChassisManager::set(motors);
 
         return *this;
       }
@@ -80,7 +82,7 @@ namespace KRONOS {
         for (AbstractDevice *device : devices)
           motors.push_back(dynamic_cast<Motor*>(device));
 
-        setChassis(motors);
+        ChassisManager::set(motors);
 
         return *this;
       }
@@ -93,7 +95,7 @@ namespace KRONOS {
         @param controller Which controller input to read
       */
       inline Robot& addControllerLink(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
-        addLink(method, function, controller);
+        ControllerManager::add(method, function, controller);
 
         return *this;
       }
@@ -106,7 +108,7 @@ namespace KRONOS {
         @param controller Which controller input to read
       */
       inline Robot& addControllerLink(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
-        addLink(methods, function, controller);
+        ControllerManager::add(methods, function, controller);
 
         return *this;
       }
@@ -119,7 +121,7 @@ namespace KRONOS {
         @param controller Which controller input to read
       */
       inline Robot& addControllerLink(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
-        addLink(method, function, controller);
+        ControllerManager::add(method, function, controller);
 
         return *this;
       }
@@ -132,7 +134,7 @@ namespace KRONOS {
         @param controller Which controller input to read
       */
       inline Robot& addControllerLink(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
-        addLink(method, function, controller);
+        ControllerManager::add(method, function, controller);
 
         return *this;
       }
@@ -141,7 +143,7 @@ namespace KRONOS {
 	      @param function
       */
       inline Robot &addControllerLink(const std::function<void()>& function) {
-        addLink(function);
+        ControllerManager::add(function);
 
         return *this;
       }
@@ -150,7 +152,7 @@ namespace KRONOS {
         Listens to controller events
       */
       inline Robot& controllerListener() {
-        listener();
+        ControllerManager::listener();
 
         return *this;
       }
@@ -167,6 +169,18 @@ namespace KRONOS {
           manipFunc(device);
 
         pros::delay(delay);
+      }
+
+      /*
+        Saves auton to auton map
+
+        @param name Name of auton
+        @param auton Auton vector
+      */
+      inline Robot& addAuton(const std::string &name, const std::vector<unsigned char> &auton) {
+        KAuton::Auton::add(name, auton);
+
+        return *this;
       }
   };
 }

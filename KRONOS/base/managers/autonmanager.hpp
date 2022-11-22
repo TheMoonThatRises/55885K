@@ -20,6 +20,9 @@ namespace KAuton {
     protected:
       /*
         Saves auton to auton map
+
+        @param name Name of auton
+        @param auton Auton vector
       */
       inline void add(const std::string &name, const std::vector<unsigned char> &auton) {
         _autons.insert({name, auton});
