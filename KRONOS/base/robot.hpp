@@ -21,7 +21,7 @@ namespace KRONOS {
     RED, GREEN
   };
 
-  class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public KAuton::Auton {
+  class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public AutonomousManager {
     protected:
       const side_color _color;
     public:
@@ -163,9 +163,9 @@ namespace KRONOS {
         @param manipFunc Function call that controls the device
         @param delay Delay after the manipDevices has ran
       */
-      inline void manipulate_devices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manipFunc, int delay = 50) {
+      inline void manipulate_devices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manip_func, int delay = 50) {
         for (const std::pair<std::string, AbstractDevice*> &device : DeviceManager::devices_by_key(dnames))
-          manipFunc(device);
+          manip_func(device);
 
         pros::delay(delay);
       }
@@ -177,9 +177,16 @@ namespace KRONOS {
         @param auton Auton vector
       */
       inline Robot& add_auton(const std::string &name, const std::vector<unsigned char> &auton) {
-        KAuton::Auton::add(name, auton);
+        AutonomousManager::add(name, auton);
 
         return *this;
+      }
+
+      /*
+        Runs selected auton
+      */
+      inline void run_auton() {
+        AutonomousManager::run(DeviceManager::get_all());
       }
   };
 }
