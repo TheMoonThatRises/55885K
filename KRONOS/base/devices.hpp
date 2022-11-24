@@ -37,27 +37,39 @@ namespace KRONOS {
 
       /*
         Gets the enum type of the class
+
+        @return Type of device
       */
       inline virtual device_types classname() const { return _type; }
 
       /*
         Get direction device is facing
+
+        @return Direction the device is facing
       */
       inline virtual device_face facing() const { return _face; }
 
       /*
         Get port device is connected to
+
+        @return Port the device is on
       */
       inline virtual char port() const { return _port; }
   };
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
     public:
+      /*
+        @param device
+      */
       inline explicit Button(const abstract_device_struct &device) : pros::ADIDigitalIn(device.port), AbstractDevice(K_BUTTON, device.face, device.port) {};
   };
 
   class Color : public pros::Optical, public AbstractDevice {
     public:
+      /*
+        @param device
+      */
       inline explicit Color(const abstract_device_struct &device) : pros::Optical(device.port), AbstractDevice(K_COLOR, device.face, device.port) {};
   };
 
@@ -66,12 +78,14 @@ namespace KRONOS {
       const pros::controller_id_e_t _id;
     public:
       /*
-        @param id Master or partner controller
+        @param controller
       */
       inline explicit Controller(const controller_struct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE, '\0'), _id(controller.id) {};
 
       /*
         Get controller id
+
+        @return Controller id
       */
       inline pros::controller_id_e_t id() const { return _id; }
 
@@ -91,7 +105,7 @@ namespace KRONOS {
   class Motor : public pros::Motor, public KPID::PID, public AbstractDevice {
     public:
       /*
-        @param port
+        @param device
       */
       inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
         pros::Motor::set_brake_mode(device.brakemode);
@@ -101,6 +115,8 @@ namespace KRONOS {
         Moves the motor to the target location
 
         @param target Target position of the motor
+
+        @return If the PID loop exists and is set to 0
       */
       inline bool move_position_pid(const double &target) {
         const double velocity = KPID::PID::pid(target, get_position());
@@ -114,6 +130,8 @@ namespace KRONOS {
         Moves the motor to the target velocity
 
         @param target Target velocity of the motor
+
+        @return If the PID loop exists and is set to 0
       */
       inline bool move_velocity_pid(const double &target) {
         const double velocity = KPID::PID::pid(target, get_actual_velocity());
@@ -129,12 +147,16 @@ namespace KRONOS {
       bool _value;
     public:
       /*
-        @param port
+        @param device
       */
       inline explicit Piston(const abstract_device_struct &device) : pros::ADIDigitalOut(device.port), AbstractDevice(K_PISTON, device.face, device.port), _value(false) {};
 
       /*
-        @param setValue
+        Sets the value of the piston
+
+        @param setValue State to set the piston to
+
+        @return The value that the piston is set to
       */
       inline bool set_value(const bool &setValue) {
         pros::ADIDigitalOut::set_value(setValue);
@@ -143,15 +165,25 @@ namespace KRONOS {
         return _value;
       }
 
+      /*
+        Toggles the piston
+
+        @return Value of the piston's new state
+      */
       inline bool toggle() { return Piston::set_value(!_value); }
 
+      /*
+        Gets the piston's current value
+
+        @return Piston's current state
+      */
       inline bool value() const { return _value; }
   };
 
   class Proximity : public pros::Distance, public AbstractDevice {
     public:
       /*
-        @param port
+        @param device
       */
       inline explicit Proximity(const abstract_device_struct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face, device.port) {};
   };
@@ -161,29 +193,31 @@ namespace KRONOS {
       std::map<int, pros::vision_signature_s_t> _signatures;
     public:
       /*
-        @param port
+        @param device
       */
       inline explicit Vision(const abstract_device_struct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
 
       /*
         Save a vision signature to the vision sensor.
 
-        @param name
-        @param signature
+        @param name Name of the signature to add
+        @param signature Vision signature to add
       */
       inline void addSignature(const int &name, const pros::vision_signature_s_t &signature) { _signatures.insert({name, signature}); }
 
       /*
         Get a vision signature saved from the sensor.
 
-        @param name
+        @param name Name of signature to get
+
+        @return Signature gotten from name
       */
       inline pros::vision_signature_s_t &getSignature(const int &name) { return _signatures.at(name); }
 
       /*
         Set the signature for the vision sensor.
 
-        @param name
+        @param name Name of signature to set vision sensor to
       */
       inline void setSignature(const int &name) { set_signature(name, &(getSignature(name))); }
   };
