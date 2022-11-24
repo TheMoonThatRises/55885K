@@ -92,7 +92,7 @@ void competition_initialize() {
     Make sure to have a while (true) loop to select auton, and a way to break out of the loop
   */
 
-  // robot.selectAuton();
+  robot.select_auton();
 }
 
 /**
@@ -111,7 +111,7 @@ void autonomous() {
     Run autonomous code here
   */
 
-  // robot.runAuton();
+  robot.run_auton();
 }
 
 /**
