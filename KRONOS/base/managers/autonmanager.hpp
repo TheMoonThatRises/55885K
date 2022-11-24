@@ -90,7 +90,7 @@ namespace KRONOS {
               _controller->set_text("Selecting auton << " + _currentAuton);
             }
 
-            pros::delay(20);
+            pros::delay(MSDELAY);
           }
 
           _controller->set_text("Locked auton < " + _currentAuton);
