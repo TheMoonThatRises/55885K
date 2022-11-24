@@ -53,8 +53,6 @@ namespace KRONOS {
     bool reverse = false;
     pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
     pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
-    bool lock = true;
-    int lockdelay = MSDELAY;
     device_face face = K_NORTH;
 
     KPID::pid_exit_conditions pidexit = KPID::pid_exit_conditions::error;
