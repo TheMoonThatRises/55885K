@@ -82,14 +82,16 @@ namespace KRONOS {
       }
 
       /*
-	      @param function
+        Runs a function every loop in the listener
+
+        @param function Function to run
       */
       inline void add(const std::function<void()>& function) {
-	      voidLinks.push_back(function);
+        voidLinks.push_back(function);
       }
 
       /*
-        Listens to controller events
+        Listens to controller and void events
       */
       inline void listener() {
         for (const auto &[key, function] : _analogLink)

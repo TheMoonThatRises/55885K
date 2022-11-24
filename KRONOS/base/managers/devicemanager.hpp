@@ -30,7 +30,9 @@ namespace KRONOS {
       }
 
       /*
-        Gets all devices in _devices
+        Gets all devices in stored
+
+        @return Vector of all devices in the form of an AbstractDevice pointer
       */
       inline std::vector<AbstractDevice*> get_all() {
         auto kv = std::views::values(_devices);
@@ -42,7 +44,7 @@ namespace KRONOS {
 
         @param dnames Vector of device keys
 
-        @return A vector of devices
+        @return A vector of the name of the device and device in a pair
       */
       inline std::vector<std::pair<std::string, AbstractDevice*>> devices_by_key(const std::vector<std::string> &dnames) {
         std::vector<std::pair<std::string, AbstractDevice*>> filtered;
@@ -59,7 +61,7 @@ namespace KRONOS {
 
         @param name Name of sign of the device
 
-        @return The device requested
+        @return The device requested as an AbstractDevice pointer
       */
       inline AbstractDevice* get_device(const std::string &name) {
         return _devices.find(name) != _devices.end() ? _devices.at(name) : nullptr;
@@ -70,7 +72,7 @@ namespace KRONOS {
 
         @param port Port device is on
 
-        @return The device requested
+        @return The device requested as an AbstractDevice pointer
       */
       inline AbstractDevice* get_device(const char &port) {
         for (const auto [name, device] : _devices)
