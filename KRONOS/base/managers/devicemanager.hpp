@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <map>
+#include <ranges>
 #include <vector>
 
 #include "base/devices.hpp"
@@ -26,6 +27,14 @@ namespace KRONOS {
       */
       inline void set(const std::string &name, AbstractDevice *device) {
         _devices.insert({name, device});
+      }
+
+      /*
+        Gets all devices in _devices
+      */
+      inline std::vector<AbstractDevice*> get_all() {
+        auto kv = std::views::values(_devices);
+        return { kv.begin(), kv.end() };
       }
 
       /*
