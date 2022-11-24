@@ -25,9 +25,9 @@
 namespace KRONOS {
   class AbstractDevice {
     protected:
-      device_types _type;
-      device_face _face;
-      char _port;
+      const device_types _type;
+      const device_face _face;
+      const char _port;
     public:
       /*
         @param device
@@ -63,7 +63,7 @@ namespace KRONOS {
 
   class Controller : public pros::Controller, public AbstractDevice {
     protected:
-      pros::controller_id_e_t _id;
+      const pros::controller_id_e_t _id;
     public:
       /*
         @param id Master or partner controller
