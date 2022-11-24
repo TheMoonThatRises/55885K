@@ -25,9 +25,12 @@ void initialize() {
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .add_device("roller", new KRONOS::Motor({.port=14}))
+    .add_device("claw", new KRONOS::Motor({.port=14, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("clawrotate", new KRONOS::Motor({.port=15, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
-    .add_device("color", new KRONOS::Color({.port=18}))
+    // .add_device("roller", new KRONOS::Motor({.port=14}))
+
+    // .add_device("color", new KRONOS::Color({.port=18}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
@@ -39,11 +42,14 @@ void initialize() {
     })
 
     // Create claw listener
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
+
+    })
+
+    // Create claw rotation listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
 
     });
-
-    // .add_controller_link()
 
     // Create roller listener
     // .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
