@@ -8,7 +8,6 @@
 #define _ROBOT_HPP_
 
 #include "base/managers/autonmanager.hpp"
-
 #include "base/managers/chassismanager.hpp"
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
