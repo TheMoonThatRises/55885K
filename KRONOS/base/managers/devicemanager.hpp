@@ -7,12 +7,12 @@
 #ifndef _DEVICEMANAGER_HPP_
 #define _DEVICEMANAGER_HPP_
 
+#include "base/devices.hpp"
+
 #include <algorithm>
 #include <map>
 #include <ranges>
 #include <vector>
-
-#include "base/devices.hpp"
 
 namespace KRONOS {
   class DeviceManager {
