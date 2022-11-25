@@ -158,7 +158,7 @@ namespace KRONOS {
       /*
         Runs a function every loop of the listener
 
-	      @param function Function to run
+        @param function Function to run
 
         @return Reference to initial robot class
       */
@@ -204,7 +204,7 @@ namespace KRONOS {
         Manipulate groups of devices at the same time with the same command
 
         @param dnames Vector of names for devices
-        @param manipFunc Function call that controls the device
+        @param manip_func Function call that controls the device
         @param delay Delay after the manipDevices has ran
       */
       inline void manipulate_devices(const std::vector<std::string> &dnames, const std::function<void(std::pair<std::string, AbstractDevice*>)>& manip_func, int delay = 50) {
