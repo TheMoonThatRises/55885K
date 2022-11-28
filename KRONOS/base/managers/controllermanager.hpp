@@ -31,10 +31,11 @@ namespace KRONOS {
         @param controller Controller as AbstractDevice pointer
       */
       inline void add(Controller *controller) {
-        if (controller->id() == pros::E_CONTROLLER_MASTER)
+        if (controller->id() == pros::E_CONTROLLER_MASTER) {
           controllers[master] = controller;
-        else
+        } else {
           controllers[partner] = controller;
+        }
       }
 
       /*
