@@ -8,6 +8,7 @@
 #define _DEVICES_HPP_
 
 #include "assets/devicestructs.hpp"
+#include "assets/logger.hpp"
 #include "assets/util.hpp"
 
 #include "base/extenders/pid.hpp"
@@ -19,7 +20,6 @@
 #include "pros/optical.hpp"
 #include "pros/vision.hpp"
 
-#include <iostream>
 #include <map>
 
 namespace KRONOS {
@@ -33,7 +33,9 @@ namespace KRONOS {
         @param device
         @param delay
       */
-      inline explicit AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {};
+      inline explicit AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
+        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + " facing " + std::to_string(_face) + " at port " + _port);
+      };
 
       /*
         Gets the enum type of the class
@@ -98,7 +100,7 @@ namespace KRONOS {
         pros::Controller::clear();
         pros::Controller::set_text(0, 0, text + "         ");
 
-        std::cout << "Controller " << id() << ": " << text << std::endl;
+        KLog::Log::info("Controller " + std::to_string(id()) + ": " + text);
       }
   };
 

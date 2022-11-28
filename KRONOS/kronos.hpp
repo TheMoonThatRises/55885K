@@ -12,6 +12,8 @@
   #include "base/robot.hpp" // Main robot class
   #include "base/devices.hpp" // Devices able to be added to the robot
 
+  #include "assets/logger.hpp" // Logger class
+
   /*
     Include KRONOS plugins
   */

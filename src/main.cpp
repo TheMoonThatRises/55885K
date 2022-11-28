@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "kronos.hpp"
 #include "main.h"
 
@@ -12,7 +10,7 @@ KRONOS::Robot robot(KRONOS::RED);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  std::cout << "Initializing Robot..." << std::endl;
+  KLog::Log::info("Initializing Robot...");
 
   /*
     Add initialization code here
@@ -67,7 +65,7 @@ void initialize() {
     //   }
     // });
 
-  std::cout << "Finish initializing Robot..." << std::endl;
+  KLog::Log::info("Finish initializing Robot...");
 }
 
 /**

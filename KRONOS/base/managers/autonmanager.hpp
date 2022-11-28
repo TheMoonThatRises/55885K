@@ -57,9 +57,9 @@ namespace KRONOS {
         if (_canRunAuton) {
 
         } else {
-          if (_controller == nullptr) {
-            std::cout << "Skipping auton..." << std::endl;
-          } else {
+          KLog::Log::warn("Skipping auton...");
+
+          if (_controller != nullptr) {
             _controller->set_text("Skipping auton...");
           }
         }
@@ -74,8 +74,9 @@ namespace KRONOS {
         }
 
         if (_controller == nullptr) {
-          std::cout << "Controller not loaded" << std::endl;
+          KLog::Log::error("Controller not loaded");
         } else if (_select == nullptr || _lock == nullptr) {
+          KLog::Log::error("Auton assets not properly loaded");
           _controller->set_text("Auton assets not properly loaded");
         } else {
           auto index = _autons.begin();

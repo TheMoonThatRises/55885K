@@ -7,6 +7,8 @@
 #ifndef _CHASSISMANAGER_HPP_
 #define _CHASSISMANAGER_HPP_
 
+#include "assets/logger.hpp"
+
 #include "base/devices.hpp"
 
 #include <algorithm>
@@ -24,6 +26,11 @@ namespace KRONOS {
       */
       inline void set(const std::vector<Motor*> &motors) {
         _chassisMotors = motors;
+
+        std::vector<char> ports;
+        std::transform(motors.begin(), motors.end(), ports.begin(), [](Motor* motor) { return motor->port(); });
+
+        KLog::Log::info("Setting chassis motors to ports " + std::string(ports.begin(), ports.end()));
       }
     public:
       /*

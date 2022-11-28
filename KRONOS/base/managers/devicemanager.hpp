@@ -7,10 +7,13 @@
 #ifndef _DEVICEMANAGER_HPP_
 #define _DEVICEMANAGER_HPP_
 
+#include "assets/logger.hpp"
+
 #include "base/devices.hpp"
 
 #include <algorithm>
 #include <map>
+#include <string>
 #include <ranges>
 #include <vector>
 
@@ -27,6 +30,8 @@ namespace KRONOS {
       */
       inline void set(const std::string &name, AbstractDevice *device) {
         _devices.insert({name, device});
+
+        KLog::Log::info("Saved device of type " + std::to_string(device->classname()) + " with name " + name + " to port " + device->port());
       }
 
       /*
