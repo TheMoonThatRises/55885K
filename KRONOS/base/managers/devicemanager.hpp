@@ -31,7 +31,7 @@ namespace KRONOS {
       inline void set(const std::string &name, AbstractDevice *device) {
         _devices.insert({name, device});
 
-        KLog::Log::info("Saved device of type " + std::to_string(device->classname()) + " with name " + name + " to port " + device->port());
+        KLog::Log::info("Saved device of type " + std::to_string(device->classname()) + " with name '" + name + "' to port " + std::to_string(device->port()));
       }
 
       /*
@@ -69,7 +69,15 @@ namespace KRONOS {
         @return The device requested as an AbstractDevice pointer
       */
       inline AbstractDevice* get_device(const std::string &name) {
-        return _devices.find(name) != _devices.end() ? _devices.at(name) : nullptr;
+        if (_devices.find(name) == _devices.end()) {
+          #ifdef _STRICT_DEVICE_GETTER_
+            throw new NoDeviceFoundError(name);
+          #else
+            return nullptr;
+          #endif
+        } else {
+          return _devices.at(name);
+        }
       }
 
       /*
@@ -84,7 +92,11 @@ namespace KRONOS {
           if (device->port() == port)
             return device;
 
-        return nullptr;
+        #ifdef _STRICT_DEVICE_GETTER_
+          throw new NoDeviceFoundError(port);
+        #else
+          return nullptr
+        #endif
       }
 
       /*

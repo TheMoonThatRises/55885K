@@ -11,18 +11,19 @@
 
 #include "base/extenders/pid.hpp"
 
+#include "pros/apix.h"
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
 
 namespace KRONOS {
   enum device_types {
-    K_BUTTON,
-    K_COLOR,
-    K_CONTROLLER,
-    K_MOTOR,
-    K_PISTON,
-    K_PROXIMITY,
-    K_VISION
+    K_BUTTON = pros::c::E_DEVICE_ADI,
+    K_COLOR = pros::c::E_DEVICE_OPTICAL,
+    K_CONTROLLER = pros::c::E_DEVICE_RADIO,
+    K_MOTOR = pros::c::E_DEVICE_MOTOR,
+    K_PISTON = pros::c::E_DEVICE_ADI,
+    K_PROXIMITY = pros::c::E_DEVICE_DISTANCE,
+    K_VISION = pros::c::E_DEVICE_VISION
   };
 
   enum device_face {
@@ -36,7 +37,6 @@ namespace KRONOS {
     K_WEST,
     K_NORTHWEST
   };
-
 
   struct abstract_device_struct {
     uint8_t port = 1;
