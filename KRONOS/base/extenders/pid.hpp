@@ -20,17 +20,23 @@ namespace KPID {
     double errormargin = 0.1,
            timeconstraint = 5000.0,
            kP = 0.5,
-           kI = 0,
+           kI = 0.1,
            kD = 0.4;
   };
 
   class PID {
     private:
       double _starttime = __DBL_MIN__;
+      double _previousError, _integral;
     protected:
       const pid_exit_conditions _exitcondition;
       const pid_consts _pidconsts;
-      double _previous;
+
+      inline void reset() {
+        _starttime = __DBL_MIN__;
+        _previousError = 0;
+        _integral = 0;
+      }
 
       /*
         Get PID tuned value for target
@@ -45,14 +51,18 @@ namespace KPID {
           _starttime = pros::millis();
         }
 
-        const double output = (_pidconsts.kP * (target - current)) + (_pidconsts.kD * (_previous - current));
+        const double error = target - current;
+        _integral += (error + _previousError) / 2;
 
-        _previous = current;
+        const double output = (_pidconsts.kP * (target - current)) + (_pidconsts.kI * _integral) + (_pidconsts.kD * (error - _previousError));
+
+        _previousError = error;
 
         if (_exitcondition == error && fabs(target - output) <= _pidconsts.errormargin) {
+          reset();
           return 0;
         } else if (_exitcondition == time && pros::millis() - _starttime >= 0) {
-          _starttime = __DBL_MIN__;
+          reset();
           return 0;
         } else {
           return output;
