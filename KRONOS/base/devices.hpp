@@ -8,12 +8,14 @@
 #define _DEVICES_HPP_
 
 #include "assets/devicestructs.hpp"
+#include "assets/errortypes.hpp"
 #include "assets/logger.hpp"
 #include "assets/util.hpp"
 
 #include "base/extenders/pid.hpp"
 
 #include "pros/adi.hpp"
+#include "pros/apix.h"
 #include "pros/distance.hpp"
 #include "pros/misc.hpp"
 #include "pros/motors.hpp"
@@ -34,7 +36,21 @@ namespace KRONOS {
         @param delay
       */
       inline explicit AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
-        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + " facing " + std::to_string(_face) + " at port " + _port);
+        if (_port == '\0') {
+          return;
+        }
+
+        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + " facing " + std::to_string(_face) + " at port " + std::to_string(_port));
+
+        #ifdef _STRICT_DEVICE_ASSIGNMENT_
+          const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port);
+
+          if (portInfo != pros::c::E_DEVICE_NONE) {
+            throw new PortOccupiedError(_port);
+          } else if ((int) portInfo != (int) _type) {
+            throw new UnexpectedDeviceFoundError(portInfo, _type);
+          }
+        #endif
       };
 
       /*
