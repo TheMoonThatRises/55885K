@@ -55,7 +55,7 @@ namespace KRONOS {
       */
       inline void run(std::vector<KRONOS::AbstractDevice*> devices) {
         if (_canRunAuton) {
-
+          KLog::Log::info("Running auton '" + _currentAuton + "'");
         } else {
           KLog::Log::warn("Skipping auton...");
 
@@ -69,6 +69,8 @@ namespace KRONOS {
         Runs the auton selector
       */
       inline void select_auton() {
+        KLog::Log::info("Starting auton selection");
+
         if (_autons.find("noauton") == _autons.end()) {
           _autons.insert({ "noauton", {} });
         }
