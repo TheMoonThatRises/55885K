@@ -7,7 +7,7 @@
 #ifndef _ERRORTYPES_HPP_
 #define _ERRORTYPES_HPP_
 
-#include "devicestructs.hpp"
+#include "assets/devicestructs.hpp"
 #include "assets/logger.hpp"
 
 #include "pros/apix.h"
