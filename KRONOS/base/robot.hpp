@@ -7,6 +7,8 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
+#include "assets/util.hpp"
+
 #include "base/managers/autonmanager.hpp"
 #include "base/managers/chassismanager.hpp"
 #include "base/managers/controllermanager.hpp"
@@ -17,25 +19,50 @@
 #include <functional>
 
 namespace KRONOS {
-  enum side_color {
-    RED, GREEN
-  };
-
   class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public AutonomousManager {
-    protected:
-      const side_color _color;
+    private:
+      KUtil::side_color _color;
     public:
       /*
         @param color
       */
-      inline explicit Robot(const side_color &color) : _color(color) {}
+      inline explicit Robot() {
+        std::set_terminate([]() {
+          try {
+            std::rethrow_exception(std::current_exception());
+          } catch (const AbstractKronosError &kronosexcept) {
+            KLog::Log::error("Uncaught KRONOS exception:" + std::string(kronosexcept.what()));
+          } catch (const std::exception &exception) {
+            KLog::Log::error("Uncaught fatal exception: " + std::string(exception.what()));
+          }
+
+          std::abort();
+        });
+      }
 
       /*
         Get color side the robot is on
 
         @return Which side the robot is on
       */
-      inline side_color side() const { return _color; }
+      inline KUtil::side_color get_side() const { return _color; }
+
+      /*
+        Set color side of the robot
+
+        @param color The side the robot is on
+
+        @return Reference to initial robot
+      */
+      inline Robot& set_side(const KUtil::side_color &color) {
+        if (_color) {
+          throw new ColorAlreadySetError(_color);
+        } else {
+          _color = color;
+        }
+
+        return *this;
+      }
 
       /*
         Adds a device to the robot
@@ -104,7 +131,7 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& add_controller_link(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=C_MASTER) {
         ControllerManager::add(method, function, controller);
 
         return *this;
@@ -119,7 +146,7 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& add_controller_link(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=C_MASTER) {
         ControllerManager::add(methods, function, controller);
 
         return *this;
@@ -134,7 +161,7 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& add_controller_link(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=C_MASTER) {
         ControllerManager::add(method, function, controller);
 
         return *this;
@@ -149,7 +176,7 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& add_controller_link(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
+      inline Robot& add_controller_link(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=C_MASTER) {
         ControllerManager::add(method, function, controller);
 
         return *this;
