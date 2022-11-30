@@ -9,6 +9,7 @@
 
 #include "assets/devicestructs.hpp"
 #include "assets/logger.hpp"
+#include "assets/util.hpp"
 
 #include "pros/apix.h"
 
@@ -20,6 +21,11 @@ namespace KRONOS {
       AbstractKronosError(const std::string &message) : std::runtime_error(message) {
         KLog::Log::error(message);
       };
+  };
+
+  class ColorAlreadySetError : public AbstractKronosError {
+    public:
+      ColorAlreadySetError(const KUtil::side_color &previous) : AbstractKronosError("Side color already set to '" + std::to_string(previous) + "'") {};
   };
 
   class NoDeviceFoundError : public AbstractKronosError {
