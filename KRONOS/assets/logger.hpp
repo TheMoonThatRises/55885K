@@ -62,7 +62,7 @@ namespace KLog {
               fileName = SD_CARD_PATH + KUUID::UUIDGenerator().generate_uuid() + ".log";
             }
 
-            logFile.open(fileName);
+            logFile.open(fileName, std::ios_base::app);
 
             logFile << logmessage;
 
