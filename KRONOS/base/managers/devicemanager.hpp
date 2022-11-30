@@ -70,7 +70,7 @@ namespace KRONOS {
       */
       inline AbstractDevice* get_device(const std::string &name) {
         if (_devices.find(name) == _devices.end()) {
-          #ifdef _STRICT_DEVICE_GETTER_
+          #ifdef STRICT_DEVICE_GETTER
             throw new NoDeviceFoundError(name);
           #else
             return nullptr;
@@ -92,10 +92,10 @@ namespace KRONOS {
           if (device->port() == port)
             return device;
 
-        #ifdef _STRICT_DEVICE_GETTER_
+        #ifdef STRICT_DEVICE_GETTER
           throw new NoDeviceFoundError(port);
         #else
-          return nullptr
+          return nullptr;
         #endif
       }
 
