@@ -11,8 +11,7 @@
 
 namespace KRONOS {
   enum controller_type {
-    master,
-    partner
+    C_MASTER, C_PARTNER
   };
 
   class ControllerManager {
@@ -32,9 +31,9 @@ namespace KRONOS {
       */
       inline void add(Controller *controller) {
         if (controller->id() == pros::E_CONTROLLER_MASTER) {
-          controllers[master] = controller;
+          controllers[C_MASTER] = controller;
         } else {
-          controllers[partner] = controller;
+          controllers[C_PARTNER] = controller;
         }
       }
 
@@ -45,7 +44,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void add(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=master) {
+      inline void add(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=C_MASTER) {
         _analogLink.insert({{method, controller}, function});
       }
 
@@ -56,7 +55,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void add(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=master) {
+      inline void add(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=C_MASTER) {
         _multiAnalogLink.insert({{methods, controller}, function});
       }
 
@@ -67,7 +66,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void add(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=master) {
+      inline void add(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=C_MASTER) {
         _digitalLink.insert({{method, controller}, function});
       }
 
@@ -78,7 +77,7 @@ namespace KRONOS {
         @param function Function to run
         @param controller Which controller input to read
       */
-      inline void add(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=master) {
+      inline void add(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=C_MASTER) {
         _multiDigitalLink.insert({{method, controller}, function});
       }
 
