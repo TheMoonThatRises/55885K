@@ -1,7 +1,15 @@
+/*
+  Define environmental variables that control how KRONOS works
+*/
+// #define LOG_COUT
+#define LOG_FILE
+#define STRICT_DEVICE_ASSIGNMENT
+#define STRICT_DEVICE_GETTER
+
 #include "kronos.hpp"
 #include "main.h"
 
-KRONOS::Robot robot(KRONOS::RED);
+KRONOS::Robot robot;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -18,6 +26,8 @@ void initialize() {
   */
 
   robot
+    .set_side(KUtil::S_NONE)
+
     .add_device("topright", new KRONOS::Motor({.port=4, .reverse=true}))
     .add_device("topleft", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHWEST}))
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
@@ -25,6 +35,8 @@ void initialize() {
 
     .add_device("claw", new KRONOS::Motor({.port=14, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
     .add_device("clawrotate", new KRONOS::Motor({.port=15, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+
+    .add_device("button", new KRONOS::Button({.port='A'}))
 
     // .add_device("roller", new KRONOS::Motor({.port=14}))
 
@@ -34,6 +46,14 @@ void initialize() {
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
 
+    .add_controller_link([&]() {
+      try {
+        KLog::Log::info(dynamic_cast<KRONOS::Button*>(robot.get_device("asdf"))->get_value() ? "true" : "false");
+      } catch (const std::exception &except) {
+        KLog::Log::error(except.what());
+      }
+    })
+
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
       robot.move_chassis(analogs[0], analogs[1], analogs[2] / 1.8);
@@ -41,12 +61,18 @@ void initialize() {
 
     // Create claw listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
-
+      dynamic_cast<KRONOS::Motor*>(robot.get_device("claw"))->move_velocity_pid(
+        values.at(0) ? 100 :
+          values.at(1) ? -100 : 0
+      );
     })
 
     // Create claw rotation listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
-
+      dynamic_cast<KRONOS::Motor*>(robot.get_device("clawrotate"))->move_velocity_pid(
+        values.at(0) ? 100 :
+          values.at(1) ? -100 : 0
+      );
     });
 
     // Create roller listener
