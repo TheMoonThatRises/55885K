@@ -13,7 +13,7 @@
 
 namespace KPID {
   enum pid_exit_conditions {
-    error, time
+    P_ERROR, P_TIME
   };
 
   struct pid_consts {
@@ -47,7 +47,7 @@ namespace KPID {
         @return Value to set
       */
       inline double pid(const double &target, const double &current) {
-        if (_exitcondition == time && _starttime == __DBL_MIN__) {
+        if (_exitcondition == P_TIME && _starttime == __DBL_MIN__) {
           _starttime = pros::millis();
         }
 
@@ -58,10 +58,10 @@ namespace KPID {
 
         _previousError = error;
 
-        if (_exitcondition == error && fabs(target - output) <= _pidconsts.errormargin) {
+        if (_exitcondition == P_ERROR && fabs(target - output) <= _pidconsts.errormargin) {
           reset();
           return 0;
-        } else if (_exitcondition == time && pros::millis() - _starttime >= 0) {
+        } else if (_exitcondition == P_TIME && pros::millis() - _starttime >= 0) {
           reset();
           return 0;
         } else {

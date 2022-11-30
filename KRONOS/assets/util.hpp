@@ -12,6 +12,10 @@ namespace KUtil {
   #define JOYSTICK_MOTOR_RATIO 1.5748031496
 
   #define SD_CARD_PATH "/usd/"
+
+  enum side_color {
+    S_RED, S_GREEN, S_NONE
+  };
 }
 
 #endif

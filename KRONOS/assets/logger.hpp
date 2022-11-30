@@ -19,7 +19,7 @@
 
 namespace KLog {
   enum log_types {
-    error, info, warning
+    L_ERROR, L_INFO, L_WARNING
   };
 
   class Log {
@@ -34,13 +34,13 @@ namespace KLog {
         std::string logmessage = std::to_string(pros::micros()) + " ";
 
         switch (type) {
-          case log_types::error:
+          case log_types::L_ERROR:
             logmessage += "[ERROR]";
             break;
-          case log_types::info:
+          case log_types::L_INFO:
             logmessage += "[INFO]";
             break;
-          case log_types::warning:
+          case log_types::L_WARNING:
             logmessage += "[WARN]";
             break;
           default:
@@ -79,7 +79,7 @@ namespace KLog {
         @param message Error message
       */
       static inline void error(const std::string &message) {
-        log(log_types::error, message);
+        log(log_types::L_ERROR, message);
       }
 
       /*
@@ -88,7 +88,7 @@ namespace KLog {
         @param message Error message
       */
       static inline void info(const std::string &message) {
-        log(log_types::info, message);
+        log(log_types::L_INFO, message);
       }
 
       /*
@@ -97,7 +97,7 @@ namespace KLog {
         @param message Error message
       */
       static inline void warn(const std::string &message) {
-        log(log_types::warning, message);
+        log(log_types::L_WARNING, message);
       }
   };
 }
