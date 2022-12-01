@@ -25,10 +25,8 @@ namespace KRONOS {
     private:
       std::optional<KUtil::side_color> _color;
     public:
-      /*
-        @param color
-      */
       inline explicit Robot() {
+        KLog::Log::info("Constructing robot");
         std::set_terminate([]() {
           try {
             std::rethrow_exception(std::current_exception());
@@ -40,6 +38,10 @@ namespace KRONOS {
 
           std::abort();
         });
+      }
+
+      inline ~Robot() {
+        KLog::Log::info("Destructuring robot class");
       }
 
       /*
