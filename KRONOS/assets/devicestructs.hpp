@@ -27,7 +27,6 @@ namespace KRONOS {
   };
 
   enum device_face {
-    K_NONE,
     K_NORTH,
     K_NORTHEAST,
     K_EAST,

@@ -21,7 +21,7 @@
 namespace KRONOS {
   class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public AutonomousManager {
     private:
-      KUtil::side_color _color;
+      std::optional<KUtil::side_color> _color;
     public:
       /*
         @param color
@@ -45,7 +45,7 @@ namespace KRONOS {
 
         @return Which side the robot is on
       */
-      inline KUtil::side_color get_side() const { return _color; }
+      inline std::optional<KUtil::side_color> get_side() const { return _color; }
 
       /*
         Set color side of the robot
@@ -55,8 +55,8 @@ namespace KRONOS {
         @return Reference to initial robot
       */
       inline Robot& set_side(const KUtil::side_color &color) {
-        if (_color) {
-          throw new ColorAlreadySetError(_color);
+        if (_color.has_value()) {
+          throw new ColorAlreadySetError(_color.value());
         } else {
           _color = color;
         }
