@@ -10,6 +10,7 @@
 #include "pros/rtos.hpp"
 
 #include <cmath>
+#include <optional>
 
 namespace KPID {
   enum pid_exit_conditions {
@@ -26,14 +27,14 @@ namespace KPID {
 
   class PID {
     private:
-      double _starttime = __DBL_MIN__;
+      std::optional<double> _starttime;
       double _previousError, _integral;
     protected:
       const pid_exit_conditions _exitcondition;
       const pid_consts _pidconsts;
 
       inline void reset() {
-        _starttime = __DBL_MIN__;
+        _starttime.reset();
         _previousError = 0;
         _integral = 0;
       }
@@ -47,7 +48,7 @@ namespace KPID {
         @return Value to set
       */
       inline double pid(const double &target, const double &current) {
-        if (_exitcondition == P_TIME && _starttime == __DBL_MIN__) {
+        if (_exitcondition == P_TIME && !_starttime.has_value()) {
           _starttime = pros::millis();
         }
 
@@ -61,7 +62,7 @@ namespace KPID {
         if (_exitcondition == P_ERROR && fabs(target - output) <= _pidconsts.errormargin) {
           reset();
           return 0;
-        } else if (_exitcondition == P_TIME && pros::millis() - _starttime >= 0) {
+        } else if (_exitcondition == P_TIME && pros::millis() - _starttime.value() >= 0) {
           reset();
           return 0;
         } else {

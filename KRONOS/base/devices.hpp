@@ -23,34 +23,61 @@
 #include "pros/vision.hpp"
 
 #include <map>
+#include <optional>
 
 namespace KRONOS {
   class AbstractDevice {
+    private:
+      inline void init() {
+        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + (_face.has_value() ? " facing " + std::to_string(_face.value()) : "") + (_port.has_value() ? " at port " + std::to_string(_port.value()) : ""));
+
+        #ifdef STRICT_DEVICE_ASSIGNMENT
+          if (_port.has_value()) {
+            const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port.value());
+
+            if (portInfo != pros::c::E_DEVICE_NONE) {
+              throw new PortOccupiedError(_port.value());
+            } else if ((int) portInfo != (int) _type) {
+              throw new UnexpectedDeviceFoundError(portInfo, _type);
+            }
+          }
+        #endif
+      }
     protected:
       const device_types _type;
-      const device_face _face;
-      const char _port;
+      const std::optional<device_face> _face;
+      const std::optional<char> _port;
     public:
       /*
         @param device
-        @param delay
+        @param face
+        @param port
       */
-      inline explicit AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
-        if (_port == '\0') {
-          return;
-        }
+      inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
+        init();
+      };
 
-        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + " facing " + std::to_string(_face) + " at port " + std::to_string(_port));
+      /*
+        @param device
+        @param face
+      */
 
-        #ifdef STRICT_DEVICE_ASSIGNMENT
-          const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port);
+      inline AbstractDevice(const device_types &device, const device_face &face) : _type(device), _face(face) {
+        init();
+      };
+      /*
+        @param device
+        @param port
+      */
+      inline AbstractDevice(const device_types &device, const char &port) : _type(device), _port(port) {
+        init();
+      };
 
-          if (portInfo != pros::c::E_DEVICE_NONE) {
-            throw new PortOccupiedError(_port);
-          } else if ((int) portInfo != (int) _type) {
-            throw new UnexpectedDeviceFoundError(portInfo, _type);
-          }
-        #endif
+      /*
+        @param device
+      */
+      inline AbstractDevice(const device_types &device) : _type(device) {
+        init();
       };
 
       /*
@@ -65,14 +92,14 @@ namespace KRONOS {
 
         @return Direction the device is facing
       */
-      inline virtual device_face facing() const { return _face; }
+      inline virtual std::optional<device_face> facing() const { return _face; }
 
       /*
         Get port device is connected to
 
         @return Port the device is on
       */
-      inline virtual char port() const { return _port; }
+      inline virtual std::optional<char> port() const { return _port; }
   };
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
@@ -98,7 +125,7 @@ namespace KRONOS {
       /*
         @param controller
       */
-      inline explicit Controller(const controller_struct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER, K_NONE, '\0'), _id(controller.id) {};
+      inline explicit Controller(const controller_struct &controller) : pros::Controller(controller.id), AbstractDevice(K_CONTROLLER), _id(controller.id) {};
 
       /*
         Get controller id
