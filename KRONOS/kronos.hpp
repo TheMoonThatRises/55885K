@@ -16,6 +16,8 @@
 
   #include "assets/logger.hpp" // Logger class
 
+  #include "base/user/caster.hpp" // Group of dynamic cast functions
+
   /*
     Include KRONOS plugins
   */

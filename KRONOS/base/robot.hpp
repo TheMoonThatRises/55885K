@@ -14,6 +14,8 @@
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
 
+#include "user/caster.hpp"
+
 #include "pros/rtos.hpp"
 
 #include <functional>
@@ -115,7 +117,7 @@ namespace KRONOS {
         std::vector<Motor*> motors;
 
         for (AbstractDevice *device : devices)
-          motors.push_back(dynamic_cast<Motor*>(device));
+          motors.push_back(to_motor(device));
 
         ChassisManager::set(motors);
 
