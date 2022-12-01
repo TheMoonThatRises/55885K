@@ -22,7 +22,7 @@ namespace KRONOS {
       /*
         Set chassis motors
 
-        @param motors Vector of motor pointer
+        @param motors Vector of motor pointers
       */
       inline void set(const std::vector<Motor*> &motors) {
         _chassisMotors = motors;
