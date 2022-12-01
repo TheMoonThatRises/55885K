@@ -49,11 +49,11 @@ namespace KLog {
 
         logmessage += ": " + message + "\n";
 
-        #ifdef LOG_COUT
+        #ifdef KRONOS_LOG_COUT
           std::cout << logmessage;
         #endif
 
-        #ifdef LOG_FILE
+        #ifdef KRONOS_LOG_FILE
           if (std::filesystem::is_directory(SD_CARD_PATH)) {
             static std::string fileName;
             std::ofstream logFile;

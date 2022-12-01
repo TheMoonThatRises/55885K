@@ -31,7 +31,7 @@ namespace KRONOS {
       inline void init() {
         KLog::Log::info("Creating abstract device type " + std::to_string(_type) + (_face.has_value() ? " facing " + std::to_string(_face.value()) : "") + (_port.has_value() ? " at port " + std::to_string(_port.value()) : ""));
 
-        #ifdef STRICT_DEVICE_ASSIGNMENT
+        #ifdef KRONOS_STRICT_DEVICE_ASSIGNMENT
           if (_port.has_value()) {
             const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port.value());
 

@@ -1,10 +1,10 @@
 /*
   Define environmental variables that control how KRONOS works
 */
-// #define LOG_COUT
-#define LOG_FILE
-#define STRICT_DEVICE_ASSIGNMENT
-#define STRICT_DEVICE_GETTER
+// #define KRONOS_LOG_COUT
+#define KRONOS_LOG_FILE
+#define KRONOS_STRICT_DEVICE_ASSIGNMENT
+#define KRONOS_STRICT_DEVICE_GETTER
 
 #include "kronos.hpp"
 #include "main.h"
