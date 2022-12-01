@@ -48,7 +48,7 @@ void initialize() {
 
     .add_controller_link([&]() {
       try {
-        KLog::Log::info(dynamic_cast<KRONOS::Button*>(robot.get_device("asdf"))->get_value() ? "true" : "false");
+        KLog::Log::info(KRONOS::to_button(robot.get_device("asdf"))->get_value() ? "true" : "false");
       } catch (const std::exception &except) {
         KLog::Log::error(except.what());
       }
@@ -61,7 +61,7 @@ void initialize() {
 
     // Create claw listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
-      dynamic_cast<KRONOS::Motor*>(robot.get_device("claw"))->move_velocity_pid(
+      KRONOS::to_motor(robot.get_device("claw"))->move_velocity_pid(
         values.at(0) ? 100 :
           values.at(1) ? -100 : 0
       );
@@ -69,7 +69,7 @@ void initialize() {
 
     // Create claw rotation listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
-      dynamic_cast<KRONOS::Motor*>(robot.get_device("clawrotate"))->move_velocity_pid(
+      KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity_pid(
         values.at(0) ? 100 :
           values.at(1) ? -100 : 0
       );
@@ -80,9 +80,9 @@ void initialize() {
     //   bool bvalue = values.at(0) || values.at(1),
     //        cvalue = values.at(0);
 
-    //   KRONOS::Motor* motor = dynamic_cast<KRONOS::Motor*>(robot.get_device("roller"));
+    //   KRONOS::Motor* motor = KRONOS::to_motor(robot.get_device("roller"));
 
-    //   pros::c::optical_raw_s_t rgb = dynamic_cast<KRONOS::Color*>(robot.get_device("color"))->get_raw();
+    //   pros::c::optical_raw_s_t rgb = KRONOS::to_color(robot.get_device("color"))->get_raw();
 
     //   if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
     //     motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
