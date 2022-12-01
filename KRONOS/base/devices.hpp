@@ -28,8 +28,12 @@
 namespace KRONOS {
   class AbstractDevice {
     private:
-      inline void init() {
-        KLog::Log::info("Creating abstract device type " + std::to_string(_type) + (_face.has_value() ? " facing " + std::to_string(_face.value()) : "") + (_port.has_value() ? " at port " + std::to_string(_port.value()) : ""));
+      inline std::string _get_info() {
+        return "abstract device type " + std::to_string(_type) + "'" + (_face.has_value() ? " facing '" + std::to_string(_face.value())  + "'": "") + (_port.has_value() ? " at port '" + std::to_string(_port.value()) + "'" : "");
+      }
+
+      inline void _init() {
+        KLog::Log::info("Constructing " + _get_info());
 
         #ifdef KRONOS_STRICT_DEVICE_ASSIGNMENT
           if (_port.has_value()) {
@@ -38,7 +42,7 @@ namespace KRONOS {
             if (portInfo != pros::c::E_DEVICE_NONE) {
               throw new PortOccupiedError(_port.value());
             } else if ((int) portInfo != (int) _type) {
-              throw new UnexpectedDeviceFoundError(portInfo, _type);
+              throw new UnexpectedDeviceFoundError(portInfo, _type, _port.value());
             }
           }
         #endif
@@ -54,7 +58,7 @@ namespace KRONOS {
         @param port
       */
       inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
-        init();
+        _init();
       };
 
       /*
@@ -63,21 +67,25 @@ namespace KRONOS {
       */
 
       inline AbstractDevice(const device_types &device, const device_face &face) : _type(device), _face(face) {
-        init();
+        _init();
       };
       /*
         @param device
         @param port
       */
       inline AbstractDevice(const device_types &device, const char &port) : _type(device), _port(port) {
-        init();
+        _init();
       };
 
       /*
         @param device
       */
       inline AbstractDevice(const device_types &device) : _type(device) {
-        init();
+        _init();
+      };
+
+      inline ~AbstractDevice() {
+        KLog::Log::info("Destructuring " + _get_info());
       };
 
       /*
