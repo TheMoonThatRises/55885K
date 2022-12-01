@@ -10,10 +10,10 @@
 #include "assets/util.hpp"
 #include "assets/uuid.hpp"
 
+#include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 
 #include <iostream>
-#include <filesystem>
 #include <fstream>
 #include <string>
 
@@ -54,7 +54,9 @@ namespace KLog {
         #endif
 
         #ifdef KRONOS_LOG_FILE
-          if (std::filesystem::is_directory(SD_CARD_PATH)) {
+          static bool usd_installed = true;
+
+          if (pros::usd::is_installed()) {
             static std::string fileName;
             std::ofstream logFile;
 
@@ -67,8 +69,9 @@ namespace KLog {
             logFile << logmessage;
 
             logFile.close();
-          } else {
-            throw new std::system_error(std::error_code(), "MicroSD card directory '" + std::string(SD_CARD_PATH) + "' not found");
+          } else if (usd_installed) {
+            usd_installed = false;
+            warn("MicroSD card directory '" + std::string(SD_CARD_PATH) + "' not found");
           }
         #endif
       }
