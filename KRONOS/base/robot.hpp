@@ -27,6 +27,8 @@ namespace KRONOS {
     public:
       inline explicit Robot() {
         KLog::Log::info("Constructing robot");
+        KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
+
         std::set_terminate([]() {
           try {
             std::rethrow_exception(std::current_exception());
