@@ -10,7 +10,6 @@
 #include "assets/util.hpp"
 #include "assets/uuid.hpp"
 
-#include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 
 #include <iostream>
