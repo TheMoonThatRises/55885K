@@ -7,7 +7,7 @@
 #ifndef _DEVICESTRUCTS_HPP_
 #define _DEVICESTRUCTS_HPP_
 
-#include "assets/util.hpp"
+#include "assets/statics.hpp"
 
 #include "base/extenders/pid.hpp"
 

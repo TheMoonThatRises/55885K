@@ -7,7 +7,7 @@
 #ifndef _ROBOT_HPP_
 #define _ROBOT_HPP_
 
-#include "assets/util.hpp"
+#include "assets/statics.hpp"
 
 #include "base/managers/autonmanager.hpp"
 #include "base/managers/chassismanager.hpp"
