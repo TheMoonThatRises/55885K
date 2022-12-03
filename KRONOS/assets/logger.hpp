@@ -7,7 +7,7 @@
 #ifndef _LOGGER_HPP_
 #define _LOGGER_HPP_
 
-#include "assets/util.hpp"
+#include "assets/statics.hpp"
 #include "assets/uuid.hpp"
 
 #include "pros/rtos.hpp"
@@ -60,7 +60,7 @@ namespace KLog {
             std::ofstream logFile;
 
             if (fileName.empty()) {
-              fileName = SD_CARD_PATH + KUUID::UUIDGenerator().generate_uuid() + ".log";
+              fileName = KRONOS_SD_CARD_PATH + KUUID::UUIDGenerator().generate_uuid() + ".log";
             }
 
             logFile.open(fileName, std::ios_base::app);
@@ -70,7 +70,7 @@ namespace KLog {
             logFile.close();
           } else if (usd_installed) {
             usd_installed = false;
-            warn("MicroSD card directory '" + std::string(SD_CARD_PATH) + "' not found");
+            warn("MicroSD card directory '" + std::string(KRONOS_SD_CARD_PATH) + "' not found");
           }
         #endif
       }

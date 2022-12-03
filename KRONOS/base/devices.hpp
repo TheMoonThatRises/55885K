@@ -10,7 +10,7 @@
 #include "assets/devicestructs.hpp"
 #include "assets/errortypes.hpp"
 #include "assets/logger.hpp"
-#include "assets/util.hpp"
+#include "assets/statics.hpp"
 
 #include "base/extenders/pid.hpp"
 
@@ -84,7 +84,7 @@ namespace KRONOS {
         _init();
       };
 
-      inline ~AbstractDevice() {
+      virtual inline ~AbstractDevice() {
         KLog::Log::info("Destructuring " + _get_info());
       };
 

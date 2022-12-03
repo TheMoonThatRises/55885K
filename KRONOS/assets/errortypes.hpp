@@ -9,7 +9,7 @@
 
 #include "assets/devicestructs.hpp"
 #include "assets/logger.hpp"
-#include "assets/util.hpp"
+#include "assets/statics.hpp"
 
 #include "pros/apix.h"
 

@@ -41,7 +41,7 @@ namespace KRONOS {
 
           double mturn = motor->is_reversed() ? -turn : turn;
           double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? strafe : -strafe;
-          motor->move_velocity((straight + mstrafe + mturn) * JOYSTICK_MOTOR_RATIO);
+          motor->move_velocity((straight + mstrafe + mturn) * KRONOS_JOYSTICK_MOTOR_RATIO);
         }
       }
   };

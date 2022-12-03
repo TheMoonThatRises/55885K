@@ -145,6 +145,6 @@ void opcontrol() {
   while (true) {
     robot.controller_listener();
 
-    pros::delay(MSDELAY); // Always have a pros::delay in a while (true) loop
+    pros::delay(KRONOS_MSDELAY); // Always have a pros::delay in a while (true) loop
   }
 }
