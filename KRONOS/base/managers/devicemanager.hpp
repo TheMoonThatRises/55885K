@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <ranges>
 #include <vector>
@@ -20,7 +21,7 @@
 namespace KRONOS {
   class DeviceManager {
     private:
-      std::map<std::string, AbstractDevice*> _devices;
+      std::map<std::string, std::unique_ptr<AbstractDevice>> _devices;
     protected:
       /*
         Sets device with name tag
@@ -29,7 +30,7 @@ namespace KRONOS {
         @param device Device to set
       */
       inline void set(const std::string &name, AbstractDevice *device) {
-        _devices.insert({name, device});
+        _devices.emplace(name, std::move(device));
 
         KLog::Log::info("Saved device of type " + std::to_string(device->classname()) + " with name '" + name + (device->port().has_value() ? "' to port " + std::to_string(device->port().value()) : ""));
       }
@@ -40,8 +41,12 @@ namespace KRONOS {
         @return Vector of all devices in the form of an AbstractDevice pointer
       */
       inline std::vector<AbstractDevice*> get_all() {
+        std::vector<AbstractDevice*> devices;
         auto kv = std::views::values(_devices);
-        return { kv.begin(), kv.end() };
+
+        std::transform(kv.begin(), kv.end(), back_inserter(devices), [](const std::unique_ptr<AbstractDevice> &device) { return device.get(); });
+
+        return devices;
       }
 
       /*
@@ -76,7 +81,7 @@ namespace KRONOS {
             return nullptr;
           #endif
         } else {
-          return _devices.at(name);
+          return _devices.at(name).get();
         }
       }
 
@@ -88,9 +93,9 @@ namespace KRONOS {
         @return The device requested as an AbstractDevice pointer
       */
       inline AbstractDevice* get_device(const char &port) {
-        for (const auto [name, device] : _devices)
+        for (const auto &[name, device] : _devices)
           if (device->port() == port)
-            return device;
+            return device.get();
 
         #ifdef KRONOS_STRICT_DEVICE_GETTER
           throw new NoDeviceFoundError(port);
