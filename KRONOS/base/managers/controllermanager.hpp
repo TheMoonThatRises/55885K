@@ -16,7 +16,7 @@ namespace KRONOS {
 
   class ControllerManager {
     private:
-      Controller *controllers[2];
+      std::array<Controller*, 2> controllers;
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
       std::map<std::pair<std::vector<pros::controller_analog_e_t>, controller_type>, std::function<void(std::vector<double>)>> _multiAnalogLink;
@@ -95,25 +95,25 @@ namespace KRONOS {
       */
       inline void listener() {
         for (const auto &[key, function] : _analogLink)
-          function(controllers[key.second]->get_analog(key.first));
+          function(controllers.at(key.second)->get_analog(key.first));
 
         for (const auto &[key, function] : _multiAnalogLink) {
           std::vector<double> analogs;
 
           for (const pros::controller_analog_e_t &analog : key.first)
-            analogs.push_back(controllers[key.second]->get_analog(analog));
+            analogs.push_back(controllers.at(key.second)->get_analog(analog));
 
           function(analogs);
         }
 
         for (const auto &[key, function] : _digitalLink)
-          function(controllers[key.second]->get_digital(key.first));
+          function(controllers.at(key.second)->get_digital(key.first));
 
         for (const auto &[key, function] : _multiDigitalLink) {
           std::vector<bool> digitals;
 
           for (const pros::controller_digital_e_t &digital : key.first)
-            digitals.push_back(controllers[key.second]->get_digital(digital));
+            digitals.push_back(controllers.at(key.second)->get_digital(digital));
 
           function(digitals);
         }
