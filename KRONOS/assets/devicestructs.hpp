@@ -38,7 +38,7 @@ namespace KRONOS {
   };
 
   struct abstract_device_struct {
-    uint8_t port = 1;
+    int8_t port = 1;
     device_face face = K_NORTH;
   };
 
@@ -47,7 +47,7 @@ namespace KRONOS {
   };
 
   struct motor_struct {
-    uint8_t port = 1;
+    int8_t port = 1;
     pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_GREEN;
     bool reverse = false;
     pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
