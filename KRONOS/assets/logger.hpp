@@ -60,7 +60,7 @@ namespace KLog {
             std::ofstream logFile;
 
             if (fileName.empty()) {
-              fileName = KRONOS_SD_CARD_PATH + KUUID::UUIDGenerator().generate_uuid() + ".log";
+              fileName = std::string(KUtil::KRONOS_SD_CARD_PATH) + KUUID::UUIDGenerator().generate_uuid() + ".log";
             }
 
             logFile.open(fileName, std::ios_base::app);
@@ -70,7 +70,7 @@ namespace KLog {
             logFile.close();
           } else if (usd_installed) {
             usd_installed = false;
-            warn("MicroSD card directory '" + std::string(KRONOS_SD_CARD_PATH) + "' not found");
+            warn("MicroSD card directory '" + std::string(KUtil::KRONOS_SD_CARD_PATH) + "' not found");
           }
         #endif
       }

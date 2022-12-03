@@ -53,7 +53,7 @@ namespace KRONOS {
 
         @param devices Vector of devices in devicemanager in robot
       */
-      inline void run(std::vector<KRONOS::AbstractDevice*> devices) {
+      inline void run(const std::vector<KRONOS::AbstractDevice*> devices) {
         if (_canRunAuton) {
           KLog::Log::info("Running auton '" + _currentAuton + "'");
         } else {
@@ -93,7 +93,7 @@ namespace KRONOS {
               _controller->set_text("Selecting auton << " + _currentAuton);
             }
 
-            pros::delay(KRONOS_MSDELAY);
+            pros::delay(KUtil::KRONOS_MSDELAY);
           }
 
           _controller->set_text("Locked auton < " + _currentAuton);
