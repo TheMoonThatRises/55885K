@@ -59,10 +59,8 @@ namespace KPID {
 
         _previousError = error;
 
-        if (_exitcondition == P_ERROR && fabs(target - output) <= _pidconsts.errormargin) {
-          reset();
-          return 0;
-        } else if (_exitcondition == P_TIME && pros::millis() - _starttime.value() >= _pidconsts.timeconstraint) {
+        if ((_exitcondition == P_ERROR && fabs(target - output) <= _pidconsts.errormargin) ||
+            (_exitcondition == P_TIME && pros::millis() - _starttime.value() >= _pidconsts.timeconstraint)) {
           reset();
           return 0;
         } else {
