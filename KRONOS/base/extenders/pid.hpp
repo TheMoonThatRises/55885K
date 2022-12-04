@@ -28,11 +28,11 @@ namespace KPID {
   class PID {
     private:
       std::optional<double> _starttime;
-      double _previousError, _integral;
-    protected:
+      double _previousError {}, _integral {};
+
       const pid_exit_conditions _exitcondition;
       const pid_consts _pidconsts;
-
+  protected:
       inline void reset() {
         _starttime.reset();
         _previousError = 0;
