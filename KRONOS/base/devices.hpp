@@ -47,7 +47,7 @@ namespace KRONOS {
           }
         #endif
       }
-    protected:
+
       const device_types _type;
       const std::optional<device_face> _face;
       const std::optional<char> _port;
@@ -80,7 +80,7 @@ namespace KRONOS {
       /*
         @param device
       */
-      inline AbstractDevice(const device_types &device) : _type(device) {
+      inline explicit AbstractDevice(const device_types &device) : _type(device) {
         _init();
       };
 
@@ -127,7 +127,7 @@ namespace KRONOS {
   };
 
   class Controller : public pros::Controller, public AbstractDevice {
-    protected:
+    private:
       const pros::controller_id_e_t _id;
     public:
       /*
@@ -176,7 +176,7 @@ namespace KRONOS {
 
         pros::Motor::move_velocity(velocity);
 
-        return !velocity;
+        return velocity == 0;
       }
 
       /*
@@ -191,12 +191,12 @@ namespace KRONOS {
 
         pros::Motor::move_velocity(velocity);
 
-        return !velocity;
+        return velocity == 0;
       }
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {
-    protected:
+    private:
       bool _value;
     public:
       /*
@@ -242,7 +242,7 @@ namespace KRONOS {
   };
 
   class Vision : pros::Vision, public AbstractDevice {
-    protected:
+    private:
       std::map<int, pros::vision_signature_s_t> _signatures;
     public:
       /*

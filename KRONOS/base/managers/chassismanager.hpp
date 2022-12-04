@@ -16,9 +16,9 @@
 
 namespace KRONOS {
   class ChassisManager {
-    protected:
+    private:
       std::vector<Motor*> _chassisMotors;
-
+    protected:
       /*
         Set chassis motors
 
@@ -39,9 +39,9 @@ namespace KRONOS {
         for (Motor *motor : _chassisMotors) {
           std::vector<device_face> reverseStrafe {K_NORTHWEST, K_SOUTHEAST};
 
-          double mturn = motor->is_reversed() ? -turn : turn;
-          double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? strafe : -strafe;
-          motor->move_velocity((straight + mstrafe + mturn) * KRONOS_JOYSTICK_MOTOR_RATIO);
+          const double mturn = motor->is_reversed() ? -turn : turn;
+          const double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? strafe : -strafe;
+          motor->move_velocity((straight + mstrafe + mturn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO);
         }
       }
   };
