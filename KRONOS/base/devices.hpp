@@ -29,7 +29,7 @@ namespace KRONOS {
   class AbstractDevice {
     private:
       inline std::string _get_info() {
-        return "abstract device type " + std::to_string(_type) + "'" + (_face.has_value() ? " facing '" + std::to_string(_face.value())  + "'": "") + (_port.has_value() ? " at port '" + std::to_string(_port.value()) + "'" : "");
+        return "abstract device type '" + std::to_string(_type) + "'" + (_face.has_value() ? " facing '" + std::to_string(_face.value())  + "'": "") + (_port.has_value() ? " at port '" + std::to_string(_port.value()) + "'" : "");
       }
 
       inline void _init() {
@@ -93,7 +93,7 @@ namespace KRONOS {
 
         @return Type of device
       */
-      inline virtual device_types classname() const { return _type; }
+      inline virtual device_types type() const { return _type; }
 
       /*
         Get direction device is facing
