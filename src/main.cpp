@@ -27,7 +27,7 @@ void initialize() {
     .set_side(KUtil::S_NONE)
 
     .add_device("topright", new KRONOS::Motor({.port=4, .reverse=true}))
-    .add_device("topleft", new KRONOS::Motor({.port=5, .face=KRONOS::K_NORTHWEST}))
+    .add_device("topleft", new KRONOS::Motor({.port=12, .face=KRONOS::K_NORTHWEST}))
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
