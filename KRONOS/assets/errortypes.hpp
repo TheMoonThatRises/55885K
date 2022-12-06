@@ -43,6 +43,11 @@ namespace KRONOS {
     public:
       explicit UnexpectedDeviceFoundError(const pros::c::v5_device_e_t &expected, const device_types& got, const char& port) : AbstractKronosError("Expected device type '" + std::to_string(expected) + "' but got '" + std::to_string(got) + "'" + " at port '" + std::to_string(port) + "'") {};
   };
+
+  class UnexpectedDeviceTypeError : public AbstractKronosError {
+    public:
+      explicit UnexpectedDeviceTypeError(const device_types &expected, const device_types &got) : AbstractKronosError("Expected device type '" + std::to_string(expected) + "' but got '" + std::to_string(got) + "' when casting") {};
+  };
 }
 
 #endif
