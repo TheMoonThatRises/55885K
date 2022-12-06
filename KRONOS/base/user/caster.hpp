@@ -10,6 +10,12 @@
 #include "base/devices.hpp"
 
 namespace KRONOS {
+  void assert_same_device(AbstractDevice* device, const device_types &type) {
+    if (device->type() != type) {
+      throw new UnexpectedDeviceTypeError(device->type(), type);
+    }
+  }
+
   /*
     Casts AbstractDevice pointer to Button pointer
 
@@ -18,6 +24,8 @@ namespace KRONOS {
     @return Button pointer
   */
   Button* to_button(AbstractDevice* device) {
+    assert_same_device(device, K_BUTTON);
+
     return dynamic_cast<Button*>(device);
   }
 
@@ -29,6 +37,8 @@ namespace KRONOS {
     @return Color pointer
   */
   Color* to_color(AbstractDevice* device) {
+    assert_same_device(device, K_COLOR);
+
     return dynamic_cast<Color*>(device);
   }
 
@@ -40,6 +50,8 @@ namespace KRONOS {
     @return Controller pointer
   */
   Controller* to_controller(AbstractDevice* device) {
+    assert_same_device(device, K_CONTROLLER);
+
     return dynamic_cast<Controller*>(device);
   }
 
@@ -51,6 +63,8 @@ namespace KRONOS {
     @return Motor pointer
   */
   Motor* to_motor(AbstractDevice* device) {
+    assert_same_device(device, K_MOTOR);
+
     return dynamic_cast<Motor*>(device);
   }
 
@@ -62,6 +76,8 @@ namespace KRONOS {
     @return Piston pointer
   */
   Piston* to_piston(AbstractDevice* device) {
+    assert_same_device(device, K_PISTON);
+
     return dynamic_cast<Piston*>(device);
   }
 
@@ -73,6 +89,8 @@ namespace KRONOS {
     @return Proximity pointer
   */
   Proximity* to_proximity(AbstractDevice* device) {
+    assert_same_device(device, K_PROXIMITY);
+
     return dynamic_cast<Proximity*>(device);
   }
 
@@ -84,6 +102,8 @@ namespace KRONOS {
     @return Vision pointer
   */
   Vision* to_vision(AbstractDevice* device) {
+    assert_same_device(device, K_VISION);
+
     return dynamic_cast<Vision*>(device);
   }
 }
