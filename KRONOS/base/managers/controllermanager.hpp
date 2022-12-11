@@ -121,6 +121,22 @@ namespace KRONOS {
         for (const auto &function : voidLinks)
           function();
       }
+    public:
+      ~ControllerManager() {
+        delete controllers[0];
+        delete controllers[1];
+      }
+
+      /*
+        Gets controller pointer stored
+
+        @param type Controller type
+
+        @return Controller pointer
+      */
+      inline Controller* get_controller(const controller_type &type) {
+        return controllers.at(type);
+      }
   };
 }
 
