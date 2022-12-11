@@ -42,10 +42,10 @@ namespace KRONOS {
         @param lock Lock button
         @param controller Main controller
       */
-      inline void set_assets(KRONOS::Button &select, KRONOS::Button &lock, KRONOS::Controller &controller) {
-        _select = &select;
-        _lock = &lock;
-        _controller = &controller;
+      inline void set_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Controller* controller) {
+        _select = select;
+        _lock = lock;
+        _controller = controller;
       }
 
       /*
