@@ -148,7 +148,7 @@ namespace KRONOS {
         @param text Text to display to controller screen
       */
       inline void set_text(const std::string &text) {
-        pros::Controller::clear();
+        // pros::Controller::clear();
         pros::Controller::set_text(0, 0, text + "         ");
 
         KLog::Log::info("Controller " + std::to_string(id()) + ": " + text);
