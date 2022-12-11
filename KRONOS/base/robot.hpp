@@ -129,6 +129,19 @@ namespace KRONOS {
       }
 
       /*
+        Sets the devices that autonomous uses
+
+        @param select Select button
+        @param lock Lock button
+        @param controller Main controller
+      */
+      inline Robot& set_auton_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Controller* controller) {
+        AutonomousManager::set_assets(select, lock, controller);
+
+        return *this;
+      }
+
+      /*
         Sets analog link for listener to listen
 
         @param method Controller analog input
@@ -245,6 +258,15 @@ namespace KRONOS {
           manip_func(device);
 
         pros::delay(delay);
+      }
+
+      /*
+        Delay's the robot's functionalities (Wrapper of pros::delay)
+
+        @param milliseconds Length of sleep
+      */
+      inline void sleep(const int &milliseconds) {
+        pros::delay(milliseconds);
       }
   };
 }
