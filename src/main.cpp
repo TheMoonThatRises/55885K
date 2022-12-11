@@ -34,15 +34,12 @@ void initialize() {
     .add_device("claw", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_36, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
     .add_device("clawrotate", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_36, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
-    // .add_device("button", new KRONOS::Button({.port='A'}))
-
-    // .add_device("roller", new KRONOS::Motor({.port=14}))
-
-    // .add_device("color", new KRONOS::Color({.port=18}))
+    .add_device("roller", new KRONOS::Motor({.port=18}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
+    .set_auton_assets(nullptr, nullptr, robot.get_controller(KRONOS::C_MASTER))
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
@@ -62,6 +59,13 @@ void initialize() {
       KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(
         values.at(0) ? -50 :
           values.at(1) ? 50 : 0
+      );
+    })
+
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_B}, [&](const std::vector<bool> &values) {
+      KRONOS::to_motor(robot.get_device("roller"))->move_velocity(
+        values.at(0) ? -160 :
+          values.at(1) ? 160 : 0
       );
     });
 
@@ -124,8 +128,31 @@ void autonomous() {
   /*
     Run autonomous code here
   */
+  robot.move_chassis(0, -50, 0);
+  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(-70);
+  robot.sleep(900);
+  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(0);
 
-  robot.run_auton();
+  robot.move_chassis(0, 45, 0);
+  robot.sleep(750);
+
+  robot.move_chassis(-50, 0, 0);
+  robot.sleep(5000);
+  robot.move_chassis(0, 0, 0);
+
+  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(50);
+  robot.sleep(1000);
+  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(0);
+
+  KRONOS::to_motor(robot.get_device("claw"))->move_velocity(-100);
+  robot.sleep(1000);
+  KRONOS::to_motor(robot.get_device("claw"))->move_velocity(0);
+
+  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(-50);
+  robot.sleep(800);
+  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(0);
+
+  // robot.run_auton();
 }
 
 /**
@@ -145,6 +172,6 @@ void opcontrol() {
   while (true) {
     robot.controller_listener();
 
-    pros::delay(KUtil::KRONOS_MSDELAY); // Always have a pros::delay in a while (true) loop
+    robot.sleep(KUtil::KRONOS_MSDELAY); // Always have a sleep in a while (true) loop
   }
 }
