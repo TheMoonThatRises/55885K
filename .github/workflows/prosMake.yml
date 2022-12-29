@@ -9,25 +9,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.SUBMODULE_KEYS }}
-          submodules: recursive
 
-      - name: Install python3.10
+      - name: Install python3.11
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           architecture: 'x64'
-          # cache: 'pip'
-          # cache-dependency-path: 'requirements.txt'
 
-      - name: Install prosv5
-        run: pip install -r requirements.txt --no-warn-script-location --no-use-pep517
+      - name: Install pros-cli
+        run: pip install pros-cli
 
       - name: Install arm-none-eabi-gcc
-        uses: fiam/arm-none-eabi-gcc@v1
-        with:
-          release: '10-2020-q4'
-        
-      - name: Pros make code
+        run: curl -Ls "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2" -o gcc-arm-none-eabi.tar.bz2 && tar -xjf gcc-arm-none-eabi.tar.bz2 && echo "$PWD/gcc-arm-none-eabi-10.3-2021.10/bin" >> $GITHUB_PATH
+
+      - name: Compile
         run: pros make
