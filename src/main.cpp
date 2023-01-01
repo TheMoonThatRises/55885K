@@ -69,22 +69,6 @@ void initialize() {
       );
     });
 
-    // Create roller listener
-    // .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
-    //   bool bvalue = values.at(0) || values.at(1),
-    //        cvalue = values.at(0);
-
-    //   KRONOS::Motor* motor = KRONOS::to_motor(robot.get_device("roller"));
-
-    //   pros::c::optical_raw_s_t rgb = KRONOS::to_color(robot.get_device("color"))->get_raw();
-
-    //   if (rgb.red > 12 && rgb.blue > 6 && rgb.blue > 6 && robot.side() == KRONOS::RED) {
-    //     motor->move_velocity(bvalue ? (cvalue ? 250 : -250) : 0);
-    //   } else {
-
-    //   }
-    // });
-
   KLog::Log::info("Finish initializing Robot...");
 }
 
