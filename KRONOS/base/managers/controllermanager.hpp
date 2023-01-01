@@ -16,13 +16,13 @@ namespace KRONOS {
 
   class ControllerManager {
     private:
-      std::array<Controller*, 2> controllers;
+      std::array<Controller*, 2> _controllers;
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
       std::map<std::pair<std::vector<pros::controller_analog_e_t>, controller_type>, std::function<void(std::vector<double>)>> _multiAnalogLink;
       std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void(bool)>> _digitalLink;
       std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
-      std::vector<std::function<void()>> voidLinks;
+      std::vector<std::function<void()>> _voidLinks;
     protected:
       /*
         Set controller
@@ -30,11 +30,7 @@ namespace KRONOS {
         @param controller Controller as AbstractDevice pointer
       */
       inline void add(Controller *controller) {
-        if (controller->id() == pros::E_CONTROLLER_MASTER) {
-          controllers[C_MASTER] = controller;
-        } else {
-          controllers[C_PARTNER] = controller;
-        }
+        _controllers[controller->id()] = controller;
       }
 
       /*
@@ -87,7 +83,7 @@ namespace KRONOS {
         @param function Function to run
       */
       inline void add(const std::function<void()>& function) {
-        voidLinks.push_back(function);
+        _voidLinks.push_back(function);
       }
 
       /*
@@ -95,36 +91,36 @@ namespace KRONOS {
       */
       inline void listener() {
         for (const auto &[key, function] : _analogLink)
-          function(controllers.at(key.second)->get_analog(key.first));
+          function(_controllers[key.second]->get_analog(key.first));
 
         for (const auto &[key, function] : _multiAnalogLink) {
           std::vector<double> analogs;
 
-          for (const pros::controller_analog_e_t &analog : key.first)
-            analogs.push_back(controllers.at(key.second)->get_analog(analog));
+          for (const auto &analog : key.first)
+            analogs.push_back(_controllers[key.second]->get_analog(analog));
 
           function(analogs);
         }
 
         for (const auto &[key, function] : _digitalLink)
-          function(controllers.at(key.second)->get_digital(key.first));
+          function(_controllers[key.second]->get_digital(key.first));
 
         for (const auto &[key, function] : _multiDigitalLink) {
           std::vector<bool> digitals;
 
-          for (const pros::controller_digital_e_t &digital : key.first)
-            digitals.push_back(controllers.at(key.second)->get_digital(digital));
+          for (const auto &digital : key.first)
+            digitals.push_back(_controllers[key.second]->get_digital(digital));
 
           function(digitals);
         }
 
-        for (const auto &function : voidLinks)
+        for (const auto &function : _voidLinks)
           function();
       }
     public:
       ~ControllerManager() {
-        delete controllers[0];
-        delete controllers[1];
+        delete _controllers[C_MASTER];
+        delete _controllers[C_PARTNER];
       }
 
       /*
@@ -135,7 +131,7 @@ namespace KRONOS {
         @return Controller pointer
       */
       inline Controller* get_controller(const controller_type &type) {
-        return controllers.at(type);
+        return _controllers[type];
       }
   };
 }

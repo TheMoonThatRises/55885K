@@ -44,7 +44,7 @@ namespace KRONOS {
         std::vector<AbstractDevice*> devices;
         auto kv = std::views::values(_devices);
 
-        std::transform(kv.begin(), kv.end(), back_inserter(devices), [](const std::unique_ptr<AbstractDevice> &device) { return device.get(); });
+        std::transform(kv.begin(), kv.end(), back_inserter(devices), [](const auto &device) { return device.get(); });
 
         return devices;
       }
