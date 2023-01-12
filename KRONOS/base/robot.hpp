@@ -13,6 +13,7 @@
 #include "base/managers/chassismanager.hpp"
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
+#include "base/managers/varmanager.hpp"
 
 #include "user/caster.hpp"
 
@@ -21,7 +22,7 @@
 #include <functional>
 
 namespace KRONOS {
-  class Robot : public DeviceManager, public ControllerManager, public ChassisManager, public AutonomousManager {
+  class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public VarManager {
     private:
       std::optional<KUtil::side_color> _color;
     public:
@@ -258,6 +259,13 @@ namespace KRONOS {
           manip_func(device);
 
         pros::delay(delay);
+      }
+
+      template<class T>
+      inline Robot& global_set(const std::string &key, const T& value) {
+        VarManager::global_set(key, value);
+
+        return *this;
       }
 
       /*
