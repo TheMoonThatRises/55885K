@@ -24,6 +24,8 @@ void initialize() {
   */
 
   robot
+    .global_set("flywheel", false)
+
     .set_side(KUtil::S_NONE)
 
     .add_device("topright", new KRONOS::Motor({.port=4, .reverse=true}))
@@ -31,10 +33,10 @@ void initialize() {
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .add_device("claw", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_36, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
-    .add_device("clawrotate", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_36, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06, .reverse=true}))
+    .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
-    .add_device("roller", new KRONOS::Motor({.port=18}))
+    .add_device("intake", new KRONOS::Motor({.port=18, .gearset=pros::E_MOTOR_GEARSET_18}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
@@ -46,27 +48,17 @@ void initialize() {
       robot.move_chassis(analogs[0], analogs[1], analogs[2] / 1.8);
     })
 
-    // Create claw listener
-    .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
-      KRONOS::to_motor(robot.get_device("claw"))->move_velocity(
-        values.at(0) ? 50 :
-          values.at(1) ? -50 : 0
-      );
-    })
+    // Flywheel listener
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1}, [&](const std::vector<bool> &values) {
+      KRONOS::Motor* flywheel1 = KRONOS::to_motor(robot.get_device("flywheel1"));
+      KRONOS::Motor* flywheel2 = KRONOS::to_motor(robot.get_device("flywheel2"));
 
-    // Create claw rotation listener
-    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
-      KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(
-        values.at(0) ? -50 :
-          values.at(1) ? 50 : 0
-      );
-    })
+      robot.global_set("flywheel", values.at(0) ? !*robot.global_get<bool>("flywheel") : *robot.global_get<bool>("flywheel"));
 
-    .add_controller_link({pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_B}, [&](const std::vector<bool> &values) {
-      KRONOS::to_motor(robot.get_device("roller"))->move_velocity(
-        values.at(0) ? -160 :
-          values.at(1) ? 160 : 0
-      );
+      const int move = robot.global_get<bool>("flywheel") ? 600 : 0;
+
+      flywheel1->move_velocity_pid(move);
+      flywheel2->move_velocity_pid(move);
     });
 
   KLog::Log::info("Finish initializing Robot...");
