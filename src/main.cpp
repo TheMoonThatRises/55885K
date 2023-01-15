@@ -25,6 +25,14 @@ void initialize() {
 
   robot
     .global_set("flywheel", false)
+    .global_set("flywheel_func", [&](const bool &spin) -> void {
+      robot.global_set("flywheel", spin);
+
+      const int move = spin ? 600 : 0;
+
+      KRONOS::to_motor(robot.get_device("flywheel1"))->move_velocity_pid(move);
+      KRONOS::to_motor(robot.get_device("flywheel2"))->move_velocity_pid(move);
+    })
 
     .set_side(KUtil::S_NONE)
 
@@ -48,17 +56,17 @@ void initialize() {
       robot.move_chassis(analogs[0], analogs[1], analogs[2] / 1.8);
     })
 
+    // Intake listener
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
+      KRONOS::to_motor(robot.get_device("intake"))->move_velocity(
+        values[0] ? 200 :
+          values[1] ? -200 : 0
+      );
+    })
+
     // Flywheel listener
-    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1}, [&](const std::vector<bool> &values) {
-      KRONOS::Motor* flywheel1 = KRONOS::to_motor(robot.get_device("flywheel1"));
-      KRONOS::Motor* flywheel2 = KRONOS::to_motor(robot.get_device("flywheel2"));
-
-      robot.global_set("flywheel", values.at(0) ? !*robot.global_get<bool>("flywheel") : *robot.global_get<bool>("flywheel"));
-
-      const int move = robot.global_get<bool>("flywheel") ? 600 : 0;
-
-      flywheel1->move_velocity_pid(move);
-      flywheel2->move_velocity_pid(move);
+    .add_controller_link(pros::E_CONTROLLER_DIGITAL_L1, [&](const bool &spin) {
+      robot.global_get<void(const bool)>("flywheel_func")(spin ? !*robot.global_get<bool>("flywheel") : *robot.global_get<bool>("flywheel"));
     });
 
   KLog::Log::info("Finish initializing Robot...");
@@ -104,29 +112,14 @@ void autonomous() {
   /*
     Run autonomous code here
   */
-  robot.move_chassis(0, -50, 0);
-  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(-70);
-  robot.sleep(900);
-  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(0);
 
-  robot.move_chassis(0, 45, 0);
-  robot.sleep(750);
+  robot.global_get<void(const bool)>("flywheel_func")(true);
 
-  robot.move_chassis(-50, 0, 0);
   robot.sleep(5000);
-  robot.move_chassis(0, 0, 0);
 
-  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(50);
-  robot.sleep(1000);
-  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(0);
+  KRONOS::to_motor(robot.get_device("intake"))->move_velocity(200, 5000);
 
-  KRONOS::to_motor(robot.get_device("claw"))->move_velocity(-100);
-  robot.sleep(1000);
-  KRONOS::to_motor(robot.get_device("claw"))->move_velocity(0);
-
-  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(-50);
-  robot.sleep(800);
-  KRONOS::to_motor(robot.get_device("clawrotate"))->move_velocity(0);
+  robot.global_get<void(const bool)>("flywheel_func")(false);
 
   // robot.run_auton();
 }
