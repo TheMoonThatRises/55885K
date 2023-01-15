@@ -21,6 +21,7 @@
 #include "pros/motors.hpp"
 #include "pros/optical.hpp"
 #include "pros/vision.hpp"
+#include "pros/rtos.hpp"
 
 #include <map>
 #include <optional>
@@ -192,6 +193,27 @@ namespace KRONOS {
         pros::Motor::move_velocity(velocity);
 
         return velocity == 0;
+      }
+
+      /*
+        Moves motor to velocity. Wrapper for pros::Motor::move_velocity
+
+        @param velocity Velocity to set motor to
+      */
+      inline void move_velocity(const double &velocity) const {
+        pros::Motor::move_velocity(velocity);
+      }
+
+      /*
+        Moves motor to velocity with an optional sleep parameter
+
+        @param velocity Velocity to set motor to
+        @param sleep How long to sleep afterwards
+      */
+      inline void move_velocity(const double &velocity, const double &sleep) const {
+        pros::Motor::move_velocity(velocity);
+        pros::delay(sleep);
+        pros::Motor::move_velocity(0);
       }
   };
 
