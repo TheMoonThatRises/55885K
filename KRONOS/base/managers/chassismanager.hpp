@@ -35,7 +35,7 @@ namespace KRONOS {
         @param strafe
         @param turn
       */
-      inline void move_chassis(const double &straight, const double &strafe, const double &turn) {
+      inline void move_chassis(const double &straight, const double &strafe, const double &turn) const {
         for (Motor *motor : _chassisMotors) {
           std::vector<device_face> reverseStrafe {K_NORTHWEST, K_SOUTHEAST};
 
@@ -43,6 +43,20 @@ namespace KRONOS {
           const double mstrafe = (std::find(reverseStrafe.begin(), reverseStrafe.end(), motor->facing()) != reverseStrafe.end()) ? strafe : -strafe;
           motor->move_velocity((straight + mstrafe + mturn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO);
         }
+      }
+
+      /*
+        Move the chassis
+
+        @param straight
+        @param strafe
+        @param turn
+        @param sleep
+      */
+      inline void move_chassis(const double &straight, const double &strafe, const double &turn, const double &sleep) const {
+        this->move_chassis(straight, strafe, turn);
+        pros::delay(sleep);
+        this->move_chassis(0, 0, 0);
       }
   };
 }
