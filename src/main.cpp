@@ -1,13 +1,17 @@
 /*
   Define environmental variables that control how KRONOS works
 */
-#define KRONOS_LOG_COUT
-#define KRONOS_LOG_FILE
 // #define KRONOS_STRICT_DEVICE_ASSIGNMENT //TODO: Fix
 #define KRONOS_STRICT_DEVICE_GETTER
+#define KRONOS_PRACTICE_DRIVE
+// #define OVERHEAT_RUMBLE
 
-#include "kronos.hpp"
-#include "main.h"
+/*
+  Include main libraries
+*/
+
+#include "kronos.hpp" // Include KRONOS library
+#include "main.h" // Include run header file
 
 KRONOS::Robot robot;
 
@@ -24,7 +28,9 @@ void initialize() {
   */
 
   robot
+    .global_set("hasrumbled", false)
     .global_set("flywheel", false)
+    .global_set("plaunchtimes", 0)
     .global_set<std::function<void(bool)>>("flywheel_func", [&](const bool &spin) -> void {
       KRONOS::PIDDevice* flywheelpid = KRONOS::to_pid(robot.get_device("flywheel_pid"));
       KRONOS::Motor* flywheel1 = KRONOS::to_motor(robot.get_device("flywheel1"));
@@ -38,7 +44,10 @@ void initialize() {
         flywheelpid->set_exit_condition(KExtender::P_ERROR);
       }
 
-      flywheel1->move_velocity(flywheel2->move_velocity(flywheelpid->pid(200 * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity())));
+      const double speed = flywheelpid->pid((spin ? (400 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
+
+      flywheel1->move_velocity(speed);
+      flywheel2->move_velocity(speed);
     })
 
     .set_side(KUtil::S_NONE)
@@ -48,11 +57,15 @@ void initialize() {
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.kP=0.0, .kI=0.1, .kD=0.5}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.maxspeed=400, .kP=0.0, .kI=0.2, .kD=0.5}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
     .add_device("intake", new KRONOS::Motor({.port=18, .gearset=pros::E_MOTOR_GEARSET_18}))
+
+    .add_device("roller", new KRONOS::Motor({.port=8}))
+
+    .add_device("plauncher", new KRONOS::Piston({.port='A'}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
@@ -72,6 +85,24 @@ void initialize() {
       );
     })
 
+    // Roller listener
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_B}, [&](const std::vector<bool> &values) {
+      KRONOS::to_motor(robot.get_device("roller"))->move_velocity(
+        values[0] ? -100 :
+          values[1] ? 100 : 0
+      );
+    })
+
+    // Piston listener
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_UP}, [&](const std::vector<bool> &values) {
+      if (values[0]) {
+        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
+        robot.global_set("plaunchtimes", robot.global_get<int>("plaunchtimes") + 1);
+        robot.sleep(500);
+        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
+      }
+    })
+
     // Flywheel listener
     .add_controller_link(pros::E_CONTROLLER_DIGITAL_L1, [&](const bool &spin) {
       robot.global_get<std::function<void(bool)>>("flywheel_func")->operator()(spin ? !*robot.global_get<bool>("flywheel") : *robot.global_get<bool>("flywheel"));
@@ -79,6 +110,26 @@ void initialize() {
       if (spin) {
         robot.sleep(10);
       }
+    })
+
+    // Motor overheat listener
+    .add_controller_link([&]() {
+      #ifdef OVERHEAT_RUMBLE
+        bool hasOverHeat = false;
+        robot.global_set("hasrumbled", false);
+        for (KRONOS::AbstractDevice *device : (robot.get_all() | std::ranges::views::filter([](const KRONOS::AbstractDevice *device) { return device->type() == KRONOS::K_MOTOR; }))) {
+          if (KRONOS::to_motor(device)->is_over_temp()) {
+            hasOverHeat = true;
+            break;
+          }
+        }
+
+        if (hasOverHeat && !robot.global_get<bool>("hasrumbled")) {
+          robot.get_controller(KRONOS::C_MASTER)->rumble(".-.- .-.-");
+        } else if (!hasOverHeat && robot.global_get<bool>("hasrumbled")) {
+          robot.global_set("hasrumbled", true);
+        }
+      #endif
     });
 
   KLog::Log::info("Finish initializing Robot...");
