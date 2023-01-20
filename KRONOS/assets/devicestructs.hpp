@@ -55,8 +55,8 @@ namespace KRONOS {
     pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
     device_face face = K_NORTH;
 
-    KPID::pid_exit_conditions pidexit = KPID::pid_exit_conditions::P_ERROR;
-    KPID::pid_consts pidmods = KPID::pid_consts();
+    KExtender::pid_exit_conditions pidexit = KExtender::pid_exit_conditions::P_ERROR;
+    KExtender::pid_consts pidmods = KExtender::pid_consts();
   };
 }
 

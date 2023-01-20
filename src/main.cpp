@@ -33,9 +33,9 @@ void initialize() {
       robot.global_set("flywheel", spin);
 
       if (spin) {
-        flywheelpid->set_exit_condition(KPID::P_NONE);
+        flywheelpid->set_exit_condition(KExtender::P_NONE);
       } else {
-        flywheelpid->set_exit_condition(KPID::P_ERROR);
+        flywheelpid->set_exit_condition(KExtender::P_ERROR);
       }
 
       flywheel1->move_velocity(flywheel2->move_velocity(flywheelpid->pid(200 * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity())));
@@ -48,7 +48,7 @@ void initialize() {
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KPID::P_NONE, {.kP=0.0, .kI=0.1, .kD=0.5}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.kP=0.0, .kI=0.1, .kD=0.5}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
