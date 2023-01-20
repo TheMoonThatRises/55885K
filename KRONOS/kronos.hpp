@@ -6,6 +6,12 @@
 
 #ifndef _KRONOS_HPP_
 #define _KRONOS_HPP_
+  #ifdef KRONOS_PRACTICE_DRIVE
+    #define KRONOS_LOG_COUT
+    #define KRONOS_LOG_FILE
+    #define KRONOS_LOG_PID
+  #endif
+
   /*
     Include KRONOS libraries
   */
