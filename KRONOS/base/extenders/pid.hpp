@@ -20,6 +20,7 @@ namespace KExtender {
   struct pid_consts {
     double errormargin = 0.1,
            timeconstraint = 5000.0,
+           minspeed = 0,
            maxspeed = 200,
            kP = 0.5,
            kI = 0.1,
@@ -65,7 +66,7 @@ namespace KExtender {
           reset();
           return 0;
         } else {
-          return std::min(output, _pidconsts.maxspeed);
+          return std::min(std::max(output, _pidconsts.minspeed), _pidconsts.maxspeed);
         }
       }
 
