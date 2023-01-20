@@ -156,12 +156,12 @@ namespace KRONOS {
       }
   };
 
-  class Motor : public pros::Motor, public KPID::PID, public AbstractDevice {
+  class Motor : public pros::Motor, public KExtender::PID, public AbstractDevice {
     public:
       /*
         @param device
       */
-      inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KPID::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
+      inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KExtender::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
         pros::Motor::set_brake_mode(device.brakemode);
       };
 
@@ -173,7 +173,7 @@ namespace KRONOS {
         @return If the PID loop exists and is set to 0
       */
       inline bool move_position_pid(const double &target) {
-        const double velocity = KPID::PID::pid(target, get_position());
+        const double velocity = KExtender::PID::pid(target, get_position());
 
         pros::Motor::move_velocity(velocity);
 
@@ -188,7 +188,7 @@ namespace KRONOS {
         @return Velocity pid is set to
       */
       inline double move_velocity_pid(const double &target) {
-        const double velocity = KPID::PID::pid(target, get_actual_velocity());
+        const double velocity = KExtender::PID::pid(target, get_actual_velocity());
 
         pros::Motor::move_velocity(velocity);
 
@@ -217,9 +217,9 @@ namespace KRONOS {
       }
   };
 
-  class PIDDevice : public KPID::PID, public AbstractDevice {
+  class PIDDevice : public KExtender::PID, public AbstractDevice {
     public:
-      inline explicit PIDDevice(const KPID::pid_exit_conditions &exitcon, const KPID::pid_consts &pidconsts) : KPID::PID(exitcon, pidconsts), AbstractDevice(K_PID) {};
+      inline explicit PIDDevice(const KExtender::pid_exit_conditions &exitcon, const KExtender::pid_consts &pidconsts) : KExtender::PID(exitcon, pidconsts), AbstractDevice(K_PID) {};
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {

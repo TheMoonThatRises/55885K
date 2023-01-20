@@ -12,7 +12,7 @@
 #include <cmath>
 #include <optional>
 
-namespace KPID {
+namespace KExtender {
   enum pid_exit_conditions {
     P_ERROR, P_NONE, P_TIME
   };
