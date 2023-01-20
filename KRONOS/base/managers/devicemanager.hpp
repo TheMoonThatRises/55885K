@@ -36,20 +36,6 @@ namespace KRONOS {
       }
 
       /*
-        Gets all devices in stored
-
-        @return Vector of all devices in the form of an AbstractDevice pointer
-      */
-      inline std::vector<AbstractDevice*> get_all() {
-        std::vector<AbstractDevice*> devices;
-        auto kv = std::views::values(_devices);
-
-        std::transform(kv.begin(), kv.end(), back_inserter(devices), [](const auto &device) { return device.get(); });
-
-        return devices;
-      }
-
-      /*
         Get all devices by a vector of keys
 
         @param dnames Vector of device keys
@@ -66,6 +52,20 @@ namespace KRONOS {
         return filtered;
       }
     public:
+      /*
+        Gets all devices in stored
+
+        @return Vector of all devices in the form of an AbstractDevice pointer
+      */
+      inline std::vector<AbstractDevice*> get_all() {
+        std::vector<AbstractDevice*> devices;
+        auto kv = std::views::values(_devices);
+
+        std::transform(kv.begin(), kv.end(), back_inserter(devices), [](const auto &device) { return device.get(); });
+
+        return devices;
+      }
+
       /*
         Gets device stored
 
@@ -114,8 +114,9 @@ namespace KRONOS {
       inline std::vector<AbstractDevice*> get_multiple_devices(const std::vector<std::string> &devices) {
         std::vector<AbstractDevice*> deviceVector;
 
-        for (const std::string &device : devices)
+        for (const std::string &device : devices) {
           deviceVector.push_back(get_device(device));
+        }
 
         return deviceVector;
       }
