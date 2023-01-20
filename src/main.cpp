@@ -44,6 +44,10 @@ void initialize() {
         flywheelpid->set_exit_condition(KExtender::P_ERROR);
       }
 
+      if (robot.global_get<int>("plaunchtimes") == nullptr) {
+        robot.global_set<int>("plaunchtimes", 1);
+      }
+
       const double speed = flywheelpid->pid((spin ? (400 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
 
       flywheel1->move_velocity(speed);
