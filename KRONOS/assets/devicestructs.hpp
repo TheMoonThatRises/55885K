@@ -21,6 +21,7 @@ namespace KRONOS {
     K_COLOR = pros::c::E_DEVICE_OPTICAL,
     K_CONTROLLER = pros::c::E_DEVICE_RADIO,
     K_MOTOR = pros::c::E_DEVICE_MOTOR,
+    K_PID = 1 << 10,
     K_PISTON = pros::c::E_DEVICE_ADI,
     K_PROXIMITY = pros::c::E_DEVICE_DISTANCE,
     K_VISION = pros::c::E_DEVICE_VISION

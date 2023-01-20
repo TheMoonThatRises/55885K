@@ -69,6 +69,19 @@ namespace KRONOS {
   }
 
   /*
+    Casts AbstractDevice pointer to PID pointer
+
+    @param device AbstractDevice pointer
+
+    @return PID pointer
+  */
+  PIDDevice* to_pid(AbstractDevice* device) {
+    assert_same_device(device, K_PID);
+
+    return dynamic_cast<PIDDevice*>(device);
+  }
+
+  /*
     Casts AbstractDevice pointer to Piston pointer
 
     @param device AbstractDevice pointer
