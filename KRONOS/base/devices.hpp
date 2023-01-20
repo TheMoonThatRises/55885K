@@ -185,14 +185,14 @@ namespace KRONOS {
 
         @param target Target velocity of the motor
 
-        @return If the PID loop exists and is set to 0
+        @return Velocity pid is set to
       */
-      inline bool move_velocity_pid(const double &target) {
+      inline double move_velocity_pid(const double &target) {
         const double velocity = KPID::PID::pid(target, get_actual_velocity());
 
         pros::Motor::move_velocity(velocity);
 
-        return velocity == 0;
+        return velocity;
       }
 
       /*
@@ -200,8 +200,8 @@ namespace KRONOS {
 
         @param velocity Velocity to set motor to
       */
-      inline void move_velocity(const double &velocity) const {
-        pros::Motor::move_velocity(velocity);
+      inline int32_t move_velocity(const double &velocity) const {
+        return pros::Motor::move_velocity(velocity);
       }
 
       /*
@@ -215,6 +215,11 @@ namespace KRONOS {
         pros::delay(sleep);
         pros::Motor::move_velocity(0);
       }
+  };
+
+  class PIDDevice : public KPID::PID, public AbstractDevice {
+    public:
+      inline explicit PIDDevice(const KPID::pid_exit_conditions &exitcon, const KPID::pid_consts &pidconsts) : KPID::PID(exitcon, pidconsts), AbstractDevice(K_PID) {};
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {
