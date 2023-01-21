@@ -14,6 +14,10 @@ namespace KRONOS {
     C_MASTER, C_PARTNER
   };
 
+  enum controller_events {
+    C_ANALOG, C_DIGITAL, C_VOID
+  };
+
   class ControllerManager {
     private:
       std::array<Controller*, 2> _controllers;
@@ -23,6 +27,11 @@ namespace KRONOS {
       std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void(bool)>> _digitalLink;
       std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
       std::vector<std::function<void()>> _voidLinks;
+
+      const std::vector<std::string> _events {"analog", "digital", "void"};
+      std::vector<std::unique_ptr<pros::Task*>> _controllerListeners;
+
+      bool _eventInitialised = false;
     protected:
       /*
         Set controller
@@ -87,35 +96,66 @@ namespace KRONOS {
       }
 
       /*
-        Listens to controller and void events
+        Initialises all robot controller listening tasks
       */
-      inline void listener() {
-        for (const auto &[key, function] : _analogLink)
-          function(_controllers[key.second]->get_analog(key.first));
+      inline void event_initialiser() {
+        if (!_eventInitialised) {
+          _controllerListeners.push_back(
+            std::make_unique<pros::Task*>(new pros::Task([&]() {
+              while (true) {
+                for (const auto &[key, function] : _analogLink)
+                  function(_controllers[key.second]->get_analog(key.first));
 
-        for (const auto &[key, function] : _multiAnalogLink) {
-          std::vector<double> analogs;
+                for (const auto &[key, function] : _multiAnalogLink) {
+                  std::vector<double> analogs;
 
-          for (const auto &analog : key.first)
-            analogs.push_back(_controllers[key.second]->get_analog(analog));
+                  for (const auto &analog : key.first)
+                    analogs.push_back(_controllers[key.second]->get_analog(analog));
 
-          function(analogs);
+                  function(analogs);
+                }
+
+                pros::delay(KUtil::KRONOS_MSDELAY);
+              }
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str()))
+          );
+
+          _controllerListeners.push_back(
+            std::make_unique<pros::Task*>(new pros::Task([&]() {
+                while (true) {
+                  for (const auto &[key, function] : _digitalLink)
+                    function(_controllers[key.second]->get_digital(key.first));
+
+                  for (const auto &[key, function] : _multiDigitalLink) {
+                    std::vector<bool> digitals;
+
+                    for (const auto &digital : key.first)
+                      digitals.push_back(_controllers[key.second]->get_digital(digital));
+
+                    function(digitals);
+                  }
+
+                  pros::delay(KUtil::KRONOS_MSDELAY);
+                }
+              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str()))
+          );
+
+          _controllerListeners.push_back(
+            std::make_unique<pros::Task*>(new pros::Task([&]() {
+              while (true) {
+                for (const auto &function : _voidLinks) {
+                  function();
+                }
+
+                pros::delay(KUtil::KRONOS_MSDELAY);
+              }
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str()))
+          );
+
+        _eventInitialised = true;
+        } else {
+          KLog::Log::warn("Event listeners already initialised");
         }
-
-        for (const auto &[key, function] : _digitalLink)
-          function(_controllers[key.second]->get_digital(key.first));
-
-        for (const auto &[key, function] : _multiDigitalLink) {
-          std::vector<bool> digitals;
-
-          for (const auto &digital : key.first)
-            digitals.push_back(_controllers[key.second]->get_digital(digital));
-
-          function(digitals);
-        }
-
-        for (const auto &function : _voidLinks)
-          function();
       }
     public:
       ~ControllerManager() {

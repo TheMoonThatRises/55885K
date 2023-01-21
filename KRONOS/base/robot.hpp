@@ -241,8 +241,8 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& controller_listener() {
-        ControllerManager::listener();
+      inline Robot& event_initialiser() {
+        ControllerManager::event_initialiser();
 
         return *this;
       }
