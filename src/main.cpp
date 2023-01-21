@@ -32,7 +32,7 @@ void initialize() {
     .global_set("intakedir", 0)
     .global_set("flywheel", false)
     .global_set("plaunchtimes", 0)
-    .global_set<std::function<void(bool)>>("flywheel_func", [&](const bool &spin) -> void {
+    .global_set<std::function<void(bool, int)>>("flywheel_func", [&](const bool &spin, const int &goSpeed = 300) {
       KRONOS::PIDDevice* flywheelpid = KRONOS::to_pid(robot.get_device("flywheel_pid"));
       KRONOS::Motor* flywheel1 = KRONOS::to_motor(robot.get_device("flywheel1"));
       KRONOS::Motor* flywheel2 = KRONOS::to_motor(robot.get_device("flywheel2"));
@@ -49,26 +49,34 @@ void initialize() {
         robot.global_set<int>("plaunchtimes", 1);
       }
 
-      const double speed = flywheelpid->pid((spin ? (400 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
+      const double speed = flywheelpid->pid((spin ? (goSpeed + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
 
       flywheel1->move_velocity(speed);
       flywheel2->move_velocity(speed);
     })
+    .global_set<std::function<void(bool)>>("launcher_func", [&](const bool &launch) {
+      if (launch) {
+        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
+        robot.global_set("plaunchtimes", robot.global_get<int>("plaunchtimes") + 1);
+        robot.sleep(500);
+        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
+      }
+    })
 
     .set_side(KUtil::S_NONE)
 
-    .add_device("topright", new KRONOS::Motor({.port=5, .reverse=true}))
+    .add_device("topright", new KRONOS::Motor({.port=6, .reverse=true}))
     .add_device("topleft", new KRONOS::Motor({.port=9, .face=KRONOS::K_NORTHWEST}))
     .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.maxspeed=400, .kP=0.0, .kI=0.1, .kD=0.5}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.maxspeed=300, .kP=0.0, .kI=0.1, .kD=0.5}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
     .add_device("intake", new KRONOS::Motor({.port=18, .gearset=pros::E_MOTOR_GEARSET_18}))
 
-    .add_device("roller", new KRONOS::Motor({.port=13, .gearset=pros::E_MOTOR_GEARSET_36}))
+    .add_device("roller", new KRONOS::Motor({.port=15, .gearset=pros::E_MOTOR_GEARSET_36}))
 
     .add_device("plauncher", new KRONOS::Piston({.port='H'}))
 
@@ -117,18 +125,13 @@ void initialize() {
 
     // Piston listener
     .add_controller_link(pros::E_CONTROLLER_DIGITAL_UP, [&](const bool &toggled) {
-      if (toggled) {
-        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
-        robot.global_set("plaunchtimes", robot.global_get<int>("plaunchtimes") + 1);
-        robot.sleep(100);
-        KRONOS::to_piston(robot.get_device("plauncher"))->toggle();
-      }
+      robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(toggled);
     })
 
     // Flywheel listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &values) {
       if (values[0] || values[1]) {
-        robot.global_get<std::function<void(bool)>>("flywheel_func")->operator()(values[0] ? true : values[1] ? false : *robot.global_get<bool>("flywheel"));
+        robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(values[0] ? true : values[1] ? false : *robot.global_get<bool>("flywheel"), 250);
 
         robot.sleep(10);
       }
@@ -198,13 +201,25 @@ void autonomous() {
     Run autonomous code here
   */
 
-  robot.global_get<std::function<void(bool)>>("flywheel_func")->operator()(true);
+  robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 250);
 
-  robot.sleep(5000);
+  robot.sleep(2500);
 
-  KRONOS::to_motor(robot.get_device("intake"))->move_velocity(200, 5000);
+  robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
 
-  robot.global_get<std::function<void(bool)>>("flywheel_func")->operator()(false);
+  KRONOS::to_motor(robot.get_device("intake"))->move_velocity(-200, 3500);
+
+  robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+
+  robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
+
+  robot.move_chassis(50, 0, 0, 1090);
+
+  robot.move_chassis(0, 50, 0);
+  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(-50);
+  robot.sleep(1400);
+  robot.move_chassis(0, 0, 0);
+  KRONOS::to_motor(robot.get_device("roller"))->move_velocity(0);
 
   // robot.run_auton();
 }
