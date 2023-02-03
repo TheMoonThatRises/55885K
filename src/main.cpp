@@ -65,10 +65,10 @@ void initialize() {
 
     .set_side(KUtil::S_NONE)
 
-    .add_device("topright", new KRONOS::Motor({.port=6, .reverse=true}))
-    .add_device("topleft", new KRONOS::Motor({.port=9, .face=KRONOS::K_NORTHWEST}))
-    .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
-    .add_device("bottomleft", new KRONOS::Motor({.port=1}))
+    .add_device("topright", new KRONOS::Motor({.port=13, .reverse=true, .face=KRONOS::K_EAST}))
+    .add_device("topleft", new KRONOS::Motor({.port=9, .reverse=true}))
+    .add_device("bottomright", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("bottomleft", new KRONOS::Motor({.port=1, .face=KRONOS::K_SOUTH}))
 
     .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.maxspeed=300, .kP=0.0, .kI=0.1, .kD=0.5}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
@@ -96,23 +96,6 @@ void initialize() {
         values[0] ? -200 :
          values[1] ? 200 : 0
       );
-      // int stored = *robot.global_get<int>("intakedir");
-
-      // if ((stored < 0 && values[0]) || (stored > 0 && values[1])) {
-      //   robot.global_set("intakedir", 0);
-      //   robot.sleep(100);
-      // } else if (stored < 0 && values[0]) {
-      //   robot.global_set("intakedir", 1);
-      //   robot.sleep(100);
-      // } else if (stored > 0 && values[1]) {
-      //   robot.global_set("intakedir", -1);
-      //   robot.sleep(100);
-      // }
-
-      // KRONOS::to_motor(robot.get_device("intake"))->move_velocity(
-      //   *robot.global_get<int>("intakedir") > 0 ? -200 :
-      //     (*robot.global_get<int>("intakedir") < 0 ? 200 : 0)
-      // );
     })
 
     // Roller listener
