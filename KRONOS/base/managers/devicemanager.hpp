@@ -46,8 +46,8 @@ namespace KRONOS {
         std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
         for (const std::string &name : dnames)
-          if (get_device(name))
-            filtered.emplace_back(name, get_device(name));
+          if (get_device<AbstractDevice>(name))
+            filtered.emplace_back(name, get_device<AbstractDevice>(name));
 
         return filtered;
       }
@@ -73,7 +73,8 @@ namespace KRONOS {
 
         @return The device requested as an AbstractDevice pointer
       */
-      inline AbstractDevice* get_device(const std::string &name) {
+      template <class Device>
+      inline Device* get_device(const std::string &name) {
         if (_devices.find(name) == _devices.end()) {
           #ifdef KRONOS_STRICT_DEVICE_GETTER
             throw new NoDeviceFoundError(name);
@@ -81,7 +82,7 @@ namespace KRONOS {
             return nullptr;
           #endif
         } else {
-          return _devices.at(name).get();
+          return dynamic_cast<Device*>(_devices.at(name).get());
         }
       }
 
@@ -92,10 +93,11 @@ namespace KRONOS {
 
         @return The device requested as an AbstractDevice pointer
       */
+      template <class Device>
       inline AbstractDevice* get_device(const char &port) {
         for (const auto &[name, device] : _devices)
           if (device->port() == port)
-            return device.get();
+            return dynamic_cast<Device*>(device.get());
 
         #ifdef KRONOS_STRICT_DEVICE_GETTER
           throw new NoDeviceFoundError(port);
@@ -115,7 +117,7 @@ namespace KRONOS {
         std::vector<AbstractDevice*> deviceVector;
 
         for (const std::string &device : devices) {
-          deviceVector.push_back(get_device(device));
+          deviceVector.push_back(get_device<AbstractDevice>(device));
         }
 
         return deviceVector;
