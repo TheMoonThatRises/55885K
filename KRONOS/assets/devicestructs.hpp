@@ -35,12 +35,13 @@ namespace KRONOS {
     K_SOUTH,
     K_SOUTHWEST,
     K_WEST,
-    K_NORTHWEST
+    K_NORTHWEST,
+    K_NA
   };
 
   struct abstract_device_struct {
     int8_t port = 1;
-    device_face face = K_NORTH;
+    device_face face = K_NA;
   };
 
   struct controller_struct {
@@ -53,7 +54,7 @@ namespace KRONOS {
     bool reverse = false;
     pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
     pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
-    device_face face = K_NORTH;
+    device_face face = K_NA;
 
     KExtender::pid_exit_conditions pidexit = KExtender::pid_exit_conditions::P_ERROR;
     KExtender::pid_consts pidmods = KExtender::pid_consts();
