@@ -20,8 +20,8 @@ namespace KExtender {
   struct pid_consts {
     double errormargin = 0.1,
            timeconstraint = 5000.0,
-           minspeed = 0,
-           maxspeed = 200,
+           minspeed = -600,
+           maxspeed = 600,
            kP = 0.5,
            kI = 0.1,
            kD = 0.4;
