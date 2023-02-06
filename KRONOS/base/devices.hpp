@@ -268,7 +268,7 @@ namespace KRONOS {
       inline explicit Proximity(const abstract_device_struct &device) : pros::Distance(device.port), AbstractDevice(K_PROXIMITY, device.face, device.port) {};
   };
 
-  class Vision : pros::Vision, public AbstractDevice {
+  class Vision : public pros::Vision, public AbstractDevice {
     private:
       std::map<int, pros::vision_signature_s_t> _signatures;
     public:
