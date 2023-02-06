@@ -16,7 +16,7 @@ namespace KUtil {
   constexpr std::string_view KRONOS_SD_CARD_PATH = "/usd/";
 
   enum side_color {
-    S_RED, S_GREEN, S_NONE
+    S_RED = 1, S_BLUE
   };
 }
 
