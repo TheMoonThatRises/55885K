@@ -23,10 +23,8 @@
 
 namespace KRONOS {
   class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public VarManager {
-    private:
-      std::optional<KUtil::side_color> _color;
     public:
-      inline explicit Robot() {
+      inline explicit Robot() : AutonomousManager(this) {
         KLog::Log::info("Constructing robot");
         KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
@@ -45,30 +43,6 @@ namespace KRONOS {
 
       inline ~Robot() {
         KLog::Log::info("Destructuring robot class");
-      }
-
-      /*
-        Get color side the robot is on
-
-        @return Which side the robot is on
-      */
-      inline std::optional<KUtil::side_color> get_side() const { return _color; }
-
-      /*
-        Set color side of the robot
-
-        @param color The side the robot is on
-
-        @return Reference to initial robot
-      */
-      inline Robot& set_side(const KUtil::side_color &color) {
-        if (_color.has_value()) {
-          throw new ColorAlreadySetError(_color.value());
-        } else {
-          _color = color;
-        }
-
-        return *this;
       }
 
       /*
@@ -136,8 +110,8 @@ namespace KRONOS {
         @param lock Lock button
         @param controller Main controller
       */
-      inline Robot& set_auton_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Controller* controller) {
-        AutonomousManager::set_assets(select, lock, controller);
+      inline Robot& set_auton_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Button* color, KRONOS::Controller* controller) {
+        AutonomousManager::set_assets(select, lock, color, controller);
 
         return *this;
       }
@@ -242,6 +216,7 @@ namespace KRONOS {
         @return Reference to initial robot class
       */
       inline Robot& event_initialiser() {
+        AutonomousManager::unload_auton_threads();
         ControllerManager::event_initialiser();
 
         return *this;
