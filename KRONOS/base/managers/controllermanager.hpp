@@ -28,10 +28,8 @@ namespace KRONOS {
       std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
       std::vector<std::function<void()>> _voidLinks;
 
-      const std::vector<std::string> _events {"analog", "digital", "void"};
-      std::vector<std::unique_ptr<pros::Task*>> _controllerListeners;
-
-      bool _eventInitialised = false;
+      const std::vector<std::string> _events {"c_analog", "c_digital", "c_void"};
+      std::array<std::unique_ptr<pros::Task>, 3> _controllerListeners;
     protected:
       /*
         Set controller
@@ -99,9 +97,9 @@ namespace KRONOS {
         Initialises all robot controller listening tasks
       */
       inline void event_initialiser() {
-        if (!_eventInitialised) {
-          _controllerListeners.push_back(
-            std::make_unique<pros::Task*>(new pros::Task([&]() {
+        if (!_controllerListeners[C_ANALOG] || !_controllerListeners[C_DIGITAL] || !_controllerListeners[C_VOID]) {
+          _controllerListeners[C_ANALOG] =
+            std::unique_ptr<pros::Task>(new pros::Task([&]() {
               while (true) {
                 for (const auto &[key, function] : _analogLink)
                   function(_controllers[key.second]->get_analog(key.first));
@@ -117,11 +115,11 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str()))
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str())
           );
 
-          _controllerListeners.push_back(
-            std::make_unique<pros::Task*>(new pros::Task([&]() {
+          _controllerListeners[C_DIGITAL] =
+            std::unique_ptr<pros::Task>(new pros::Task([&]() {
                 while (true) {
                   for (const auto &[key, function] : _digitalLink)
                     function(_controllers[key.second]->get_digital(key.first));
@@ -137,11 +135,11 @@ namespace KRONOS {
 
                   pros::delay(KUtil::KRONOS_MSDELAY);
                 }
-              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str()))
-          );
+              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str())
+            );
 
-          _controllerListeners.push_back(
-            std::make_unique<pros::Task*>(new pros::Task([&]() {
+          _controllerListeners[C_VOID] =
+            std::unique_ptr<pros::Task>(new pros::Task([&]() {
               while (true) {
                 for (const auto &function : _voidLinks) {
                   function();
@@ -149,10 +147,8 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str()))
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str())
           );
-
-        _eventInitialised = true;
         } else {
           KLog::Log::warn("Event listeners already initialised");
         }
