@@ -37,8 +37,6 @@ void initialize() {
       robot.get_device<KRONOS::Vision>(vision)->set_signature(*robot.global_get<int>("side"));
     })
     .global_set<std::function<void(bool, int)>>("flywheel_func", [&](const bool &spin, const int &goSpeed = 340) {
-      robot.global_set("aimmode", spin);
-
       KRONOS::PIDDevice* flywheelpid = robot.get_device<KRONOS::PIDDevice>("flywheel_pid");
       KRONOS::Motor* flywheel1 = robot.get_device<KRONOS::Motor>("flywheel1");
       KRONOS::Motor* flywheel2 = robot.get_device<KRONOS::Motor>("flywheel2");
@@ -55,7 +53,7 @@ void initialize() {
         robot.global_set<int>("plaunchtimes", 1);
       }
 
-      const double speed = flywheelpid->pid((spin ? (goSpeed - robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).width / 2 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
+      const double speed = flywheelpid->pid((spin ? (goSpeed - robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).width / 2 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity()) / 2;
 
       flywheel1->move_velocity(speed);
       flywheel2->move_velocity(speed);
@@ -71,14 +69,14 @@ void initialize() {
 
     // Device initialisers
     .add_device("topright", new KRONOS::Motor({.port=13, .reverse=true, .face=KRONOS::K_EAST}))
-    .add_device("topleft", new KRONOS::Motor({.port=9, .reverse=true}))
+    .add_device("topleft", new KRONOS::Motor({.port=8, .reverse=true}))
     .add_device("bottomright", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1, .face=KRONOS::K_SOUTH}))
 
     .add_device("aimcamera_pid", new KRONOS::PIDDevice(KExtender::P_ERROR, {.minspeed=-50, .maxspeed=50, .kP=0.2, .kI=0.0, .kD=0.0}))
     .add_device("aimcamera", new KRONOS::Vision({.port=19}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.1, .kD=0.5}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.08, .kD=0.5}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
@@ -123,7 +121,12 @@ void initialize() {
 
     // Flywheel listener
     .add_controller_link(pros::E_CONTROLLER_DIGITAL_L1, [&](const bool &spin) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spin, 250);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spin, 340);
+    })
+
+    // Aim mode
+    .add_controller_link(pros::E_CONTROLLER_DIGITAL_A, [&](const bool &toggled) {
+      robot.global_set("aimmode", toggled);
     })
 
     // Motor overheat listener
