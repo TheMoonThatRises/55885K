@@ -277,13 +277,25 @@ namespace KRONOS {
       */
       inline explicit Vision(const abstract_device_struct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
 
+      inline Vision& set_zero_point(const pros::vision_zero_e_t &zero_point) {
+        pros::Vision::set_zero_point(zero_point);
+
+        return *this;
+      }
+
       /*
         Save a vision signature to the vision sensor.
 
         @param name Name of the signature to add
         @param signature Vision signature to add
+
+        @return Self to chain
       */
-      inline void addSignature(const int &name, const pros::vision_signature_s_t &signature) { _signatures.insert({name, signature}); }
+      inline Vision& add_signature(const int &name, const pros::vision_signature_s_t &signature) {
+        _signatures.insert({name, signature});
+
+        return *this;
+      }
 
       /*
         Get a vision signature saved from the sensor.
@@ -292,14 +304,20 @@ namespace KRONOS {
 
         @return Signature gotten from name
       */
-      inline pros::vision_signature_s_t &getSignature(const int &name) { return _signatures.at(name); }
+      inline pros::vision_signature_s_t &get_signature(const int &name) { return _signatures.at(name); }
 
       /*
         Set the signature for the vision sensor.
 
         @param name Name of signature to set vision sensor to
+
+        @return Self to chain
       */
-      inline void setSignature(const int &name) { set_signature(name, &(getSignature(name))); }
+      inline Vision& set_signature(const int &name) {
+        pros::Vision::set_signature(name, &(get_signature(name)));
+
+        return *this;
+      }
   };
 }
 
