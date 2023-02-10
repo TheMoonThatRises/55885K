@@ -110,8 +110,8 @@ namespace KRONOS {
         @param lock Lock button
         @param controller Main controller
       */
-      inline Robot& set_auton_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Button* color, KRONOS::Controller* controller) {
-        AutonomousManager::set_assets(select, lock, color, controller);
+      inline Robot& set_auton_assets(KRONOS::Button* select, KRONOS::Button* color, KRONOS::Controller* controller) {
+        AutonomousManager::set_assets(select, color, controller);
 
         return *this;
       }

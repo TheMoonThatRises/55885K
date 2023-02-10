@@ -23,7 +23,7 @@ namespace KRONOS {
     private:
       VarManager *_varManager { nullptr };
 
-      Button *_select { nullptr }, *_lock { nullptr }, *_color { nullptr };
+      Button *_select { nullptr }, *_color { nullptr };
       Controller *_controller { nullptr };
 
       std::string _currentAuton;
@@ -53,10 +53,9 @@ namespace KRONOS {
         @param lock Lock button
         @param controller Main controller
       */
-      inline void set_assets(KRONOS::Button* select, KRONOS::Button* lock, KRONOS::Button* color, KRONOS::Controller* controller) {
+      inline void set_assets(KRONOS::Button* select, KRONOS::Button* color, KRONOS::Controller* controller) {
         _color = color;
         _select = select;
-        _lock = lock;
         _controller = controller;
       }
 
@@ -105,10 +104,14 @@ namespace KRONOS {
             KLog::Log::info("Loading color selector");
             _selectors[S_AUTON] =
               std::unique_ptr<pros::Task>(new pros::Task([&](){
-                  if (_color->get_value()) {
-                    const KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
-                    _varManager->global_set("side", newColor);
-                    _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
+                  while (true) {
+                    if (_color->get_value()) {
+                      KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
+                      _varManager->global_set<int>("side", newColor);
+                      _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
+                    }
+
+                    pros::delay(500);
                   }
                 }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_COLOR].c_str())
               );
@@ -116,7 +119,7 @@ namespace KRONOS {
             KLog::Log::warn("Color listener already initialised");
           }
 
-          if (!_select && !_lock) {
+          if (!_select) {
             KLog::Log::error("Auton assets not properly loaded");
             _controller->set_text("Atn slct ast nt prply ldd");
             _selectors[S_AUTON] = nullptr;
@@ -124,23 +127,21 @@ namespace KRONOS {
             KLog::Log::info("Loading auton selector");
             _selectors[S_AUTON] =
               std::unique_ptr<pros::Task>(new pros::Task([&]() {
-                  auto index = _autons.begin();
-                  _currentAuton = index->first;
-                  _controller->set_text("Selecting auton << " + _currentAuton);
+                  while (true) {
+                    auto index = _autons.begin();
+                    _currentAuton = index->first;
+                    _controller->set_text("Selecting auton << " + _currentAuton);
 
-                  while (!_lock->get_value()) {
                     if (_select->get_value()) {
                       ++index;
 
                       _currentAuton = index->first;
+                      _canRunAuton = true;
                       _controller->set_text("Selecting auton << " + _currentAuton);
                     }
 
-                    pros::delay(KUtil::KRONOS_MSDELAY);
+                    pros::delay(500);
                   }
-
-                  _controller->set_text("Locked auton < " + _currentAuton);
-                  _canRunAuton = true;
                 }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_AUTON].c_str())
               );
           } else {
@@ -153,13 +154,13 @@ namespace KRONOS {
 
       inline void unload_auton_threads() {
         if (_selectors[S_COLOR]) {
-            KLog::Log::info("Unloading color selector");
+          KLog::Log::info("Unloading color selector");
           _selectors[S_COLOR].get()->remove();
           _selectors[S_COLOR].reset();
         }
 
         if (_selectors[S_AUTON]) {
-            KLog::Log::info("Unloading auton selector");
+          KLog::Log::info("Unloading auton selector");
           _selectors[S_AUTON].get()->remove();
           _selectors[S_AUTON].reset();
         }
