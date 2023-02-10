@@ -8,6 +8,7 @@
 #define _CONTROLLERMANAGER_HPP_
 
 #include <functional>
+#include <memory>
 
 namespace KRONOS {
   enum controller_type {
@@ -99,7 +100,7 @@ namespace KRONOS {
       inline void event_initialiser() {
         if (!_controllerListeners[C_ANALOG] || !_controllerListeners[C_DIGITAL] || !_controllerListeners[C_VOID]) {
           _controllerListeners[C_ANALOG] =
-            std::unique_ptr<pros::Task>(new pros::Task([&]() {
+            std::make_unique<pros::Task>([&]() {
               while (true) {
                 for (const auto &[key, function] : _analogLink)
                   function(_controllers[key.second]->get_analog(key.first));
@@ -115,11 +116,11 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str())
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str()
           );
 
           _controllerListeners[C_DIGITAL] =
-            std::unique_ptr<pros::Task>(new pros::Task([&]() {
+            std::make_unique<pros::Task>([&]() {
                 while (true) {
                   for (const auto &[key, function] : _digitalLink)
                     function(_controllers[key.second]->get_digital(key.first));
@@ -135,11 +136,11 @@ namespace KRONOS {
 
                   pros::delay(KUtil::KRONOS_MSDELAY);
                 }
-              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str())
+              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str()
             );
 
           _controllerListeners[C_VOID] =
-            std::unique_ptr<pros::Task>(new pros::Task([&]() {
+            std::make_unique<pros::Task>([&]() {
               while (true) {
                 for (const auto &function : _voidLinks) {
                   function();
@@ -147,7 +148,7 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str())
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str()
           );
         } else {
           KLog::Log::warn("Event listeners already initialised");
