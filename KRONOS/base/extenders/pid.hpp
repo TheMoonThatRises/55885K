@@ -76,7 +76,7 @@ namespace KExtender {
       inline void add_consistency_value(const double &value) {
         _consistencyValues.push_back(value);
 
-        if (_consistencyValues.size()) {
+        if (_consistencyValues.size() > 10) {
           _consistencyValues.erase(_consistencyValues.begin());
         }
       }

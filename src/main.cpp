@@ -55,6 +55,12 @@ void initialize() {
 
       const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 20 : 0;
 
+      flywheelpid->add_consistency_value(combinedSpeed);
+
+      if (flywheelpid->consistency(targetSpeed)) {
+        robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      }
+
       flywheel1->move_voltage(speed);
       flywheel2->move_voltage(speed);
     })
