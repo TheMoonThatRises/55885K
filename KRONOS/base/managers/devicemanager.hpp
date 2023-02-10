@@ -32,7 +32,7 @@ namespace KRONOS {
       inline void set(const std::string &name, AbstractDevice *device) {
         _devices.emplace(name, std::move(device));
 
-        KLog::Log::info("Saved device of type " + std::to_string(device->type()) + " with name '" + name + (device->port().has_value() ? "' to port " + std::to_string(device->port().value()) : ""));
+        KLog::Log::info("Saved device of type " + std::to_string(_devices.at(name)->type()) + " with name '" + name + (_devices.at(name)->port().has_value() ? "' to port " + std::to_string(_devices.at(name)->port().value()) : ""));
       }
 
       /*
