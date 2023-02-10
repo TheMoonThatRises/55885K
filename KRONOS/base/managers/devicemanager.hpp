@@ -73,7 +73,7 @@ namespace KRONOS {
 
         @return The device requested as an AbstractDevice pointer
       */
-      template <class Device>
+      template <class Device = AbstractDevice>
       inline Device* get_device(const std::string &name) {
         if (_devices.find(name) == _devices.end()) {
           #ifdef KRONOS_STRICT_DEVICE_GETTER
@@ -91,10 +91,10 @@ namespace KRONOS {
 
         @param port Port device is on
 
-        @return The device requested as an AbstractDevice pointer
+        @return The device requested as a Device pointer
       */
-      template <class Device>
-      inline AbstractDevice* get_device(const char &port) {
+      template <class Device = AbstractDevice>
+      inline Device* get_device(const char &port) {
         for (const auto &[name, device] : _devices)
           if (device->port() == port)
             return dynamic_cast<Device*>(device.get());
