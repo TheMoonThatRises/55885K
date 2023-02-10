@@ -11,6 +11,7 @@
 #include "base/managers/varmanager.hpp"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -64,7 +65,7 @@ namespace KRONOS {
 
         @param devices Vector of devices in devicemanager in robot
       */
-      inline void run(const std::vector<KRONOS::AbstractDevice*> devices) {
+      inline void run(const std::vector<KRONOS::AbstractDevice*> &devices) {
         unload_auton_threads();
 
         if (_canRunAuton) {
@@ -81,7 +82,7 @@ namespace KRONOS {
       /*
         Variable manager. Should be robot's
       */
-      inline AutonomousManager(VarManager *varManager) : _varManager(varManager) {}
+      inline explicit AutonomousManager(VarManager *varManager) : _varManager(varManager) {}
 
       /*
         Load auton selector threads
@@ -103,7 +104,7 @@ namespace KRONOS {
           } else if (!_selectors[S_AUTON]) {
             KLog::Log::info("Loading color selector");
             _selectors[S_AUTON] =
-              std::unique_ptr<pros::Task>(new pros::Task([&](){
+              std::make_unique<pros::Task>([&](){
                   while (true) {
                     if (_color->get_value()) {
                       KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
@@ -113,7 +114,7 @@ namespace KRONOS {
 
                     pros::delay(500);
                   }
-                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_COLOR].c_str())
+                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_COLOR].c_str()
               );
           } else {
             KLog::Log::warn("Color listener already initialised");
@@ -126,7 +127,7 @@ namespace KRONOS {
           } else if (!_selectors[S_AUTON]) {
             KLog::Log::info("Loading auton selector");
             _selectors[S_AUTON] =
-              std::unique_ptr<pros::Task>(new pros::Task([&]() {
+              std::make_unique<pros::Task>([&]() {
                   while (true) {
                     auto index = _autons.begin();
                     _currentAuton = index->first;
@@ -142,7 +143,7 @@ namespace KRONOS {
 
                     pros::delay(500);
                   }
-                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_AUTON].c_str())
+                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_AUTON].c_str()
               );
           } else {
             KLog::Log::warn("Auton listener already initialised");
