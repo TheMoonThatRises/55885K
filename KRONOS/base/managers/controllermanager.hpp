@@ -20,7 +20,7 @@ namespace KRONOS {
 
   class ControllerManager {
     private:
-      std::array<Controller*, 2> _controllers;
+      std::array<std::unique_ptr<Controller>, 2> _controllers;
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
       std::map<std::pair<std::vector<pros::controller_analog_e_t>, controller_type>, std::function<void(std::vector<double>)>> _multiAnalogLink;
@@ -37,7 +37,7 @@ namespace KRONOS {
         @param controller Controller as AbstractDevice pointer
       */
       inline void add(Controller *controller) {
-        _controllers[controller->id()] = controller;
+        _controllers[controller->id()] = std::unique_ptr<Controller>(controller);
       }
 
       /*
@@ -154,11 +154,6 @@ namespace KRONOS {
         }
       }
     public:
-      ~ControllerManager() {
-        delete _controllers[C_MASTER];
-        delete _controllers[C_PARTNER];
-      }
-
       /*
         Gets controller pointer stored
 
@@ -167,7 +162,7 @@ namespace KRONOS {
         @return Controller pointer
       */
       inline Controller* get_controller(const controller_type &type) {
-        return _controllers[type];
+        return _controllers[type].get();
       }
   };
 }
