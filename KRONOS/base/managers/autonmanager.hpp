@@ -34,7 +34,7 @@ namespace KRONOS {
 
       const std::vector<std::string> _events {"s_auton", "s_color"};
 
-      std::array<std::unique_ptr<pros::Task>, 2> _selectors { nullptr, nullptr };
+      std::array<std::unique_ptr<pros::Task>, 2> _selectors;
     protected:
       /*
         Saves auton to auton map
@@ -97,7 +97,7 @@ namespace KRONOS {
           KLog::Log::error("Controller not loaded. Aborting auton threads loader");
         } else if (!_selectors[S_AUTON] || !_selectors[S_COLOR]) {
           if (!_color) {
-            KLog::Log::error("Color assets not properly loaded");
+            KLog::Log::warn("Color assets not properly loaded");
             _controller->set_text("Clr slct ast nt prply ldd");
             _selectors[S_COLOR] = nullptr;
           } else if (!_selectors[S_AUTON]) {
@@ -120,7 +120,7 @@ namespace KRONOS {
           }
 
           if (!_select) {
-            KLog::Log::error("Auton assets not properly loaded");
+            KLog::Log::warn("Auton assets not properly loaded");
             _controller->set_text("Atn slct ast nt prply ldd");
             _selectors[S_AUTON] = nullptr;
           } else if (!_selectors[S_AUTON]) {
@@ -156,13 +156,13 @@ namespace KRONOS {
         if (_selectors[S_COLOR]) {
           KLog::Log::info("Unloading color selector");
           _selectors[S_COLOR].get()->remove();
-          _selectors[S_COLOR].reset();
+          _selectors[S_COLOR].reset(nullptr);
         }
 
         if (_selectors[S_AUTON]) {
           KLog::Log::info("Unloading auton selector");
           _selectors[S_AUTON].get()->remove();
-          _selectors[S_AUTON].reset();
+          _selectors[S_AUTON].reset(nullptr);
         }
       }
   };
