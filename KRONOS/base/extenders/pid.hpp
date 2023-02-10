@@ -10,6 +10,7 @@
 #include "pros/rtos.hpp"
 
 #include <cmath>
+#include <numeric>
 #include <optional>
 
 namespace KExtender {
@@ -31,6 +32,8 @@ namespace KExtender {
     private:
       std::optional<double> _starttime;
       double _previousError {}, _integral {};
+
+      std::vector<double> _consistencyValues {};
 
       pid_exit_conditions _exitcondition;
       pid_consts _pidconsts;
@@ -70,6 +73,20 @@ namespace KExtender {
         }
       }
 
+      inline void add_consistency_value(const double &value) {
+        _consistencyValues.push_back(value);
+
+        if (_consistencyValues.size()) {
+          _consistencyValues.erase(_consistencyValues.begin());
+        }
+      }
+
+      inline bool consistency(const double &compare) {
+        const double result = std::reduce(_consistencyValues.begin(), _consistencyValues.end());
+
+        return result >= compare - 10 && result <= compare + 10;
+      }
+
       inline void reset() {
         _starttime.reset();
         _previousError = 0;
@@ -82,6 +99,10 @@ namespace KExtender {
 
       inline void set_pid_consts(const pid_consts &pidconsts) {
         _pidconsts = pidconsts;
+      }
+
+      inline void set_max_speed(const double &max) {
+        _pidconsts.maxspeed = max;
       }
   };
 }
