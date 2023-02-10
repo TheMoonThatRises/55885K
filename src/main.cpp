@@ -38,9 +38,9 @@ void initialize() {
       robot.get_device<KRONOS::Vision>(vision)->set_signature(*robot.global_get<int>("side"));
     })
     .global_set<std::function<void(bool, int)>>("flywheel_func", [&](const bool &spin, const int &goSpeed) {
-      KRONOS::PIDDevice* flywheelpid = robot.get_device<KRONOS::PIDDevice>("flywheel_pid");
-      KRONOS::Motor* flywheel1 = robot.get_device<KRONOS::Motor>("flywheel1");
-      KRONOS::Motor* flywheel2 = robot.get_device<KRONOS::Motor>("flywheel2");
+      auto* flywheelpid = robot.get_device<KRONOS::PIDDevice>("flywheel_pid");
+      auto* flywheel1 = robot.get_device<KRONOS::Motor>("flywheel1");
+      auto* flywheel2 = robot.get_device<KRONOS::Motor>("flywheel2");
 
       robot.global_set("flywheel", spin);
 
