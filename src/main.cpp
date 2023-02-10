@@ -34,29 +34,29 @@ void initialize() {
     .global_set("plaunchtimes", 0)
     .global_set("aimmode", false)
     .global_set<std::function<void(std::string)>>("setsigtocolor", [&](const std::string &vision) {
+      robot.get_controller(KRONOS::C_MASTER)->set_text("Setting color: " + std::string(*robot.global_get<int>("side") == KUtil::S_BLUE ? "Blue" : "Red"));
       robot.get_device<KRONOS::Vision>(vision)->set_signature(*robot.global_get<int>("side"));
     })
-    .global_set<std::function<void(bool, int)>>("flywheel_func", [&](const bool &spin, const int &goSpeed = 500) {
+    .global_set<std::function<void(bool, int)>>("flywheel_func", [&](const bool &spin, const int &goSpeed) {
       KRONOS::PIDDevice* flywheelpid = robot.get_device<KRONOS::PIDDevice>("flywheel_pid");
       KRONOS::Motor* flywheel1 = robot.get_device<KRONOS::Motor>("flywheel1");
       KRONOS::Motor* flywheel2 = robot.get_device<KRONOS::Motor>("flywheel2");
 
       robot.global_set("flywheel", spin);
 
-      if (spin) {
-        flywheelpid->set_exit_condition(KExtender::P_NONE);
-      } else {
-        flywheelpid->set_exit_condition(KExtender::P_ERROR);
-      }
-
       if (robot.global_get<int>("plaunchtimes") == nullptr) {
         robot.global_set<int>("plaunchtimes", 1);
       }
 
-      const double speed = flywheelpid->pid((spin ? (goSpeed - (robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).width) / 2 + *robot.global_get<int>("plaunchtimes")) : 0) * 2, flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity()) / 2;
+      flywheelpid->set_max_speed(goSpeed);
 
-      flywheel1->move_velocity(speed);
-      flywheel2->move_velocity(speed);
+      const double targetSpeed = (goSpeed + *robot.global_get<int>("plaunchtimes")) * 2;
+      const double combinedSpeed = (flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
+
+      const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 20 : 0;
+
+      flywheel1->move_voltage(speed);
+      flywheel2->move_voltage(speed);
     })
     .global_set<std::function<void(bool)>>("launcher_func", [&](const bool &launch) {
       if (launch) {
@@ -76,7 +76,7 @@ void initialize() {
     .add_device("aimcamera_pid", new KRONOS::PIDDevice(KExtender::P_ERROR, {.minspeed=-50, .maxspeed=50, .kP=0.2, .kI=0.0, .kD=0.0}))
     .add_device("aimcamera", new KRONOS::Vision({.port=21}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.001, .kI=0.021, .kD=0.42}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.15, .kD=0.2}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
@@ -91,11 +91,11 @@ void initialize() {
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
-    .set_auton_assets(nullptr, nullptr, robot.get_device<KRONOS::Button>("colorbutton"), robot.get_controller(KRONOS::C_MASTER))
+    .set_auton_assets(nullptr, robot.get_device<KRONOS::Button>("colorbutton"), robot.get_controller(KRONOS::C_MASTER))
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
-      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord + 20) : (analogs[2] / 1.8)));
+      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord) : (analogs[2] / 1.8)));
     })
 
     // Intake listener
@@ -120,8 +120,8 @@ void initialize() {
     })
 
     // Flywheel listener
-    .add_controller_link(pros::E_CONTROLLER_DIGITAL_L1, [&](const bool &spin) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spin, 500);
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &spinSpeed) {
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 370 : spinSpeed[1] ? 450 : 0);
     })
 
     // Aim mode
@@ -152,8 +152,7 @@ void initialize() {
   robot.get_device<KRONOS::Vision>("aimcamera")
     ->set_zero_point(pros::E_VISION_ZERO_CENTER)
     .add_signature(KUtil::S_RED, KRONOS::Vision::signature_from_utility(KUtil::S_RED, 8099, 8893, 8496, -1505, -949, -1227, 9.5, 0))
-    .add_signature(KUtil::S_BLUE, KRONOS::Vision::signature_from_utility(KUtil::S_BLUE, 8099, 8893, 8496, -1505, -949, -1227, 9.5, 0))
-    .set_signature(KUtil::S_RED);
+    .add_signature(KUtil::S_BLUE, KRONOS::Vision::signature_from_utility(KUtil::S_BLUE, -3441, -2785, -3113, 8975, 10355, 9665, 9.2, 0));
 
   KLog::Log::info("Finish initializing Robot...");
 }
