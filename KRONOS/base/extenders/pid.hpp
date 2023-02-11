@@ -28,6 +28,11 @@ namespace KExtender {
            kD = 0.4;
   };
 
+  struct consistency_consts {
+    double errormargin = 10,
+           maxvalues = 10;
+  };
+
   class PID {
     private:
       std::optional<double> _starttime;
@@ -37,12 +42,13 @@ namespace KExtender {
 
       pid_exit_conditions _exitcondition;
       pid_consts _pidconsts;
+      consistency_consts _consistencyconsts;
     public:
       /*
         @param exitcondition
         @param pidconsts
       */
-      inline explicit PID(const pid_exit_conditions &exitcondition, const pid_consts &pidconsts) : _exitcondition(exitcondition), _pidconsts(pidconsts) {}
+      inline explicit PID(const pid_exit_conditions &exitcondition, const pid_consts &pidconsts, const consistency_consts &consistencyconsts) : _exitcondition(exitcondition), _pidconsts(pidconsts), _consistencyconsts(consistencyconsts) {}
 
       /*
         Get PID tuned value for target
@@ -76,15 +82,19 @@ namespace KExtender {
       inline void add_consistency_value(const double &value) {
         _consistencyValues.push_back(value);
 
-        if (_consistencyValues.size() > 10) {
+        if (_consistencyValues.size() > _consistencyconsts.maxvalues) {
           _consistencyValues.erase(_consistencyValues.begin());
         }
       }
 
       inline bool consistency(const double &compare) {
-        const double result = std::reduce(_consistencyValues.begin(), _consistencyValues.end());
+        const double result = std::reduce(_consistencyValues.begin(), _consistencyValues.end()) / _consistencyValues.size();
 
-        return result >= compare - 10 && result <= compare + 10;
+        return result >= compare - _consistencyconsts.errormargin && result <= compare + _consistencyconsts.errormargin;
+      }
+
+      inline bool drop_consistency() {
+        _consistencyValues.clear();
       }
 
       inline void reset() {
