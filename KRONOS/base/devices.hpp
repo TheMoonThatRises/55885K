@@ -158,7 +158,9 @@ namespace KRONOS {
 
   class Imu : public pros::Imu, public AbstractDevice {
     public:
-      inline explicit Imu(const abstract_device_struct &device) : pros::Imu(device.port), AbstractDevice(K_IMU, device.port) {};
+      inline explicit Imu(const abstract_device_struct &device) : pros::Imu(device.port), AbstractDevice(K_IMU, device.port) {
+        pros::Imu::reset();
+      };
   };
 
   class Motor : public pros::Motor, public KExtender::PID, public AbstractDevice {
@@ -280,7 +282,9 @@ namespace KRONOS {
       /*
         @param device
       */
-      inline explicit Vision(const abstract_device_struct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {};
+      inline explicit Vision(const abstract_device_struct &device) : pros::Vision(device.port), AbstractDevice(K_VISION, device.face, device.port) {
+        pros::Vision::set_zero_point(pros::E_VISION_ZERO_CENTER);
+      };
 
       inline Vision& set_zero_point(const pros::vision_zero_e_t &zero_point) {
         pros::Vision::set_zero_point(zero_point);
