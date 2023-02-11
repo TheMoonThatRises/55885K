@@ -94,6 +94,8 @@ void initialize() {
 
     .add_device("colorbutton", new KRONOS::Button({.port='G'}))
 
+    .add_device("imu", new KRONOS::Imu({.port=20}))
+
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))

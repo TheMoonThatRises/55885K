@@ -156,12 +156,17 @@ namespace KRONOS {
       }
   };
 
+  class Imu : public pros::Imu, public AbstractDevice {
+    public:
+      inline explicit Imu(const abstract_device_struct &device) : pros::Imu(device.port), AbstractDevice(K_IMU, device.port) {};
+  };
+
   class Motor : public pros::Motor, public KExtender::PID, public AbstractDevice {
     public:
       /*
         @param device
       */
-      inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KExtender::PID(device.pidexit, device.pidmods), AbstractDevice(K_MOTOR, device.face, device.port) {
+      inline explicit Motor(const motor_struct &device) : pros::Motor(device.port, device.gearset, device.reverse, device.encoder), KExtender::PID(device.pidexit, device.pidmods, device.consistencymods), AbstractDevice(K_MOTOR, device.face, device.port) {
         pros::Motor::set_brake_mode(device.brakemode);
       };
 
@@ -219,7 +224,7 @@ namespace KRONOS {
 
   class PIDDevice : public KExtender::PID, public AbstractDevice {
     public:
-      inline explicit PIDDevice(const KExtender::pid_exit_conditions &exitcon, const KExtender::pid_consts &pidconsts) : KExtender::PID(exitcon, pidconsts), AbstractDevice(K_PID) {};
+      inline explicit PIDDevice(const KExtender::pid_exit_conditions &exitcon, const KExtender::pid_consts &pidconsts, const KExtender::consistency_consts &consistencyconsts) : KExtender::PID(exitcon, pidconsts, consistencyconsts), AbstractDevice(K_PID) {};
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {
