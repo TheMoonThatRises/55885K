@@ -130,7 +130,7 @@ void initialize() {
 
     // Flywheel listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &spinSpeed) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 370 : spinSpeed[1] ? 450 : 0);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 325 : spinSpeed[1] ? 600 : 0);
     })
 
     // Aim mode
@@ -159,7 +159,11 @@ void initialize() {
     })
 
     .add_auton("roller", [&]() {
-
+      robot.move_chassis(20, 0, 0);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(20);
+      robot.sleep(500);
+      robot.move_chassis(0, 0, 0);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
     });
 
   robot.get_device<KRONOS::Vision>("aimcamera")
