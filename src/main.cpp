@@ -92,6 +92,7 @@ void initialize() {
 
     .add_device("plauncher", new KRONOS::Piston({.port='H'}))
 
+    .add_device("autonbutton", new KRONOS::Button({.port='F'}))
     .add_device("colorbutton", new KRONOS::Button({.port='G'}))
 
     .add_device("imu", new KRONOS::Imu({.port=20}))
@@ -99,7 +100,7 @@ void initialize() {
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
-    .set_auton_assets(nullptr, robot.get_device<KRONOS::Button>("colorbutton"), robot.get_controller(KRONOS::C_MASTER))
+    .set_auton_assets(robot.get_device<KRONOS::Button>("autonbutton"), robot.get_device<KRONOS::Button>("colorbutton"), robot.get_controller(KRONOS::C_MASTER))
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
