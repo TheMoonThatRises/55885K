@@ -86,9 +86,9 @@ void initialize() {
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
-    .add_device("intake", new KRONOS::Motor({.port=18, .gearset=pros::E_MOTOR_GEARSET_18}))
+    .add_device("intake", new KRONOS::Motor({.port=15, .gearset=pros::E_MOTOR_GEARSET_18}))
 
-    .add_device("roller", new KRONOS::Motor({.port=15, .gearset=pros::E_MOTOR_GEARSET_36}))
+    .add_device("roller", new KRONOS::Motor({.port=18, .gearset=pros::E_MOTOR_GEARSET_36}))
 
     .add_device("plauncher", new KRONOS::Piston({.port='H'}))
 
@@ -156,6 +156,10 @@ void initialize() {
           robot.global_set("hasrumbled", true);
         }
       #endif
+    })
+
+    .add_auton("roller", [&]() {
+
     });
 
   robot.get_device<KRONOS::Vision>("aimcamera")
@@ -206,30 +210,8 @@ void autonomous() {
   /*
     Run autonomous code here
   */
-  robot.unload_auton_threads();
-  robot.global_get<std::function<void(std::string)>>("setsigtocolor")->operator()("aimcamera");
 
-  // robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 250);
-
-  // robot.sleep(2500);
-
-  // robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
-
-  // robot.get_device<KRONOS::Motor>("intake")->move_velocity(-200, 3500);
-
-  // robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
-
-  // robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
-
-  // robot.move_chassis(50, 0, 0, 1090);
-
-  // robot.move_chassis(0, 50, 0);
-  // robot.get_device<KRONOS::Motor>("roller")->move_velocity(-50);
-  // robot.sleep(1400);
-  // robot.move_chassis(0, 0, 0);
-  // robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
-
-  // robot.run_auton();
+  robot.run_auton();
 }
 
 /**
