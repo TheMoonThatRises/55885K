@@ -29,13 +29,26 @@ namespace KRONOS {
 
       std::string _currentAuton;
 
-      std::map<std::string, std::vector<unsigned char>> _autons;
+      std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
 
       bool _canRunAuton = false;
 
       const std::vector<std::string> _events {"s_auton", "s_color"};
 
       std::array<std::unique_ptr<pros::Task>, 2> _selectors;
+
+      /*
+        Get value from auton map by index
+
+        @param index Index of value
+
+        @return Auton function
+      */
+      inline std::pair<std::string, std::function<void()>> autonByIndex(const int &index) {
+        auto iter = _autons.begin();
+        std::advance(iter, index);
+        return {iter->first, iter->second};
+      }
     protected:
       /*
         Saves auton to auton map
@@ -43,7 +56,7 @@ namespace KRONOS {
         @param name Name of auton
         @param auton Auton vector
       */
-      inline void add(const std::string &name, const std::vector<unsigned char> &auton) {
+      inline void add(const std::string &name, std::function<void()> auton) {
         _autons.insert({name, auton});
       }
 
@@ -62,14 +75,16 @@ namespace KRONOS {
 
       /*
         Runs the selected autonomous code
-
-        @param devices Vector of devices in devicemanager in robot
       */
-      inline void run(const std::vector<KRONOS::AbstractDevice*> &devices) {
+      inline void run() {
         unload_auton_threads();
+        _varManager->global_get<std::function<void(std::string)>>("setsigtocolor")->operator()("aimcamera");
 
         if (_canRunAuton) {
           KLog::Log::info("Running auton '" + _currentAuton + "'");
+          _controller->set_text("Rng auton '" + _currentAuton + "'");
+
+          _autons.at(_currentAuton)();
         } else {
           KLog::Log::warn("Skipping auton...");
 
@@ -90,10 +105,6 @@ namespace KRONOS {
       inline void load_auton_threads() {
         KLog::Log::info("Starting auton selection");
 
-        if (_autons.find("noauton") == _autons.end()) {
-          _autons.insert({ "noauton", {} });
-        }
-
         if (_controller == nullptr) {
           KLog::Log::error("Controller not loaded. Aborting auton threads loader");
         } else if (!_selectors[S_AUTON] || !_selectors[S_COLOR]) {
@@ -101,9 +112,9 @@ namespace KRONOS {
             KLog::Log::warn("Color assets not properly loaded");
             _controller->set_text("Clr slct ast nt prply ldd");
             _selectors[S_COLOR] = nullptr;
-          } else if (!_selectors[S_AUTON]) {
+          } else if (!_selectors[S_COLOR]) {
             KLog::Log::info("Loading color selector");
-            _selectors[S_AUTON] =
+            _selectors[S_COLOR] =
               std::make_unique<pros::Task>([&](){
                   while (true) {
                     if (_color->get_value()) {
@@ -112,7 +123,7 @@ namespace KRONOS {
                       _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
                     }
 
-                    pros::delay(500);
+                    pros::delay(200);
                   }
                 }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_COLOR].c_str()
               );
@@ -128,20 +139,20 @@ namespace KRONOS {
             KLog::Log::info("Loading auton selector");
             _selectors[S_AUTON] =
               std::make_unique<pros::Task>([&]() {
+                  int index = 0;
+                  _currentAuton = autonByIndex(index).first;
+
+                  _controller->set_text("Auton << " + _currentAuton);
                   while (true) {
-                    auto index = _autons.begin();
-                    _currentAuton = index->first;
-                    _controller->set_text("Selecting auton << " + _currentAuton);
-
                     if (_select->get_value()) {
-                      ++index;
+                      index = index == _autons.size() - 1 ? 0 : index + 1;
 
-                      _currentAuton = index->first;
-                      _canRunAuton = true;
-                      _controller->set_text("Selecting auton << " + _currentAuton);
+                      _currentAuton = autonByIndex(index).first;
+                      _canRunAuton = index != 0;
+                      _controller->set_text("Auton << " + _currentAuton);
                     }
 
-                    pros::delay(500);
+                    pros::delay(200);
                   }
                 }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_AUTON].c_str()
               );
