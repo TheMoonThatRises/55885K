@@ -197,7 +197,7 @@ namespace KRONOS {
 
         @return Reference to initial robot class
       */
-      inline Robot& add_auton(const std::string &name, const std::vector<unsigned char> &auton) {
+      inline Robot& add_auton(const std::string &name, std::function<void()> auton) {
         AutonomousManager::add(name, auton);
 
         return *this;
@@ -207,7 +207,7 @@ namespace KRONOS {
         Runs selected auton
       */
       inline void run_auton() {
-        AutonomousManager::run(DeviceManager::get_all());
+        AutonomousManager::run();
       }
 
       /*
