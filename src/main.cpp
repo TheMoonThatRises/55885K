@@ -55,11 +55,11 @@ void initialize() {
 
       const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 20 : 0;
 
-      flywheelpid->add_consistency_value(combinedSpeed);
+      // flywheelpid->add_consistency_value(combinedSpeed);
 
-      if (spin && !robot.get_device<KRONOS::Piston>("plauncher")->value() && flywheelpid->consistency(targetSpeed)) {
-        robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
-      }
+      // if (spin && !robot.get_device<KRONOS::Piston>("plauncher")->value() && flywheelpid->consistency(targetSpeed)) {
+      //   robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      // }
 
       flywheel1->move_voltage(speed);
       flywheel2->move_voltage(speed);
@@ -95,7 +95,7 @@ void initialize() {
     .add_device("autonbutton", new KRONOS::Button({.port='F'}))
     .add_device("colorbutton", new KRONOS::Button({.port='G'}))
 
-    .add_device("imu", new KRONOS::Imu({.port=20}))
+    .add_device("imu", new KRONOS::Imu({.port=5}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
@@ -164,11 +164,49 @@ void initialize() {
       robot.sleep(500);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
+      robot.move_chassis(-20, 0, 0, 400);
+      robot.move_chassis(0, 0, 50, 700);
+      auto flywheelThread = new pros::Task([&](){
+          while (true) {
+            robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 200);
+            pros::delay(20);
+          }
+        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+      robot.sleep(2500);
+      robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-200);
+      robot.sleep(3000);
+      robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+      flywheelThread->remove();
+    })
+    .add_auton("rolleroffset", [&]() {
+      auto flywheelThread = new pros::Task([&](){
+          while (true) {
+            robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 210);
+            pros::delay(20);
+          }
+        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+      robot.sleep(2500);
+      robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-200);
+      robot.sleep(3000);
+      robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+      flywheelThread->remove();
+      robot.move_chassis(50, 0, 0, 1200);
+      robot.move_chassis(0, 0, 50, 770);
+      robot.move_chassis(50, 0, 0);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(20);
+      robot.sleep(900);
+      robot.move_chassis(0, 0, 0);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
     });
 
   robot.get_device<KRONOS::Vision>("aimcamera")
-    ->set_zero_point(pros::E_VISION_ZERO_CENTER)
-    .add_signature(KUtil::S_RED, KRONOS::Vision::signature_from_utility(KUtil::S_RED, 8099, 8893, 8496, -1505, -949, -1227, 9.5, 0))
+    ->add_signature(KUtil::S_RED, KRONOS::Vision::signature_from_utility(KUtil::S_RED, 8099, 8893, 8496, -1505, -949, -1227, 9.5, 0))
     .add_signature(KUtil::S_BLUE, KRONOS::Vision::signature_from_utility(KUtil::S_BLUE, -3441, -2785, -3113, 8975, 10355, 9665, 9.2, 0));
 
   KLog::Log::info("Finish initializing Robot...");
