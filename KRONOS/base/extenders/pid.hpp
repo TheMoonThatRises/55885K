@@ -93,7 +93,7 @@ namespace KExtender {
         return result >= compare - _consistencyconsts.errormargin && result <= compare + _consistencyconsts.errormargin;
       }
 
-      inline bool drop_consistency() {
+      inline void drop_consistency() {
         _consistencyValues.clear();
       }
 
