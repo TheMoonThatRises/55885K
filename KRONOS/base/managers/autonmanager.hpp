@@ -27,11 +27,9 @@ namespace KRONOS {
       Button *_select { nullptr }, *_color { nullptr };
       Controller *_controller { nullptr };
 
-      std::string _currentAuton;
+      std::string _currentAuton = "noauton";
 
       std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
-
-      bool _canRunAuton = false;
 
       const std::vector<std::string> _events {"s_auton", "s_color"};
 
@@ -80,7 +78,7 @@ namespace KRONOS {
         unload_auton_threads();
         _varManager->global_get<std::function<void(std::string)>>("setsigtocolor")->operator()("aimcamera");
 
-        if (_canRunAuton) {
+        if (!_currentAuton.empty() && _currentAuton != "noauton") {
           KLog::Log::info("Running auton '" + _currentAuton + "'");
           _controller->set_text("Rng auton '" + _currentAuton + "'");
 
@@ -148,7 +146,6 @@ namespace KRONOS {
                       index = index == _autons.size() - 1 ? 0 : index + 1;
 
                       _currentAuton = autonByIndex(index).first;
-                      _canRunAuton = index != 0;
                       _controller->set_text("Auton << " + _currentAuton);
                     }
 
