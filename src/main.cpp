@@ -48,16 +48,16 @@ void initialize() {
         robot.global_set<int>("plaunchtimes", 1);
       }
 
-      flywheelpid->set_max_speed(goSpeed);
-
       const double targetSpeed = (goSpeed + *robot.global_get<int>("plaunchtimes")) * 2;
       const double combinedSpeed = (flywheel1->get_actual_velocity() + flywheel2->get_actual_velocity());
+
+      flywheelpid->set_max_speed(targetSpeed);
 
       const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 20 : 0;
 
       flywheelpid->add_consistency_value(combinedSpeed);
 
-      if (flywheelpid->consistency(targetSpeed)) {
+      if (spin && !robot.get_device<KRONOS::Piston>("plauncher")->value() && flywheelpid->consistency(targetSpeed)) {
         robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       }
 
@@ -77,12 +77,12 @@ void initialize() {
     .add_device("topright", new KRONOS::Motor({.port=13, .reverse=true, .face=KRONOS::K_EAST}))
     .add_device("topleft", new KRONOS::Motor({.port=8, .reverse=true}))
     .add_device("bottomright", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHEAST}))
-    .add_device("bottomleft", new KRONOS::Motor({.port=1, .face=KRONOS::K_SOUTH}))
+    .add_device("bottomleft", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_SOUTH}))
 
-    .add_device("aimcamera_pid", new KRONOS::PIDDevice(KExtender::P_ERROR, {.minspeed=-50, .maxspeed=50, .kP=0.2, .kI=0.0, .kD=0.0}))
+    .add_device("aimcamera_pid", new KRONOS::PIDDevice(KExtender::P_ERROR, {.minspeed=-50, .maxspeed=50, .kP=0.2, .kI=0.0, .kD=0.0}, {}))
     .add_device("aimcamera", new KRONOS::Vision({.port=21}))
 
-    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.15, .kD=0.2}))
+    .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.15, .kD=0.2}, {}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
     .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
 
