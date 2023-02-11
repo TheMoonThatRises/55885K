@@ -20,6 +20,7 @@ namespace KRONOS {
     K_BUTTON = pros::c::E_DEVICE_ADI,
     K_COLOR = pros::c::E_DEVICE_OPTICAL,
     K_CONTROLLER = pros::c::E_DEVICE_RADIO,
+    K_IMU = pros::c::E_DEVICE_IMU,
     K_MOTOR = pros::c::E_DEVICE_MOTOR,
     K_PID = 1 << 10,
     K_PISTON = pros::c::E_DEVICE_ADI,
@@ -58,6 +59,7 @@ namespace KRONOS {
 
     KExtender::pid_exit_conditions pidexit = KExtender::pid_exit_conditions::P_ERROR;
     KExtender::pid_consts pidmods = KExtender::pid_consts();
+    KExtender::consistency_consts consistencymods = KExtender::consistency_consts();
   };
 }
 
