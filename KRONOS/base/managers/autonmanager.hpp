@@ -22,13 +22,15 @@ namespace KRONOS {
 
   class AutonomousManager {
     private:
-      VarManager *_varManager { nullptr };
+      inline static VarManager *_varManager { nullptr };
 
-      Controller *_controller { nullptr };
+      inline static Controller *_controller { nullptr };
 
-      std::string _currentAuton = "noauton";
+      inline static int _currentAutonIndex = 0;
 
-      std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
+      inline static std::string _currentAuton = "noauton";
+
+      inline static std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
 
       std::array<std::unique_ptr<pros::Task>, 1> _selectors;
 
@@ -39,7 +41,7 @@ namespace KRONOS {
 
         @return Auton function
       */
-      inline std::pair<std::string, std::function<void()>> autonByIndex(const int &index) {
+      inline static std::pair<std::string, std::function<void()>> autonByIndex(const int &index) {
         auto iter = _autons.begin();
         std::advance(iter, index);
         return {iter->first, iter->second};
@@ -48,15 +50,15 @@ namespace KRONOS {
       /*
         LVGL Auton button listener
       */
-      inline lv_res_t button_listener(lv_obj_t* btn) {
+      inline static lv_res_t button_listener(lv_obj_t* btn) {
         uint8_t id = lv_obj_get_free_num(btn);
 
         switch (id) {
           case S_AUTON:
-            // index = index == _autons.size() - 1 ? 0 : index + 1;
+            _currentAutonIndex = _currentAutonIndex == _autons.size() - 1 ? 0 : _currentAutonIndex + 1;
 
-            // _currentAuton = autonByIndex(index).first;
-            // _controller->set_text("Auton << " + _currentAuton);
+            _currentAuton = autonByIndex(_currentAutonIndex).first;
+            _controller->set_text("Auton << " + _currentAuton);
             break;
           case S_COLOR:
             KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
@@ -93,7 +95,6 @@ namespace KRONOS {
         Runs the selected autonomous code
       */
       inline void run() {
-        unload_auton_threads();
         _varManager->global_get<std::function<void(std::string)>>("setsigtocolor")->operator()("aimcamera");
 
         if (!_currentAuton.empty() && _currentAuton != "noauton") {
@@ -104,53 +105,50 @@ namespace KRONOS {
         } else {
           KLog::Log::warn("Skipping auton...");
 
-          if (!_controller) {
+          if (_controller) {
             _controller->set_text("Skipping auton...");
           }
         }
       }
-    public:
-      /*
-        Variable manager. Should be robot's
-      */
-      inline explicit AutonomousManager(VarManager *varManager) : _varManager(varManager) {}
 
       /*
         Load auton selector threads
       */
       inline void load_auton_threads() {
-        if (_selectors[0]) {
+        if (!_selectors[0]) {
           KLog::Log::info("Starting auton selection");
 
           _selectors[0] = std::make_unique<pros::Task>([&]() {
-            int index = 0;
-            _currentAuton = autonByIndex(index).first;
+            _currentAutonIndex = 0;
+            _currentAuton = autonByIndex(_currentAutonIndex).first;
 
             _controller->set_text("Auton << " + _currentAuton);
             while (true) {
-              // lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
-              // lv_label_set_text(title, "Auton buttons");
-              // lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
+              lv_obj_clean(lv_scr_act());
 
-              // lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
-              // lv_cont_set_fit(autonbtn, true, true); /*Enable resizing horizontally and vertically*/
-              // lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
-              // lv_obj_set_free_num(autonbtn, 0);   /*Set a unique number for the button*/
-              // lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
+              lv_label_set_text(title, "Auton buttons");
+              lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
 
-              // lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
-              // lv_label_set_text(autonlabel, _currentAuton.c_str());
+              lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
+              lv_cont_set_fit(autonbtn, true, true); /*Enable resizing horizontally and vertically*/
+              lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
+              lv_obj_set_free_num(autonbtn, 0);   /*Set a unique number for the button*/
+              lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-              // lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
-              // lv_cont_set_fit(colorbtn, true, true); /*Enable resizing horizontally and vertically*/
-              // lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
-              // lv_obj_set_free_num(colorbtn, 1);   /*Set a unique number for the button*/
-              // lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
+              lv_label_set_text(autonlabel, _currentAuton.c_str());
 
-              // lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
-              // lv_label_set_text(colorlabel, std::string(*_varManager->global_get<int>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
+              lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
+              lv_cont_set_fit(colorbtn, true, true); /*Enable resizing horizontally and vertically*/
+              lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
+              lv_obj_set_free_num(colorbtn, 1);   /*Set a unique number for the button*/
+              lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-              pros::delay(20);
+              lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
+              lv_label_set_text(colorlabel, std::string(*_varManager->global_get<int>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
+
+              pros::delay(200);
             }
           }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "autonselector");
         } else {
@@ -163,7 +161,15 @@ namespace KRONOS {
           KLog::Log::info("Unloading auton selector");
           _selectors[0].get()->remove();
           _selectors[0].reset(nullptr);
+          lv_obj_clean(lv_scr_act());
         }
+      }
+    public:
+      /*
+        Variable manager. Should be robot's
+      */
+      inline explicit AutonomousManager(VarManager *varManager) {
+        _varManager = varManager;
       }
   };
 }
