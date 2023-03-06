@@ -203,11 +203,28 @@ namespace KRONOS {
         return *this;
       }
 
+      inline Robot& load_auton_threads() {
+        ControllerManager::event_deinitialize();
+        AutonomousManager::load_auton_threads();
+
+        return *this;
+      }
+
+      inline Robot& unload_auton_threads() {
+        AutonomousManager::unload_auton_threads();
+
+        return *this;
+      }
+
       /*
         Runs selected auton
       */
-      inline void run_auton() {
+      inline Robot& run_auton() {
+        ControllerManager::event_deinitialize();
+        AutonomousManager::unload_auton_threads();
         AutonomousManager::run();
+
+        return *this;
       }
 
       /*
@@ -218,6 +235,17 @@ namespace KRONOS {
       inline Robot& event_initialiser() {
         AutonomousManager::unload_auton_threads();
         ControllerManager::event_initialiser();
+
+        return *this;
+      }
+
+      /*
+        Unload event threads
+
+        @return Reference to initial robot class
+      */
+      inline Robot& event_deinitialize() {
+        ControllerManager::event_deinitialize();
 
         return *this;
       }

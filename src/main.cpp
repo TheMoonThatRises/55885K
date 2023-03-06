@@ -76,7 +76,7 @@ void initialize() {
     // Device initialisers
     .add_device("topright", new KRONOS::Motor({.port=13, .reverse=true, .face=KRONOS::K_EAST}))
     .add_device("topleft", new KRONOS::Motor({.port=8, .reverse=true}))
-    .add_device("bottomright", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("bottomright", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
     .add_device("bottomleft", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_SOUTH}))
 
     .add_device("aimcamera_pid", new KRONOS::PIDDevice(KExtender::P_ERROR, {.minspeed=-50, .maxspeed=50, .kP=0.2, .kI=0.0, .kD=0.0}, {}))
@@ -101,7 +101,7 @@ void initialize() {
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
-      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord) : (analogs[2] / 1.8)));
+      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord + 20) : (analogs[2] / 1.8)));
     })
 
     // Intake listener
@@ -127,7 +127,7 @@ void initialize() {
 
     // Flywheel listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &spinSpeed) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 250 : spinSpeed[1] ? 300 : 0);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 350 : spinSpeed[1] ? 379 : 0);
     })
 
     // Aim mode
@@ -214,7 +214,16 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+  /*
+    Load auton threads if it is autonomous and disabled
+  */
+  if (pros::competition::is_autonomous()) {
+    robot.load_auton_threads();
+  } else {
+    robot.event_deinitialize();
+  }
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -227,9 +236,10 @@ void disabled() {}
  */
 void competition_initialize() {
   /*
-    Initilize autonomous selector here
+    Initialize autonomous selector here
     Make sure to have a while (true) loop to select auton, and a way to break out of the loop
   */
+
   robot.load_auton_threads();
 }
 
