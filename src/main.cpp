@@ -53,7 +53,7 @@ void initialize() {
 
       flywheelpid->set_max_speed(targetSpeed);
 
-      const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 20 : 0;
+      const double speed = spin ? flywheelpid->pid(targetSpeed, combinedSpeed) * 10 : 0;
 
       // flywheelpid->add_consistency_value(combinedSpeed);
 
@@ -84,7 +84,7 @@ void initialize() {
 
     .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.15, .kD=0.2}, {}))
     .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
-    .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06}))
+    .add_device("flywheel2", new KRONOS::Motor({.port=16, .gearset=pros::E_MOTOR_GEARSET_06, .reverse=true}))
 
     .add_device("intake", new KRONOS::Motor({.port=15, .gearset=pros::E_MOTOR_GEARSET_18}))
 
@@ -92,15 +92,12 @@ void initialize() {
 
     .add_device("plauncher", new KRONOS::Piston({.port='H'}))
 
-    .add_device("autonbutton", new KRONOS::Button({.port='F'}))
-    .add_device("colorbutton", new KRONOS::Button({.port='G'}))
-
     .add_device("imu", new KRONOS::Imu({.port=5}))
 
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
-    .set_auton_assets(robot.get_device<KRONOS::Button>("autonbutton"), robot.get_device<KRONOS::Button>("colorbutton"), robot.get_controller(KRONOS::C_MASTER))
+    .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
@@ -130,7 +127,7 @@ void initialize() {
 
     // Flywheel listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &spinSpeed) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 325 : spinSpeed[1] ? 600 : 0);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 250 : spinSpeed[1] ? 300 : 0);
     })
 
     // Aim mode
@@ -233,7 +230,6 @@ void competition_initialize() {
     Initilize autonomous selector here
     Make sure to have a while (true) loop to select auton, and a way to break out of the loop
   */
-
   robot.load_auton_threads();
 }
 
