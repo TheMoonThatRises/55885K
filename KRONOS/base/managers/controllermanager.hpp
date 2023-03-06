@@ -154,6 +154,26 @@ namespace KRONOS {
           KLog::Log::warn("Event listeners already initialised");
         }
       }
+
+      inline void event_deinitialize() {
+        if (_controllerListeners[C_ANALOG]) {
+          KLog::Log::info("Unloading analog event");
+          _controllerListeners[C_ANALOG].get()->remove();
+          _controllerListeners[C_ANALOG].reset(nullptr);
+        }
+
+        if (_controllerListeners[C_DIGITAL]) {
+          KLog::Log::info("Unloading digital event");
+          _controllerListeners[C_DIGITAL].get()->remove();
+          _controllerListeners[C_DIGITAL].reset(nullptr);
+        }
+
+        if (_controllerListeners[C_VOID]) {
+          KLog::Log::info("Unloading void event");
+          _controllerListeners[C_VOID].get()->remove();
+          _controllerListeners[C_VOID].reset(nullptr);
+        }
+      }
     public:
       /*
         Gets controller pointer stored
