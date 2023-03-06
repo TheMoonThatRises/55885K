@@ -24,16 +24,13 @@ namespace KRONOS {
     private:
       VarManager *_varManager { nullptr };
 
-      Button *_select { nullptr }, *_color { nullptr };
       Controller *_controller { nullptr };
 
       std::string _currentAuton = "noauton";
 
       std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
 
-      const std::vector<std::string> _events {"s_auton", "s_color"};
-
-      std::array<std::unique_ptr<pros::Task>, 2> _selectors;
+      std::array<std::unique_ptr<pros::Task>, 1> _selectors;
 
       /*
         Get value from auton map by index
@@ -46,6 +43,29 @@ namespace KRONOS {
         auto iter = _autons.begin();
         std::advance(iter, index);
         return {iter->first, iter->second};
+      }
+
+      /*
+        LVGL Auton button listener
+      */
+      inline lv_res_t button_listener(lv_obj_t* btn) {
+        uint8_t id = lv_obj_get_free_num(btn);
+
+        switch (id) {
+          case S_AUTON:
+            // index = index == _autons.size() - 1 ? 0 : index + 1;
+
+            // _currentAuton = autonByIndex(index).first;
+            // _controller->set_text("Auton << " + _currentAuton);
+            break;
+          case S_COLOR:
+            KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
+            _varManager->global_set<int>("side", newColor);
+            _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
+            break;
+        }
+
+        return LV_RES_OK;
       }
     protected:
       /*
@@ -65,9 +85,7 @@ namespace KRONOS {
         @param lock Lock button
         @param controller Main controller
       */
-      inline void set_assets(KRONOS::Button* select, KRONOS::Button* color, KRONOS::Controller* controller) {
-        _color = color;
-        _select = select;
+      inline void set_assets(KRONOS::Controller* controller) {
         _controller = controller;
       }
 
@@ -101,77 +119,50 @@ namespace KRONOS {
         Load auton selector threads
       */
       inline void load_auton_threads() {
-        KLog::Log::info("Starting auton selection");
+        if (_selectors[0]) {
+          KLog::Log::info("Starting auton selection");
 
-        if (_controller == nullptr) {
-          KLog::Log::error("Controller not loaded. Aborting auton threads loader");
-        } else if (!_selectors[S_AUTON] || !_selectors[S_COLOR]) {
-          if (!_color) {
-            KLog::Log::warn("Color assets not properly loaded");
-            _controller->set_text("Clr slct ast nt prply ldd");
-            _selectors[S_COLOR] = nullptr;
-          } else if (!_selectors[S_COLOR]) {
-            KLog::Log::info("Loading color selector");
-            _selectors[S_COLOR] =
-              std::make_unique<pros::Task>([&](){
-                  while (true) {
-                    if (_color->get_value()) {
-                      KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
-                      _varManager->global_set<int>("side", newColor);
-                      _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
-                    }
+          _selectors[0] = std::make_unique<pros::Task>([&]() {
+            int index = 0;
+            _currentAuton = autonByIndex(index).first;
 
-                    pros::delay(200);
-                  }
-                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_COLOR].c_str()
-              );
-          } else {
-            KLog::Log::warn("Color listener already initialised");
-          }
+            _controller->set_text("Auton << " + _currentAuton);
+            while (true) {
+              // lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
+              // lv_label_set_text(title, "Auton buttons");
+              // lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
 
-          if (!_select) {
-            KLog::Log::warn("Auton assets not properly loaded");
-            _controller->set_text("Atn slct ast nt prply ldd");
-            _selectors[S_AUTON] = nullptr;
-          } else if (!_selectors[S_AUTON]) {
-            KLog::Log::info("Loading auton selector");
-            _selectors[S_AUTON] =
-              std::make_unique<pros::Task>([&]() {
-                  int index = 0;
-                  _currentAuton = autonByIndex(index).first;
+              // lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
+              // lv_cont_set_fit(autonbtn, true, true); /*Enable resizing horizontally and vertically*/
+              // lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
+              // lv_obj_set_free_num(autonbtn, 0);   /*Set a unique number for the button*/
+              // lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-                  _controller->set_text("Auton << " + _currentAuton);
-                  while (true) {
-                    if (_select->get_value()) {
-                      index = index == _autons.size() - 1 ? 0 : index + 1;
+              // lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
+              // lv_label_set_text(autonlabel, _currentAuton.c_str());
 
-                      _currentAuton = autonByIndex(index).first;
-                      _controller->set_text("Auton << " + _currentAuton);
-                    }
+              // lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
+              // lv_cont_set_fit(colorbtn, true, true); /*Enable resizing horizontally and vertically*/
+              // lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
+              // lv_obj_set_free_num(colorbtn, 1);   /*Set a unique number for the button*/
+              // lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-                    pros::delay(200);
-                  }
-                }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, _events[S_AUTON].c_str()
-              );
-          } else {
-            KLog::Log::warn("Auton listener already initialised");
-          }
+              // lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
+              // lv_label_set_text(colorlabel, std::string(*_varManager->global_get<int>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
+
+              pros::delay(20);
+            }
+          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "autonselector");
         } else {
-          KLog::Log::warn("Auton and color listeners already initialised");
+          KLog::Log::warn("Auton selector already initialised");
         }
       }
 
       inline void unload_auton_threads() {
-        if (_selectors[S_COLOR]) {
-          KLog::Log::info("Unloading color selector");
-          _selectors[S_COLOR].get()->remove();
-          _selectors[S_COLOR].reset(nullptr);
-        }
-
-        if (_selectors[S_AUTON]) {
+        if (_selectors[0]) {
           KLog::Log::info("Unloading auton selector");
-          _selectors[S_AUTON].get()->remove();
-          _selectors[S_AUTON].reset(nullptr);
+          _selectors[0].get()->remove();
+          _selectors[0].reset(nullptr);
         }
       }
   };
