@@ -119,7 +119,6 @@ namespace KRONOS {
           KLog::Log::info("Starting auton selection");
 
           _selectors[0] = std::make_unique<pros::Task>([&]() {
-            _currentAutonIndex = 0;
             _currentAuton = autonByIndex(_currentAutonIndex).first;
 
             _controller->set_text("Auton << " + _currentAuton);
