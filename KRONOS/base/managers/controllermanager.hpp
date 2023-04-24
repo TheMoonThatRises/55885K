@@ -21,6 +21,9 @@ namespace KRONOS {
 
   class ControllerManager {
     private:
+      TaskManager *_taskManager;
+      const std::array<std::string, 3> _taskNames {"c_analog", "c_digital", "c_void"};
+
       std::array<std::unique_ptr<Controller>, 2> _controllers;
 
       std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
@@ -28,9 +31,6 @@ namespace KRONOS {
       std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void(bool)>> _digitalLink;
       std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
       std::vector<std::function<void()>> _voidLinks;
-
-      const std::vector<std::string> _events {"c_analog", "c_digital", "c_void"};
-      std::array<std::unique_ptr<pros::Task>, 3> _controllerListeners;
     protected:
       /*
         Set controller
@@ -98,9 +98,8 @@ namespace KRONOS {
         Initialises all robot controller listening tasks
       */
       inline void event_initialiser() {
-        if (!_controllerListeners[C_ANALOG] || !_controllerListeners[C_DIGITAL] || !_controllerListeners[C_VOID]) {
-          _controllerListeners[C_ANALOG] =
-            std::make_unique<pros::Task>([&]() {
+        if (!_taskManager->get_task(_taskNames[C_ANALOG]) || !_taskManager->get_task(_taskNames[C_DIGITAL]) || !_taskManager->get_task(_taskNames[C_VOID])) {
+          _taskManager->add_task(_taskNames[C_ANALOG], pros::Task([&]() {
               while (true) {
                 for (const auto &[key, function] : _analogLink)
                   function(_controllers[key.second]->get_analog(key.first));
@@ -116,11 +115,10 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_ANALOG].c_str()
-          );
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_ANALOG].c_str()
+          ));
 
-          _controllerListeners[C_DIGITAL] =
-            std::make_unique<pros::Task>([&]() {
+          _taskManager->add_task(_taskNames[C_DIGITAL], pros::Task([&]() {
                 while (true) {
                   for (const auto &[key, function] : _digitalLink)
                     function(_controllers[key.second]->get_digital(key.first));
@@ -136,11 +134,10 @@ namespace KRONOS {
 
                   pros::delay(KUtil::KRONOS_MSDELAY);
                 }
-              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_DIGITAL].c_str()
-            );
+              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_DIGITAL].c_str()
+            ));
 
-          _controllerListeners[C_VOID] =
-            std::make_unique<pros::Task>([&]() {
+          _taskManager->add_task(_taskNames[C_VOID], pros::Task([&]() {
               while (true) {
                 for (const auto &function : _voidLinks) {
                   function();
@@ -148,33 +145,28 @@ namespace KRONOS {
 
                 pros::delay(KUtil::KRONOS_MSDELAY);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _events[C_VOID].c_str()
-          );
+            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_VOID].c_str()
+          ));
         } else {
           KLog::Log::warn("Event listeners already initialised");
         }
       }
 
       inline void event_deinitialize() {
-        if (_controllerListeners[C_ANALOG]) {
-          KLog::Log::info("Unloading analog event");
-          _controllerListeners[C_ANALOG].get()->remove();
-          _controllerListeners[C_ANALOG].reset(nullptr);
-        }
+        KLog::Log::info("Unloading analog event");
+        _taskManager->kill_task(_taskNames[C_ANALOG]);
 
-        if (_controllerListeners[C_DIGITAL]) {
-          KLog::Log::info("Unloading digital event");
-          _controllerListeners[C_DIGITAL].get()->remove();
-          _controllerListeners[C_DIGITAL].reset(nullptr);
-        }
+        KLog::Log::info("Unloading digital event");
+        _taskManager->kill_task(_taskNames[C_DIGITAL]);
 
-        if (_controllerListeners[C_VOID]) {
-          KLog::Log::info("Unloading void event");
-          _controllerListeners[C_VOID].get()->remove();
-          _controllerListeners[C_VOID].reset(nullptr);
-        }
+        KLog::Log::info("Unloading void event");
+        _taskManager->kill_task(_taskNames[C_VOID]);
       }
     public:
+      inline explicit ControllerManager(TaskManager *taskManager) {
+        _taskManager = taskManager;
+      }
+
       /*
         Gets controller pointer stored
 

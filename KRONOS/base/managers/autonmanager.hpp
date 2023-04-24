@@ -8,6 +8,7 @@
 #define _AUTON_HPP_
 
 #include "base/devices.hpp"
+#include "base/managers/taskmanager.hpp"
 #include "base/managers/varmanager.hpp"
 
 #include <map>
@@ -22,6 +23,10 @@ namespace KRONOS {
 
   class AutonomousManager {
     private:
+      TaskManager *_taskManager;
+
+      const std::string _taskName = "selector";
+
       inline static VarManager *_varManager { nullptr };
 
       inline static Controller *_controller { nullptr };
@@ -31,8 +36,6 @@ namespace KRONOS {
       inline static std::string _currentAuton = "noauton";
 
       inline static std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
-
-      std::array<std::unique_ptr<pros::Task>, 1> _selectors;
 
       /*
         Get value from auton map by index
@@ -115,10 +118,10 @@ namespace KRONOS {
         Load auton selector threads
       */
       inline void load_auton_threads() {
-        if (!_selectors[0]) {
+        if (!_taskManager->get_task(_taskName)) {
           KLog::Log::info("Starting auton selection");
 
-          _selectors[0] = std::make_unique<pros::Task>([&]() {
+          _taskManager->add_task(_taskName, pros::Task([&]() {
             _currentAuton = autonByIndex(_currentAutonIndex).first;
 
             _controller->set_text("Auton << " + _currentAuton);
@@ -149,26 +152,24 @@ namespace KRONOS {
 
               pros::delay(200);
             }
-          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "autonselector");
+          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "autonselector"));
         } else {
           KLog::Log::warn("Auton selector already initialised");
         }
       }
 
       inline void unload_auton_threads() {
-        if (_selectors[0]) {
-          KLog::Log::info("Unloading auton selector");
-          _selectors[0].get()->remove();
-          _selectors[0].reset(nullptr);
-          lv_obj_clean(lv_scr_act());
-        }
+        KLog::Log::info("Unloading auton selector");
+        _taskManager->kill_task(_taskName);
+        lv_obj_clean(lv_scr_act());
       }
     public:
       /*
         Variable manager. Should be robot's
       */
-      inline explicit AutonomousManager(VarManager *varManager) {
+      inline explicit AutonomousManager(VarManager *varManager, TaskManager *taskManager) {
         _varManager = varManager;
+        _taskManager = taskManager;
       }
   };
 }

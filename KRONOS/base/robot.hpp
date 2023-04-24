@@ -14,6 +14,7 @@
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
 #include "base/managers/varmanager.hpp"
+#include "base/managers/taskmanager.hpp"
 
 #include "user/caster.hpp"
 
@@ -22,9 +23,9 @@
 #include <functional>
 
 namespace KRONOS {
-  class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public VarManager {
+  class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public VarManager, public TaskManager {
     public:
-      inline explicit Robot() : AutonomousManager(this) {
+      inline explicit Robot() : AutonomousManager(this, this), ControllerManager(this) {
         KLog::Log::info("Constructing robot");
         KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
@@ -204,14 +205,8 @@ namespace KRONOS {
       }
 
       inline Robot& load_auton_threads() {
-        ControllerManager::event_deinitialize();
+        kill_all_tasks();
         AutonomousManager::load_auton_threads();
-
-        return *this;
-      }
-
-      inline Robot& unload_auton_threads() {
-        AutonomousManager::unload_auton_threads();
 
         return *this;
       }
@@ -220,8 +215,7 @@ namespace KRONOS {
         Runs selected auton
       */
       inline Robot& run_auton() {
-        ControllerManager::event_deinitialize();
-        AutonomousManager::unload_auton_threads();
+        kill_all_tasks();
         AutonomousManager::run();
 
         return *this;
@@ -233,19 +227,16 @@ namespace KRONOS {
         @return Reference to initial robot class
       */
       inline Robot& event_initialiser() {
-        AutonomousManager::unload_auton_threads();
+        kill_all_tasks();
         ControllerManager::event_initialiser();
 
         return *this;
       }
 
-      /*
-        Unload event threads
-
-        @return Reference to initial robot class
-      */
-      inline Robot& event_deinitialize() {
+      inline Robot& kill_all_tasks() {
+        AutonomousManager::unload_auton_threads();
         ControllerManager::event_deinitialize();
+        TaskManager::kill_all();
 
         return *this;
       }
