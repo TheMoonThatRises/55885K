@@ -172,32 +172,32 @@ void initialize() {
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
       robot.move_chassis(-20, 0, 0, 400);
       robot.move_chassis(0, 0, 50, 700);
-      auto flywheelThread = new pros::Task([&](){
+      robot.add_task("flywheelThread", pros::Task([&](){
           while (true) {
             robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 365);
             pros::delay(20);
           }
-        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread"));
       robot.sleep(2500);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.sleep(1000);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
-      flywheelThread->remove();
+      robot.kill_task("flywheelThread");
     })
     .add_auton("rolleroffset", [&]() {
-      auto flywheelThread = new pros::Task([&](){
+      robot.add_task("flywheelThread", pros::Task([&](){
           while (true) {
             robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 350);
             pros::delay(20);
           }
-        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+        }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread"));
       robot.sleep(2500);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.sleep(1000);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
-      flywheelThread->remove();
+      robot.kill_task("flywheelThread");
       robot.move_chassis(50, 0, 0, 1200);
       robot.move_chassis(0, 0, 50, 770);
       robot.move_chassis(50, 0, 0);
@@ -245,12 +245,12 @@ void initialize() {
 
       robot.move_chassis(0, 0, 0);
 
-      auto flywheelThread = new pros::Task([&](){
+      robot.add_task("flywheelThread", pros::Task([&](){
         while (true) {
           robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 373);
           robot.sleep(20);
         }
-      }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+      }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread"));
 
       robot.sleep(4000);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
@@ -261,7 +261,7 @@ void initialize() {
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      flywheelThread->remove();
+      robot.suspend_task("flywheelThread");
       robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
 
       robot.move_chassis(50, 0, 0, 3300);
@@ -310,18 +310,13 @@ void initialize() {
 
       robot.move_chassis(0, 0, 0);
 
-      flywheelThread = new pros::Task([&](){
-        while (true) {
-          robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 373);
-          robot.sleep(20);
-        }
-      }, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "flywheelThread");
+      robot.resume_task("flywheelThread");
 
       robot.sleep(4000);
       robot.global_get<std::function<void(bool)>>("launcher_func")->operator()(true);
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      flywheelThread->remove();
+      robot.kill_task("flywheelThread");
       robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(false, 0);
     });
 
@@ -341,10 +336,10 @@ void disabled() {
   /*
     Load auton threads if it is autonomous and disabled
   */
+  robot.kill_all_tasks();
+
   if (pros::competition::is_autonomous()) {
     robot.load_auton_threads();
-  } else {
-    robot.event_deinitialize();
   }
 }
 
