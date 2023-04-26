@@ -109,8 +109,8 @@ void initialize() {
     // Intake listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &values) {
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(
-        values[0] ? -500 :
-         values[1] ? 500 : 0
+        values[0] ? -150 :
+         values[1] ? 150 : 0
       );
     })
 
@@ -176,13 +176,13 @@ void initialize() {
 
     .add_auton("roller", [&]() {
       robot.move_chassis(20, 0, 0);
-      robot.get_device<KRONOS::Motor>("roller")->move_velocity(20);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(-20);
       robot.sleep(500);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
       robot.move_chassis(-20, 0, 50, 800);
       robot.move_chassis(-20, 0, 0, 500);
-      robot.move_chassis(-20, 0, 30, 600);
+      robot.move_chassis(-20, 0, 30, 450);
       robot.add_task("flywheelThread", pros::Task([&](){
           while (true) {
             robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 365);
@@ -212,7 +212,7 @@ void initialize() {
       robot.move_chassis(50, 0, 0, 1200);
       robot.move_chassis(0, 0, 50, 770);
       robot.move_chassis(50, 0, 0);
-      robot.get_device<KRONOS::Motor>("roller")->move_velocity(20);
+      robot.get_device<KRONOS::Motor>("roller")->move_velocity(-20);
       robot.sleep(1000);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
