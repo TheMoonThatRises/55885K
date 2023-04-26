@@ -15,10 +15,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-# IDE files
-.vscode
-.idea
-
-# System files
-.DS_Store
