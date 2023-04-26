@@ -129,7 +129,7 @@ void initialize() {
 
     // Flywheel listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &spinSpeed) {
-      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 390 : spinSpeed[1] ? 440 : 0);
+      robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(spinSpeed[0] || spinSpeed[1], spinSpeed[0] ? 390 : spinSpeed[1] ? 450 : 0);
     })
 
     // Aim mode
