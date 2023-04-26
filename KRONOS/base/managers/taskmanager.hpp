@@ -21,23 +21,23 @@ namespace KRONOS {
       }
 
       pros::Task* get_task(const std::string& name) {
-        return tasks.at(name).get();
+        return tasks.find(name) != tasks.end() ? tasks.at(name).get() : nullptr;
       }
 
       void suspend_task(const std::string &name) {
-        if (tasks.at(name)) {
+        if (tasks.find(name) != tasks.end()) {
           get_task(name)->suspend();
         }
       }
 
       void resume_task(const std::string &name) {
-        if (tasks.at(name)) {
+        if (tasks.find(name) != tasks.end()) {
           get_task(name)->resume();
         }
       }
 
       void kill_task(const std::string &name) {
-        if (tasks.at(name)) {
+        if (tasks.find(name) != tasks.end()) {
           tasks.at(name)->remove();
           tasks.at(name).reset(nullptr);
           tasks.erase(name);
