@@ -16,6 +16,10 @@ namespace KRONOS {
     private:
       std::map<std::string, std::unique_ptr<pros::Task>> tasks;
     public:
+      inline ~TaskManager() {
+        kill_all();
+      }
+
       void add_task(const std::string &name, const pros::Task &task) {
         tasks.insert({ name, std::make_unique<pros::Task>(task) });
       }
