@@ -83,8 +83,8 @@ void initialize() {
     .add_device("aimcamera", new KRONOS::Vision({.port=21}))
 
     .add_device("flywheel_pid", new KRONOS::PIDDevice(KExtender::P_NONE, {.minspeed=0, .kP=0.0, .kI=0.15, .kD=0.2}, {}))
-    .add_device("flywheel1", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06}))
-    .add_device("flywheel2", new KRONOS::Motor({.port=17, .gearset=pros::E_MOTOR_GEARSET_06, .reverse=true}))
+    .add_device("flywheel1", new KRONOS::Motor({.port=17, .gearset=pros::E_MOTOR_GEARSET_06}))
+    .add_device("flywheel2", new KRONOS::Motor({.port=14, .gearset=pros::E_MOTOR_GEARSET_06, .reverse=true}))
 
     .add_device("intake", new KRONOS::Motor({.port=15, .gearset=pros::E_MOTOR_GEARSET_18}))
 
@@ -94,6 +94,8 @@ void initialize() {
 
     .add_device("imu", new KRONOS::Imu({.port=5}))
 
+    .add_device("expansion", new KRONOS::Piston({.port='G'}))
+
     .add_device(new KRONOS::Controller({.id=pros::E_CONTROLLER_MASTER}))
 
     .set_chassis_motors(robot.get_multiple_devices({"topleft", "topright", "bottomleft", "bottomright"}))
@@ -101,7 +103,7 @@ void initialize() {
 
     // Create chassis listener
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &analogs) {
-      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord + 25) : (analogs[2] / 1.8)));
+      robot.move_chassis(analogs[0], analogs[1], (*robot.global_get<bool>("aimmode") ? robot.get_device<KRONOS::PIDDevice>("aimcamera_pid")->pid(0, -robot.get_device<KRONOS::Vision>("aimcamera")->get_by_sig(0, *robot.global_get<int>("side")).x_middle_coord + 20) : (analogs[2] / 1.8)));
     })
 
     // Intake listener
@@ -115,8 +117,8 @@ void initialize() {
     // Roller listener
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_X, pros::E_CONTROLLER_DIGITAL_B}, [&](const std::vector<bool> &values) {
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(
-        values[0] ? -160 :
-          values[1] ? 160 : 0
+        values[0] ? 160 :
+          values[1] ? -160 : 0
       );
     })
 
@@ -133,6 +135,14 @@ void initialize() {
     // Aim mode
     .add_controller_link(pros::E_CONTROLLER_DIGITAL_A, [&](const bool &toggled) {
       robot.global_set("aimmode", toggled);
+    })
+
+    .add_controller_link(pros::E_CONTROLLER_DIGITAL_DOWN, [&](const bool &toggled) {
+      if (toggled) {
+        robot.get_device<KRONOS::Piston>("expansion")->toggle();
+        robot.sleep(500);
+        robot.get_device<KRONOS::Piston>("expansion")->toggle();
+      }
     })
 
     .add_controller_link(pros::E_CONTROLLER_DIGITAL_RIGHT, [&](const bool &toggled) {
@@ -170,8 +180,9 @@ void initialize() {
       robot.sleep(500);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
-      robot.move_chassis(-20, 0, 0, 400);
-      robot.move_chassis(0, 0, 50, 700);
+      robot.move_chassis(-20, 0, 50, 800);
+      robot.move_chassis(-20, 0, 0, 500);
+      robot.move_chassis(-20, 0, 30, 600);
       robot.add_task("flywheelThread", pros::Task([&](){
           while (true) {
             robot.global_get<std::function<void(bool, int)>>("flywheel_func")->operator()(true, 365);
@@ -202,7 +213,7 @@ void initialize() {
       robot.move_chassis(0, 0, 50, 770);
       robot.move_chassis(50, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(20);
-      robot.sleep(900);
+      robot.sleep(1000);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
     })
