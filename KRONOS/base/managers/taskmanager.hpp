@@ -20,27 +20,27 @@ namespace KRONOS {
         kill_all();
       }
 
-      void add_task(const std::string &name, const pros::Task &task) {
+      inline void add_task(const std::string &name, const pros::Task &task) {
         tasks.insert({ name, std::make_unique<pros::Task>(task) });
       }
 
-      pros::Task* get_task(const std::string& name) {
+      inline pros::Task* get_task(const std::string& name) {
         return tasks.find(name) != tasks.end() ? tasks.at(name).get() : nullptr;
       }
 
-      void suspend_task(const std::string &name) {
+      inline void suspend_task(const std::string &name) {
         if (tasks.find(name) != tasks.end()) {
           get_task(name)->suspend();
         }
       }
 
-      void resume_task(const std::string &name) {
+      inline void resume_task(const std::string &name) {
         if (tasks.find(name) != tasks.end()) {
           get_task(name)->resume();
         }
       }
 
-      void kill_task(const std::string &name) {
+      inline void kill_task(const std::string &name) {
         if (tasks.find(name) != tasks.end()) {
           tasks.at(name)->remove();
           tasks.at(name).reset(nullptr);
@@ -48,7 +48,7 @@ namespace KRONOS {
         }
       }
 
-      void kill_all() {
+      inline void kill_all() {
         for (const auto &[name, task] : tasks) {
           kill_task(name);
         }
