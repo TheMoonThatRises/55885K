@@ -177,7 +177,7 @@ void initialize() {
     .add_auton("roller", [&]() {
       robot.move_chassis(20, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(-20);
-      robot.sleep(500);
+      robot.sleep(800);
       robot.move_chassis(0, 0, 0);
       robot.get_device<KRONOS::Motor>("roller")->move_velocity(0);
       robot.move_chassis(-20, 0, 50, 800);
