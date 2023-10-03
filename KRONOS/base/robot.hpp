@@ -17,6 +17,7 @@
 #include "base/managers/taskmanager.hpp"
 
 #include "user/caster.hpp"
+#include "user/memoryprofiler.hpp"
 
 #include "pros/rtos.hpp"
 
@@ -24,8 +25,10 @@
 
 namespace KRONOS {
   class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public VarManager, public TaskManager {
+    protected:
+      KMemoryProfiler::MemoryProfiler _memory_profiler;
     public:
-      inline explicit Robot() : AutonomousManager(this, this), ControllerManager(this) {
+      inline explicit Robot() : AutonomousManager(this, this), ControllerManager(this), _memory_profiler(this) {
         KLog::Log::info("Constructing robot");
         KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
