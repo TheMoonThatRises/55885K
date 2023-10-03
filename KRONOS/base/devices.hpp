@@ -36,22 +36,30 @@ namespace KRONOS {
       inline void _init() {
         KLog::Log::info("Constructing " + _get_info());
 
-        #ifdef KRONOS_STRICT_DEVICE_ASSIGNMENT
-          if (_port.has_value()) {
-            const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port.value());
+        if (_port.has_value()) {
+          const pros::c::v5_device_e_t portInfo = pros::c::registry_get_plugged_type(_port.value());
 
-            if (portInfo != pros::c::E_DEVICE_NONE) {
-              throw new PortOccupiedError(_port.value());
-            } else if ((int) portInfo != (int) _type) {
-              throw new UnexpectedDeviceFoundError(portInfo, _type, _port.value());
-            }
+          int port_index = isdigit(_port.value()) ? _port.value() - '0' : 21 + toupper(_port.value()) - 'A';
+
+          if (portInfo == pros::c::E_DEVICE_NONE) {
+            return KLog::Log::warn("No device found at port '" + std::to_string(_port.value()) + "'");
+          } else if (portInfo == pros::c::E_DEVICE_UNDEFINED) {
+            return KLog::Log::warn("Unknown device found at port '" + std::to_string(_port.value()) + "'");
+          } else if (AbstractDevice::_occupied_ports[port_index]) {
+            throw new PortOccupiedError(_port.value());
+          } else if ((int) portInfo != (int) _type) {
+            throw new UnexpectedDeviceFoundError(portInfo, _type, _port.value());
+          } else {
+            AbstractDevice::_occupied_ports[port_index] = 1;
           }
-        #endif
+        }
       }
 
       const device_types _type;
       const std::optional<device_face> _face;
       const std::optional<char> _port;
+
+      inline static char _occupied_ports[29] {};
     public:
       /*
         @param device

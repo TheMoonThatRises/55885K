@@ -1,7 +1,6 @@
 /*
   Define environmental variables that control how KRONOS works
 */
-// #define KRONOS_STRICT_DEVICE_ASSIGNMENT //TODO: Fix
 #define KRONOS_STRICT_DEVICE_GETTER
 #define KRONOS_PRACTICE_DRIVE
 // #define OVERHEAT_RUMBLE
