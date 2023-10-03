@@ -22,6 +22,8 @@ namespace KLog {
   };
 
   class Log {
+    private:
+        inline static bool usd_installed = true;
     protected:
       /*
         Default log function
@@ -53,8 +55,6 @@ namespace KLog {
         #endif
 
         #ifdef KRONOS_LOG_FILE
-          static bool usd_installed = true;
-
           if (pros::usd::is_installed()) {
             static std::string fileName;
             std::ofstream logFile;
