@@ -45,12 +45,12 @@ namespace KRONOS {
             return KLog::Log::warn("No device found at port '" + std::to_string(_port.value()) + "'");
           } else if (portInfo == pros::c::E_DEVICE_UNDEFINED) {
             return KLog::Log::warn("Unknown device found at port '" + std::to_string(_port.value()) + "'");
-          } else if (AbstractDevice::_occupied_ports[port_index]) {
+          } else if (_occupied_ports[port_index]) {
             throw new PortOccupiedError(_port.value());
           } else if ((int) portInfo != (int) _type) {
             throw new UnexpectedDeviceFoundError(portInfo, _type, _port.value());
           } else {
-            AbstractDevice::_occupied_ports[port_index] = 1;
+            _occupied_ports[port_index] = 1;
           }
         }
       }
