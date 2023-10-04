@@ -6,11 +6,15 @@
 
 #ifndef _KRONOS_HPP_
 #define _KRONOS_HPP_
-  #ifdef KRONOS_PRACTICE_DRIVE
-    #define KRONOS_LOG_COUT
-    #define KRONOS_LOG_FILE
-    #define KRONOS_LOG_PID
-  #endif
+  // These flags should be used only when testing code, and not when running robot.
+  // They will either throw errors or may potentially come at a performance cost
+  // #define KRONOS_SAFETY_CHECKS
+  // #define KRONOS_STRICT_DEVICE_GETTER
+  // #define KRONOS_STRICT_MUTEX
+
+  #define KRONOS_LOG_COUT
+  #define KRONOS_LOG_FILE
+  #define KRONOS_DEVICE_USE_MUTEX
 
   /*
     Include KRONOS libraries

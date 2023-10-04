@@ -58,7 +58,7 @@ namespace KExtender {
 
         @return Value to set
       */
-      inline double pid(const double &target, const double &current) {
+      inline virtual double tick(const double &target, const double &current) {
         if (_exitcondition == P_TIME && !_starttime.has_value()) {
           _starttime = pros::millis();
         }
@@ -79,7 +79,7 @@ namespace KExtender {
         }
       }
 
-      inline void add_consistency_value(const double &value) {
+      inline virtual void add_consistency_value(const double &value) {
         _consistencyValues.push_back(value);
 
         if (_consistencyValues.size() > _consistencyconsts.maxvalues) {
@@ -87,31 +87,31 @@ namespace KExtender {
         }
       }
 
-      inline bool consistency(const double &compare) {
+      inline virtual bool consistency(const double &compare) {
         const double result = std::reduce(_consistencyValues.begin(), _consistencyValues.end()) / _consistencyValues.size();
 
         return result >= compare - _consistencyconsts.errormargin && result <= compare + _consistencyconsts.errormargin;
       }
 
-      inline void drop_consistency() {
+      inline virtual void drop_consistency() {
         _consistencyValues.clear();
       }
 
-      inline void reset() {
+      inline virtual void reset() {
         _starttime.reset();
         _previousError = 0;
         _integral = 0;
       }
 
-      inline void set_exit_condition(const pid_exit_conditions &exit) {
+      inline virtual void set_exit_condition(const pid_exit_conditions &exit) {
         _exitcondition = exit;
       }
 
-      inline void set_pid_consts(const pid_consts &pidconsts) {
+      inline virtual void set_pid_consts(const pid_consts &pidconsts) {
         _pidconsts = pidconsts;
       }
 
-      inline void set_max_speed(const double &max) {
+      inline virtual void set_max_speed(const double &max) {
         _pidconsts.maxspeed = max;
       }
   };

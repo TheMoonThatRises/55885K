@@ -24,7 +24,7 @@ namespace KLog {
   class Log {
     private:
         inline static bool usd_installed = true;
-    protected:
+    public:
       /*
         Default log function
 
@@ -74,7 +74,7 @@ namespace KLog {
           }
         #endif
       }
-    public:
+
       /*
         Error logger function
 

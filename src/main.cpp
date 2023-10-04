@@ -1,14 +1,13 @@
 /*
   Define environmental variables that control how KRONOS works
 */
+// #define KRONOS_SAFETY_CHECKS
 #define KRONOS_STRICT_DEVICE_GETTER
-#define KRONOS_PRACTICE_DRIVE
-// #define OVERHEAT_RUMBLE
+// #define KRONOS_STRICT_MUTEX
 
 /*
   Include main libraries
 */
-
 #include "kronos.hpp" // Include KRONOS library
 #include "main.h" // Include run header file
 
