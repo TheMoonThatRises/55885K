@@ -16,6 +16,7 @@
 #include "assets/logger.hpp"
 #include "assets/statics.hpp"
 
+// #include "pros/misc.h" // TODO: Add battery info
 #include "pros/rtos.h"
 
 #include "external/FreeRTOSConfig.h"
@@ -26,9 +27,13 @@ namespace KMemoryProfiler {
     private:
       KRONOS::TaskManager *_taskManager;
 
-      const size_t _min_ever_free_heap;
-      const size_t _free_heap_min_buffer = 0x400;
+      const size_t _min_ever_free_heap = xPortGetMinimumEverFreeHeapSize();
+      const size_t _free_heap_min_buffer = 0x200;
       size_t _last_tick_free_heap;
+
+      // const size_t _max_battery_capacity = pros::battery::
+
+      const bool _detailed_tick_info;
 
       const std::string _task_name = "memoryprofiler";
     protected:
@@ -38,15 +43,19 @@ namespace KMemoryProfiler {
               while (true) {
                 size_t free_heap_size = xPortGetFreeHeapSize();
 
-                if (free_heap_size - this->_free_heap_min_buffer <= this->_min_ever_free_heap) {
-                  KLog::Log::warn("Low free heap left: " + std::to_string(free_heap_size));
-                }
+                if (this->_detailed_tick_info) {
+                  this->print_memory_info();
+                } else {
+                  if (free_heap_size - this->_free_heap_min_buffer <= this->_min_ever_free_heap) {
+                    KLog::Log::warn("Low free heap left: " + std::to_string(free_heap_size));
+                  }
 
-                KLog::Log::info("Memory used since last tick: " + std::to_string(free_heap_size - this->_last_tick_free_heap));
+                  KLog::Log::info("Memory used since last tick: " + std::to_string(free_heap_size - this->_last_tick_free_heap));
+                }
 
                 this->_last_tick_free_heap = free_heap_size;
 
-                pros::delay(KUtil::KRONOS_MSDELAY * 500);
+                pros::delay(KUtil::KRONOS_MSDELAY * 50);
               }
             }, TASK_PRIORITY_MIN, TASK_STACK_DEPTH_MIN, _task_name.c_str()
           ));
@@ -57,11 +66,12 @@ namespace KMemoryProfiler {
         }
       }
     public:
-      inline explicit MemoryProfiler(KRONOS::TaskManager *taskManager): _taskManager(taskManager), _min_ever_free_heap(xPortGetMinimumEverFreeHeapSize()), _last_tick_free_heap(xPortGetFreeHeapSize()) {
+      inline explicit MemoryProfiler(KRONOS::TaskManager *taskManager, const bool &detailed_tick_info = false): _taskManager(taskManager), _last_tick_free_heap(xPortGetFreeHeapSize()), _detailed_tick_info(detailed_tick_info) {
         _init();
       }
 
       inline void print_memory_info() {
+        bool loop_is_ticking = _taskManager->get_task(_task_name)->get_state() == pros::E_TASK_STATE_SUSPENDED;
         size_t free_heap_size = xPortGetFreeHeapSize();
 
         KLog::Log::info("|---------------[Memory Profiler]---------------|");
@@ -71,6 +81,15 @@ namespace KMemoryProfiler {
         KLog::Log::info("| Current Heap Usage: " + std::to_string(free_heap_size));
         KLog::Log::info("| Last Tick Heap Usage: " + std::to_string(_last_tick_free_heap));
         KLog::Log::info("| Heap Usage Since Last Tick: " + std::to_string(free_heap_size - _last_tick_free_heap));
+
+        if (!loop_is_ticking) {
+          KLog::Log::warn("| Heap usage tick is not running");
+        }
+
+        if (free_heap_size - this->_free_heap_min_buffer <= this->_min_ever_free_heap) {
+          KLog::Log::warn("Low free heap left: " + std::to_string(free_heap_size));
+        }
+
         KLog::Log::info("|-----------------------------------------------|");
       }
 
