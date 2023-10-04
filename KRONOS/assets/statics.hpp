@@ -10,7 +10,7 @@
 #include <string>
 
 namespace KUtil {
-  constexpr double KRONOS_MSDELAY = 20.0;
+  constexpr uint32_t KRONOS_MSDELAY = 20;
   constexpr double KRONOS_JOYSTICK_MOTOR_RATIO = 1.5748031496;
 
   constexpr std::string_view KRONOS_SD_CARD_PATH = "/usd/";

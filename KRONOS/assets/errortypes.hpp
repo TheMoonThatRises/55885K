@@ -48,6 +48,11 @@ namespace KRONOS {
     public:
       explicit UnexpectedDeviceTypeError(const device_types &expected, const device_types &got) : AbstractKronosError("Expected device type '" + std::to_string(expected) + "' but got '" + std::to_string(got) + "' when casting") {};
   };
+
+  class UnsuccessfulMutexTake : public AbstractKronosError {
+    public:
+      explicit UnsuccessfulMutexTake() : AbstractKronosError("Unsuccessful mutex take: " + errno) {};
+  };
 }
 
 #endif

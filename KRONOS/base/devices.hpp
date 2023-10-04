@@ -27,7 +27,7 @@
 #include <optional>
 
 namespace KRONOS {
-  class AbstractDevice {
+  class AbstractDevice : public pros::Mutex {
     private:
       inline std::string _get_info() {
         return "abstract device type '" + std::to_string(_type) + "'" + (_face.has_value() ? " facing '" + std::to_string(_face.value())  + "'": "") + (_port.has_value() ? " at port '" + std::to_string(_port.value()) + "'" : "");
@@ -117,6 +117,35 @@ namespace KRONOS {
         @return Port the device is on
       */
       inline virtual std::optional<char> port() const { return _port; }
+
+      /*
+        Tests if the device type is that inputted
+
+        @param type The type to compare against
+
+        @return If the device is of inputted type
+      */
+      inline virtual bool is_type(const device_types &type) const { return _type == type; }
+
+      /*
+        Takes mutex
+
+        @return Successful operation or not
+      */
+      inline virtual bool mutex_take(const uint32_t &delay = KUtil::KRONOS_MSDELAY) {
+        #ifdef KRONOS_DEVICE_USE_MUTEX
+          if (!Mutex::take(delay)) {
+            #ifdef KRONOS_STRICT_MUTEX
+              throw new UnsuccessfulMutexTake();
+            #else
+              KLog::Log::warn("Unable to take mutex for device '" + std::to_string(_type) + "' on port '" + std::to_string(port().value()) + "'. This may cause unexpected motor functionality");
+              return false;
+            #endif
+          }
+        #endif
+
+        return true;
+      }
   };
 
   class Button : public pros::ADIDigitalIn, public AbstractDevice {
@@ -138,6 +167,10 @@ namespace KRONOS {
   class Controller : public pros::Controller, public AbstractDevice {
     private:
       const pros::controller_id_e_t _id;
+
+      inline void logger(const KLog::log_types &log_type, const std::string &text) {
+        KLog::Log::log(log_type, "Controller " + std::to_string(id()) + ": " + text);
+      }
     public:
       /*
         @param controller
@@ -152,15 +185,30 @@ namespace KRONOS {
       inline pros::controller_id_e_t id() const { return _id; }
 
       /*
+        Rumbles the controller in the pattern given. Wrapper for pros::Controller::rumble
+
+        @param pattern The pattern to rumble the controller
+      */
+      inline void rumble(const std::string &pattern) {
+        AbstractDevice::mutex_take();
+
+        pros::Controller::rumble(pattern.c_str());
+
+        logger(KLog::log_types::L_WARNING, "Rumbling pattern: " + pattern);
+      }
+
+      /*
         Sets the controllers display screen text
 
         @param text Text to display to controller screen
       */
       inline void set_text(const std::string &text) {
+        AbstractDevice::mutex_take();
+
         // pros::Controller::clear();
         pros::Controller::set_text(0, 0, text + "         ");
 
-        KLog::Log::info("Controller " + std::to_string(id()) + ": " + text);
+        logger(KLog::log_types::L_INFO, text);
       }
   };
 
@@ -188,7 +236,9 @@ namespace KRONOS {
         @return If the PID loop exists and is set to 0
       */
       inline bool move_position_pid(const double &target) {
-        const double velocity = KExtender::PID::pid(target, get_position());
+        AbstractDevice::mutex_take();
+
+        const double velocity = KExtender::PID::tick(target, get_position());
 
         pros::Motor::move_velocity(velocity);
 
@@ -203,7 +253,9 @@ namespace KRONOS {
         @return Velocity pid is set to
       */
       inline double move_velocity_pid(const double &target) {
-        const double velocity = KExtender::PID::pid(target, get_actual_velocity());
+        AbstractDevice::mutex_take();
+
+        const double velocity = KExtender::PID::tick(target, get_actual_velocity());
 
         pros::Motor::move_velocity(velocity);
 
@@ -215,7 +267,9 @@ namespace KRONOS {
 
         @param velocity Velocity to set motor to
       */
-      inline int32_t move_velocity(const double &velocity) const {
+      inline int32_t move_velocity(const double &velocity) {
+        AbstractDevice::mutex_take();
+
         return pros::Motor::move_velocity(velocity);
       }
 
@@ -225,7 +279,9 @@ namespace KRONOS {
         @param velocity Velocity to set motor to
         @param sleep How long to sleep afterwards
       */
-      inline void move_velocity(const double &velocity, const double &sleep) const {
+      inline void move_velocity(const double &velocity, const double &sleep) {
+        AbstractDevice::mutex_take(sleep);
+
         pros::Motor::move_velocity(velocity);
         pros::delay(sleep);
         pros::Motor::move_velocity(0);
@@ -235,6 +291,12 @@ namespace KRONOS {
   class PIDDevice : public KExtender::PID, public AbstractDevice {
     public:
       inline explicit PIDDevice(const KExtender::pid_exit_conditions &exitcon, const KExtender::pid_consts &pidconsts, const KExtender::consistency_consts &consistencyconsts) : KExtender::PID(exitcon, pidconsts, consistencyconsts), AbstractDevice(K_PID) {};
+
+      inline double tick(const double &target, const double &current) {
+        AbstractDevice::mutex_take();
+
+        return KExtender::PID::tick(target, current);
+      }
   };
 
   class Piston : public pros::ADIDigitalOut, public AbstractDevice {
@@ -254,6 +316,8 @@ namespace KRONOS {
         @return The value that the piston is set to
       */
       inline bool set_value(const bool &setValue) {
+        AbstractDevice::mutex_take();
+
         pros::ADIDigitalOut::set_value(setValue);
         _value = setValue;
 
@@ -295,6 +359,8 @@ namespace KRONOS {
       };
 
       inline Vision& set_zero_point(const pros::vision_zero_e_t &zero_point) {
+        AbstractDevice::mutex_take();
+
         pros::Vision::set_zero_point(zero_point);
 
         return *this;
@@ -331,6 +397,8 @@ namespace KRONOS {
         @return Self to chain
       */
       inline Vision& set_signature(const int &name) {
+        AbstractDevice::mutex_take();
+
         pros::Vision::set_signature(name, &(get_signature(name)));
 
         return *this;
