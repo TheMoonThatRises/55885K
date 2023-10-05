@@ -167,6 +167,10 @@ namespace KRONOS {
         _taskManager = taskManager;
       }
 
+      inline ~ControllerManager() {
+        event_deinitialize();
+      }
+
       /*
         Gets controller pointer stored
 
@@ -175,6 +179,17 @@ namespace KRONOS {
         @return Controller pointer
       */
       inline Controller* get_controller(const controller_type &type) {
+        return _controllers[type].get();
+      }
+
+      /*
+        Queries if has specific controller
+
+        @param type Controller type
+
+        @returns If the controller manager contains the specific controller
+      */
+      inline bool has_controller(const controller_type &type) {
         return _controllers[type].get();
       }
   };
