@@ -171,6 +171,10 @@ namespace KRONOS {
         _varManager = varManager;
         _taskManager = taskManager;
       }
+
+      inline ~AutonomousManager() {
+        unload_auton_threads();
+      }
   };
 }
 
