@@ -19,9 +19,9 @@ namespace KUUID {
       std::mt19937 _gen; // seed the generator
       std::uniform_int_distribution<> _distr; // define the range
     public:
-      explicit UUIDGenerator() : _gen(_rd()), _distr(0, (int) _characters.size() - 1) {};
+      inline explicit UUIDGenerator() : _gen(_rd()), _distr(0, (int) _characters.size() - 1) {};
 
-      std::string generate_uuid() {
+      inline std::string generate_uuid() {
         std::string id;
 
         for (int i = 0; i < _max_characters; ++i) {

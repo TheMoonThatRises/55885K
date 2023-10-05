@@ -25,7 +25,7 @@
 #include <functional>
 
 namespace KRONOS {
-  class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public SafetyManager, public TaskManager,public VarManager {
+  class Robot : public AutonomousManager, public DeviceManager, public ChassisManager, public ControllerManager, public SafetyManager, public TaskManager, public VarManager {
     protected:
       KMemoryProfiler::MemoryProfiler _memory_profiler;
     public:
