@@ -122,6 +122,26 @@ namespace KRONOS {
 
         return deviceVector;
       }
+
+      /*
+        Gets all devices of the same type
+
+        @param type The type of the device to get
+
+        @return A vector of the device type
+      */
+      template <class Device = AbstractDevice>
+      inline std::vector<Device*> get_all_device_type(const device_types &type) {
+        std::vector<Device*> deviceVector;
+
+        for (const auto &[name, device] : _devices) {
+          if (device->is_type(type)) {
+            deviceVector.push_back(get_device<Device>(name));
+          }
+        }
+
+        return deviceVector;
+      }
   };
 }
 
