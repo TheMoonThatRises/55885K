@@ -66,7 +66,7 @@ namespace KRONOS {
         @param face
         @param port
       */
-      inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port) {
+      inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port), Mutex() {
         _init();
       };
 
@@ -138,7 +138,7 @@ namespace KRONOS {
             #ifdef KRONOS_STRICT_MUTEX
               throw new UnsuccessfulMutexTake();
             #else
-              KLog::Log::warn("Unable to take mutex for device '" + std::to_string(_type) + "' on port '" + std::to_string(port().value()) + "'. This may cause unexpected motor functionality");
+              KLog::Log::warn("Unable to take mutex for device '" + std::to_string(_type) + "' on port '" + std::to_string(port().value()) + "'. This may cause unexpected device functionality. Errno: " + std::to_string(errno));
               return false;
             #endif
           }
