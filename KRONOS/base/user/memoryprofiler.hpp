@@ -55,7 +55,7 @@ namespace KMemoryProfiler {
 
                 this->_last_tick_free_heap = free_heap_size;
 
-                pros::delay(KUtil::KRONOS_MSDELAY * 50);
+                pros::delay(KUtil::KRONOS_MSDELAY * 500);
               }
             }, TASK_PRIORITY_MIN, TASK_STACK_DEPTH_MIN, _task_name.c_str()
           ));
@@ -71,7 +71,7 @@ namespace KMemoryProfiler {
       }
 
       inline void print_memory_info() {
-        bool loop_is_ticking = _taskManager->get_task(_task_name)->get_state() == pros::E_TASK_STATE_SUSPENDED;
+        bool loop_is_ticking = _taskManager->get_task(_task_name)->get_state() == pros::E_TASK_STATE_RUNNING;
         size_t free_heap_size = xPortGetFreeHeapSize();
 
         KLog::Log::info("|---------------[Memory Profiler]---------------|");
@@ -87,7 +87,7 @@ namespace KMemoryProfiler {
         }
 
         if (free_heap_size - this->_free_heap_min_buffer <= this->_min_ever_free_heap) {
-          KLog::Log::warn("Low free heap left: " + std::to_string(free_heap_size));
+          KLog::Log::warn("| Low free heap left: " + std::to_string(free_heap_size));
         }
 
         KLog::Log::info("|-----------------------------------------------|");

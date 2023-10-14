@@ -29,7 +29,11 @@ namespace KRONOS {
     protected:
       KMemoryProfiler::MemoryProfiler _memory_profiler;
     public:
-      inline explicit Robot(): AutonomousManager(this, this), ControllerManager(this), SafetyManager(this, this, this), _memory_profiler(this) {
+      inline explicit Robot(bool use_memory_profiler = false, bool detailed_memory_profiler = true): AutonomousManager(this, this), ControllerManager(this), SafetyManager(this, this, this), _memory_profiler(this, detailed_memory_profiler) {
+        if (use_memory_profiler) {
+          _memory_profiler.enable_memory_profiler();
+        }
+
         KLog::Log::info("Constructing robot");
         KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
@@ -240,7 +244,6 @@ namespace KRONOS {
       inline Robot& kill_all_tasks() {
         AutonomousManager::unload_auton_threads();
         ControllerManager::event_deinitialize();
-        TaskManager::kill_all();
 
         return *this;
       }
