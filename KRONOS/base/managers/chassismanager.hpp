@@ -28,12 +28,6 @@ namespace KRONOS {
         _chassisMotors = motors;
       }
     public:
-      ~ChassisManager() {
-        for (const auto motor : _chassisMotors) {
-          delete motor;
-        }
-      }
-
       /*
         Move the chassis
 
