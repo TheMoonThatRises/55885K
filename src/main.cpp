@@ -30,14 +30,18 @@ void initialize() {
     // Device initialisers
     .add_device(new KRONOS::Controller({}))
 
-    .add_device("leftone", new KRONOS::Motor({.port=17}))
-    .add_device("lefttwo", new KRONOS::Motor({.port=18}))
-    .add_device("leftthree", new KRONOS::Motor({.port=19}))
+    .add_device("leftone", new KRONOS::Motor({.port=1, .face=KRONOS::K_NORTHWEST}))
+    .add_device("lefttwo", new KRONOS::Motor({.port=2, .face=KRONOS::K_WEST}))
+    .add_device("leftthree", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHWEST}))
 
-    .add_controller_link(pros::E_CONTROLLER_ANALOG_LEFT_Y, [&](const double &velocity) {
-      robot.get_device<KRONOS::Motor>("leftone")->move_velocity(velocity);
-      robot.get_device<KRONOS::Motor>("lefttwo")->move_velocity(velocity);
-      robot.get_device<KRONOS::Motor>("leftthree")->move_velocity(velocity);
+    .add_device("rightone", new KRONOS::Motor({.port=4, .face=KRONOS::K_NORTHEAST}))
+    .add_device("righttwo", new KRONOS::Motor({.port=5, .face=KRONOS::K_EAST}))
+    .add_device("rightthree", new KRONOS::Motor({.port=6, .face=KRONOS::K_SOUTHEAST}))
+
+    .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "leftthree", "rightone", "righttwo", "rightthree"}))
+
+    .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &velocity) {
+      robot.move_chassis(velocity[0], velocity[1], velocity[2] / 1.8);
     });
 
 
