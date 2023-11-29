@@ -30,6 +30,7 @@ void initialize() {
     // Device initialisers
     .add_device(new KRONOS::Controller({}))
 
+    // chassis devices
     .add_device("leftone", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_NORTHWEST}))
     .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_WEST}))
     .add_device("leftthree", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
@@ -38,10 +39,45 @@ void initialize() {
     .add_device("righttwo", new KRONOS::Motor({.port=5, .reverse=true, .face=KRONOS::K_EAST}))
     .add_device("rightthree", new KRONOS::Motor({.port=6, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
 
+    // launcher device
+    .add_device("catapult", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED,}))
+
+    // intake device
+    .add_device("intake", new KRONOS::Motor({.port=8, .gearset=pros::E_MOTOR_GEAR_BLUE}))
+
+    // launcher distance trigger
+    .add_device("ltrigger", new KRONOS::Button({.port='A'}))
+
     .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "leftthree", "rightone", "righttwo", "rightthree"}))
 
+    // chassis controls
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &velocity) {
-      robot.move_chassis(velocity[0], velocity[1], velocity[2] / 1.8);
+      robot.move_chassis(-velocity[0], velocity[1], velocity[2] / 1.8);
+    })
+
+    // launcher controls
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &pressed) {
+      KRONOS::Motor *catapult = robot.get_device<KRONOS::Motor>("catapult");
+      KRONOS::Button *ltrigger = robot.get_device<KRONOS::Button>("ltrigger");
+
+      if (pressed[1]) {
+        catapult->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+      } else if (pressed[0]) {
+        catapult->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+        if (ltrigger->get_value()) {
+          catapult->move_velocity(100, 300);
+        }
+
+        while (!ltrigger->get_value()) {
+          catapult->move_velocity(50, 10);
+        }
+      }
+    })
+
+    // intake controls
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &pressed) {
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(pressed[0] ? -600 : pressed[1] ? 600 : 0);
     });
 
 
