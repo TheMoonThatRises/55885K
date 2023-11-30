@@ -23,9 +23,9 @@ namespace KExtender {
            timeconstraint = 5000.0,
            minspeed = -600,
            maxspeed = 600,
-           kP = 0.5,
-           kI = 0.1,
-           kD = 0.4;
+           kP = 0.0,
+           kI = 0.0,
+           kD = 0.0;
   };
 
   struct consistency_consts {
