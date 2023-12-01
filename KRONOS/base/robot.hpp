@@ -34,6 +34,8 @@ namespace KRONOS {
           _memory_profiler.enable_memory_profiler();
         }
 
+        VarManager::global_set("side", KUtil::S_RED);
+
         KLog::Log::info("Constructing robot");
         KLog::Log::info("Current status: Autonomous: " + std::to_string(pros::competition::is_autonomous()) + " Connected: " + std::to_string(pros::competition::is_connected()) + " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
