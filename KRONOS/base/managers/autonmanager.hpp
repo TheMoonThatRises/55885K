@@ -86,8 +86,6 @@ namespace KRONOS {
       /*
         Sets peripheral select and lock button, and main controller for display
 
-        @param select Select button
-        @param lock Lock button
         @param controller Main controller
       */
       inline void set_assets(KRONOS::Controller* controller) {
@@ -98,8 +96,6 @@ namespace KRONOS {
         Runs the selected autonomous code
       */
       inline void run() {
-        _varManager->global_get<std::function<void(std::string)>>("setsigtocolor")->operator()("aimcamera");
-
         if (!_currentAuton.empty() && _currentAuton != "noauton") {
           KLog::Log::info("Running auton '" + _currentAuton + "'");
           _controller->set_text("Rng auton '" + _currentAuton + "'");
