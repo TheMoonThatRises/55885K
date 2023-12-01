@@ -49,6 +49,8 @@ void initialize() {
     .add_device("ltrigger", new KRONOS::Button({.port='A'}))
 
     .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "leftthree", "rightone", "righttwo", "rightthree"}))
+    .set_chassis_use_pid(true)
+    .set_chassis_pid({.kP=0.0, .kI=0.0, .kD=0.0})
 
     // chassis controls
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &velocity) {
@@ -73,6 +75,18 @@ void initialize() {
           catapult->move_velocity(50, 10);
         }
       }
+    })
+
+    .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
+
+    .add_auton("offense", [&]() {
+
+    })
+    .add_auton("defensive", [&]() {
+
+    })
+    .add_auton("skills", [&]() {
+
     })
 
     // intake controls
