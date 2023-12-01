@@ -51,12 +51,14 @@ namespace KRONOS {
           const double mstraight = (motor->facing() >= K_NORTHEAST && motor->facing() <= K_SOUTHEAST)  ? -straight : straight;
           const double mstrafe = (motor->facing() >= K_SOUTHEAST && motor->facing() <= K_SOUTHWEST) ? -strafe : strafe;
 
-          const double move_value = (mstraight + mstrafe + turn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO;
+          const double target_velocity = (mstraight + mstrafe + turn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO;
+
+          motor->set_max_speed(target_velocity);
 
           if (_use_pid) {
-            motor->move_velocity_pid(move_value);
+            motor->move_velocity_pid(target_velocity);
           } else {
-            motor->move_velocity(move_value);
+            motor->move_velocity(target_velocity);
           }
         }
       }
@@ -73,6 +75,15 @@ namespace KRONOS {
         this->move_chassis(straight, strafe, turn);
         pros::delay(sleep);
         this->move_chassis(0, 0, 0);
+      }
+
+      /*
+
+      */
+      inline void set_pid_consts(const KExtender::pid_consts &pidconsts) override {
+        for (Motor *motor : _chassisMotors) {
+          motor->set_pid_consts(pidconsts);
+        }
       }
   };
 }
