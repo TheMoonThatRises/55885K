@@ -113,10 +113,34 @@ namespace KRONOS {
       }
 
       /*
+        Sets pid gains for chassis
+
+        @param gains The gains to update
+
+        @return Reference to initial robot class
+      */
+      inline Robot& set_chassis_pid(const KExtender::pid_consts &gains) {
+        ChassisManager::set_pid_consts(gains);
+
+        return *this;
+      }
+
+      /*
+        Sets whether to use pid for chassis
+
+        @param use Whether to use pid or not
+
+        @return Reference to initial robot class
+      */
+      inline Robot& set_chassis_use_pid(const bool &use) {
+        ChassisManager::use_pid(use);
+
+        return *this;
+      }
+
+      /*
         Sets the devices that autonomous uses
 
-        @param select Select button
-        @param lock Lock button
         @param controller Main controller
       */
       inline Robot& set_auton_assets(KRONOS::Controller* controller) {
