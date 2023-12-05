@@ -25,7 +25,7 @@ namespace KRONOS {
     private:
       TaskManager *_taskManager;
 
-      const std::string _taskName = "selector";
+      const std::string _taskName = "autonselector";
 
       inline static VarManager *_varManager { nullptr };
 
@@ -144,11 +144,11 @@ namespace KRONOS {
               lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
               lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
-              lv_label_set_text(colorlabel, std::string(*_varManager->global_get<int>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
+              lv_label_set_text(colorlabel, std::string(*_varManager->global_get<KUtil::side_color>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
 
               pros::delay(200);
             }
-          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, "autonselector"));
+          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskName.c_str()));
         } else {
           KLog::Log::warn("Auton selector already initialised");
         }
