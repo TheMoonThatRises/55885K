@@ -34,12 +34,12 @@ void initialize() {
 
       catapult->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-      while (ltrigger->get_value()) {
+      while (ltrigger->get_value()/* || catapult->get_voltage()*/) {
         catapult->move_velocity(100, 500);
       }
 
       while (!ltrigger->get_value()) {
-        catapult->move_velocity(60, 15);
+        catapult->move_velocity(60, 20);
       }
 
       robot.sleep(100);
@@ -102,38 +102,51 @@ void initialize() {
     .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
 
     .add_auton("offense", [&]() {
-
-    })
-    .add_auton("defensive", [&]() {
       robot.move_chassis(25, 0, 0);
       robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
+    })
+    .add_auton("defensive", [&]() {
+      robot.move_chassis(25, 0, 0);
+      robot.get_device<KRONOS::Motor>("catapult")->move_velocity(100, 500);
+      robot.get_device<KRONOS::Motor>("catapult")->move_velocity(-75, 500);
+      robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
 
-      robot.move_chassis(75, 0, 5, 1000);
+      robot.move_chassis(50, 0, 9, 850);
 
       robot.move_chassis(0, 0, 0, 100);
       robot.move_chassis(0, 0, 25);
 
-      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
-
       robot.sleep(650);
 
       robot.move_chassis(0, 0, 0);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
       robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
 
       robot.move_chassis(5, 0, 50, 500);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
-      robot.move_chassis(-25, 0, 0, 1000);
+      robot.move_chassis(-25, 0, 0, 850);
 
       robot.move_chassis(75, 0, -25, 300);
 
+      robot.move_chassis(0, 0, -25, 1000);
+
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      robot.move_chassis(0, 0, -25, 350);
-
       robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
+
+      robot.move_chassis(-110, 0, -58, 2000);
+      robot.move_chassis(45, 0, -43, 800);
+      robot.move_chassis(50, 0, 0, 1700);
+      robot.move_chassis(-50, 0, 0, 800);
+
+      robot.get_device<KRONOS::Motor>("catapult")->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+      robot.move_chassis(50, 0, 0, 500);
     })
     .add_auton("skills", [&]() {
 
