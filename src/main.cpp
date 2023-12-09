@@ -39,7 +39,7 @@ void initialize() {
       }
 
       while (!ltrigger->get_value()) {
-        catapult->move_velocity(60, 20);
+        catapult->move_velocity(90, 20);
       }
 
       robot.sleep(100);
@@ -139,14 +139,24 @@ void initialize() {
 
       robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
 
-      robot.move_chassis(-110, 0, -58, 2000);
-      robot.move_chassis(45, 0, -43, 800);
-      robot.move_chassis(50, 0, 0, 1700);
-      robot.move_chassis(-50, 0, 0, 800);
+      robot.move_chassis(0, 0, 25, 800);
+      robot.move_chassis(75, 0, 0, 1450);
+      robot.move_chassis(0, 0, -25, 800);
+      robot.move_chassis(75, 0, 0, 1500);
+      robot.move_chassis(-75, 0, 0, 1500);
 
       robot.get_device<KRONOS::Motor>("catapult")->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 
-      robot.move_chassis(50, 0, 0, 500);
+      robot.move_chassis(75, 0, 0, 1000);
+
+      // robot.move_chassis(-110, 0, -58, 2000);
+      // robot.move_chassis(45, 0, -43, 800);
+      // robot.move_chassis(50, 0, 0, 1700);
+      // robot.move_chassis(-50, 0, 0, 800);
+
+      // robot.get_device<KRONOS::Motor>("catapult")->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+      // robot.move_chassis(50, 0, 0, 500);
     })
     .add_auton("skills", [&]() {
 
