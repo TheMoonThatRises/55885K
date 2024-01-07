@@ -1,0 +1,23 @@
+name: cpplint
+
+on: [push]
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install python3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          architecture: 'x64'
+
+      - name: Install cpplint
+        run: pip install cpplint
+
+      - name: Run linter
+        run: cpplint --exclude KRONOS/external --recursive KRONOS/
