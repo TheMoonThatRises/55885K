@@ -35,7 +35,7 @@ namespace KExtender {
 
   class PID {
     private:
-      std::optional<double> _starttime;
+      std::optional<double> _starttime, _previousTime;
       double _previousError {}, _integral {};
 
       std::vector<double> _consistencyValues {};
@@ -63,12 +63,19 @@ namespace KExtender {
           _starttime = pros::millis();
         }
 
+        if (!_previousTime.has_value()){
+          _previousTime = pros::millis();
+          return 0;
+        }
+
         const double error = target - current;
         _integral += (error + _previousError) / 2;
+        const double _derivative = (error - _previousError) / (pros::millis() - _previousTime.value());
 
-        const double output = (_pidconsts.kP * error) + (_pidconsts.kI * _integral) + (_pidconsts.kD * (error - _previousError));
+        const double output = (_pidconsts.kP * error) + (_pidconsts.kI * _integral) + (_pidconsts.kD * _derivative);
 
         _previousError = error;
+        _previousTime = pros::millis();
 
         if ((_exitcondition == P_ERROR && fabs(target - output) <= _pidconsts.errormargin) ||
             (_exitcondition == P_TIME && pros::millis() - _starttime.value() >= _pidconsts.timeconstraint)) {
