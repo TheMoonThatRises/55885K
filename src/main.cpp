@@ -48,11 +48,11 @@ void initialize() {
     // chassis devices
     .add_device("leftone", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_NORTHWEST}))
     .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_WEST}))
-    .add_device("leftthree", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
+    .add_device("leftthree", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHWEST}))
 
     .add_device("rightone", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_NORTHEAST}))
     .add_device("righttwo", new KRONOS::Motor({.port=5, .reverse=true, .face=KRONOS::K_EAST}))
-    .add_device("rightthree", new KRONOS::Motor({.port=6, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("rightthree", new KRONOS::Motor({.port=6, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
     .add_device("catapult", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED,}))
@@ -63,10 +63,13 @@ void initialize() {
     // launcher distance trigger
     .add_device("ltrigger", new KRONOS::Button({.port='A'}))
 
-    // expansion
-    .add_device("expansion", new KRONOS::Piston({.port='B'}))
+    // transmission
+    .add_device("transmission", new KRONOS::Piston({.port='B'}))
 
-    .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "leftthree", "rightone", "righttwo", "rightthree"}))
+    // new device
+    .add_device("new device", new KRONOS::Motor({.port=8}))
+
+    .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "rightone", "righttwo"}))
     .set_chassis_use_pid(false)
     .set_chassis_pid({.kP=0.0, .kI=0.0, .kD=10.0})
 
