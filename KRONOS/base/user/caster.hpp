@@ -12,7 +12,9 @@
 #include "base/devices.hpp"
 
 namespace KRONOS {
-void assert_same_device(AbstractDevice* device, const device_types &type) {
+void assert_same_device(
+  const AbstractDevice* device,
+  const device_types &type) {
   if (device->type() != type) {
     throw new UnexpectedDeviceTypeError(device->type(), type);
   }

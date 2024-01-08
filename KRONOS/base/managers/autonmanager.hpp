@@ -132,7 +132,7 @@ class AutonomousManager {
     /*
       Load auton selector threads
     */
-    inline void load_auton_threads() {
+    inline void load_auton() {
       if (!_taskManager->get_task(_taskName)) {
         KLog::Log::info("Starting auton selection");
 
