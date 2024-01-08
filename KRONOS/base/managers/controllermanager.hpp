@@ -9,6 +9,7 @@
 #ifndef KRONOS_BASE_MANAGERS_CONTROLLERMANAGER_HPP_
 #define KRONOS_BASE_MANAGERS_CONTROLLERMANAGER_HPP_
 
+#include <cassert>
 #include <functional>
 #include <map>
 #include <memory>
@@ -232,6 +233,8 @@ class ControllerManager {
 
  public:
     inline explicit ControllerManager(TaskManager *taskManager) {
+      assert(taskManager);
+
       _taskManager = taskManager;
     }
 

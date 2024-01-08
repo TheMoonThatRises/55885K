@@ -1,3 +1,6 @@
+// Ensure debug compile options turned off for production
+#define NDEBUG
+
 /*
   Define environmental variables that control how KRONOS works
 */
