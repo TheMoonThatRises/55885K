@@ -35,7 +35,7 @@ class DeviceManager {
       @param device Device to set
     */
     inline void set(const std::string &name, AbstractDevice *device) {
-      _devices.emplace(name, std::move(device));
+      (void) _devices.emplace(name, std::move(device));
 
       auto port_name = _devices.at(name)->port().has_value()
         ? "' to port " + std::to_string(_devices.at(name)->port().value())
@@ -59,7 +59,7 @@ class DeviceManager {
 
       for (const std::string &name : dnames) {
         if (get_device<AbstractDevice>(name)) {
-          filtered.emplace_back(name, get_device<AbstractDevice>(name));
+          (void) filtered.emplace_back(name, get_device<AbstractDevice>(name));
         }
       }
 
@@ -76,7 +76,7 @@ class DeviceManager {
       std::vector<AbstractDevice*> devices;
       auto kv = std::views::values(_devices);
 
-      std::transform(
+      (void) std::transform(
         kv.begin(),
         kv.end(),
         back_inserter(devices),

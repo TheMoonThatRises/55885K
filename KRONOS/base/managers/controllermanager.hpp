@@ -81,7 +81,7 @@ class ControllerManager {
       const pros::controller_analog_e_t &method,
       const single_analog_function& function,
       const controller_type &controller = C_MASTER) {
-      _analogLink.insert({{method, controller}, function});
+      (void) _analogLink.insert({{method, controller}, function});
     }
 
     /*
@@ -95,7 +95,7 @@ class ControllerManager {
       const std::vector<pros::controller_analog_e_t> &methods,
       const multi_analog_function& function,
       const controller_type &controller = C_MASTER) {
-      _multiAnalogLink.insert({{methods, controller}, function});
+      (void) _multiAnalogLink.insert({{methods, controller}, function});
     }
 
     /*
@@ -109,7 +109,7 @@ class ControllerManager {
       const pros::controller_digital_e_t &method,
       const single_digital_function& function,
       const controller_type &controller = C_MASTER) {
-      _digitalLink.insert({{method, controller}, function});
+      (void) _digitalLink.insert({{method, controller}, function});
     }
 
     /*
@@ -123,7 +123,7 @@ class ControllerManager {
       const std::vector<pros::controller_digital_e_t> &method,
       const multi_digital_function& function,
       const controller_type &controller = C_MASTER) {
-      _multiDigitalLink.insert({{method, controller}, function});
+      (void) _multiDigitalLink.insert({{method, controller}, function});
     }
 
     /*

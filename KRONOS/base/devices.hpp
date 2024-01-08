@@ -224,8 +224,7 @@ class Controller : public pros::Controller, public AbstractDevice {
 
     inline void logger(
       const KLog::log_types &log_type,
-      const std::string &text
-    ) {
+      const std::string &text) {
       KLog::Log::log(
         log_type,
         "Controller " + std::to_string(id()) + ": " + text);
@@ -255,9 +254,9 @@ class Controller : public pros::Controller, public AbstractDevice {
       @param pattern The pattern to rumble the controller
     */
     inline void rumble(const std::string &pattern) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
-      pros::Controller::rumble(pattern.c_str());
+      (void) pros::Controller::rumble(pattern.c_str());
 
       logger(KLog::log_types::L_WARNING, "Rumbling pattern: " + pattern);
     }
@@ -268,10 +267,10 @@ class Controller : public pros::Controller, public AbstractDevice {
       @param text Text to display to controller screen
     */
     inline void set_text(const std::string &text) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
       // pros::Controller::clear();
-      pros::Controller::set_text(0, 0, text + "         ");
+      (void) pros::Controller::set_text(0, 0, text + "         ");
 
       logger(KLog::log_types::L_INFO, text);
     }
@@ -282,7 +281,7 @@ class Imu : public pros::Imu, public AbstractDevice {
     inline explicit Imu(const abstract_device_struct &device)
     : pros::Imu(device.port),
       AbstractDevice(K_IMU, device.port) {
-      pros::Imu::reset();
+      (void) pros::Imu::reset();
     }
 };
 
@@ -298,7 +297,7 @@ class Motor
     : pros::Motor(device.port, device.gearset, device.reverse, device.encoder),
       KExtender::PID(device.pidexit, device.pidmods, device.consistencymods),
       AbstractDevice(K_MOTOR, device.face, device.port) {
-      pros::Motor::set_brake_mode(device.brakemode);
+      (void) pros::Motor::set_brake_mode(device.brakemode);
     }
 
     /*
@@ -309,11 +308,11 @@ class Motor
       @return If the PID loop exists and is set to 0
     */
     inline bool move_position_pid(const double &target) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
       const double velocity = KExtender::PID::tick(target, get_position());
 
-      pros::Motor::move_velocity(velocity);
+      (void) pros::Motor::move_velocity(velocity);
 
       return velocity == 0;
     }
@@ -326,12 +325,12 @@ class Motor
       @return Velocity pid is set to
     */
     inline double move_velocity_pid(const double &target) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
       const double velocity =
         KExtender::PID::tick(target, get_actual_velocity());
 
-      pros::Motor::move_velocity(velocity);
+      (void) pros::Motor::move_velocity(velocity);
 
       return velocity;
     }
@@ -342,7 +341,7 @@ class Motor
       @param velocity Velocity to set motor to
     */
     inline int32_t move_velocity(const double &velocity) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
       return pros::Motor::move_velocity(velocity);
     }
@@ -354,11 +353,11 @@ class Motor
       @param sleep How long to sleep afterwards
     */
     inline void move_velocity(const double &velocity, const double &sleep) {
-      AbstractDevice::mutex_take(sleep);
+      (void) AbstractDevice::mutex_take(sleep);
 
-      pros::Motor::move_velocity(velocity);
+      (void) pros::Motor::move_velocity(velocity);
       pros::delay(sleep);
-      pros::Motor::move_velocity(0);
+      (void) pros::Motor::move_velocity(0);
     }
 };
 
@@ -372,7 +371,7 @@ class PIDDevice : public KExtender::PID, public AbstractDevice {
       AbstractDevice(K_PID) {}
 
     inline double tick(const double &target, const double &current) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
       return KExtender::PID::tick(target, current);
     }
@@ -399,9 +398,9 @@ class Piston : public pros::ADIDigitalOut, public AbstractDevice {
       @return The value that the piston is set to
     */
     inline bool set_value(const bool &setValue) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
-      pros::ADIDigitalOut::set_value(setValue);
+      (void) pros::ADIDigitalOut::set_value(setValue);
       _value = setValue;
 
       return _value;
@@ -447,13 +446,13 @@ class Vision : public pros::Vision, public AbstractDevice {
     inline explicit Vision(const abstract_device_struct &device)
     : pros::Vision(device.port),
       AbstractDevice(K_VISION, device.face, device.port) {
-      pros::Vision::set_zero_point(pros::E_VISION_ZERO_CENTER);
+      (void) pros::Vision::set_zero_point(pros::E_VISION_ZERO_CENTER);
     }
 
     inline Vision& set_zero_point(const pros::vision_zero_e_t &zero_point) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
-      pros::Vision::set_zero_point(zero_point);
+      (void) pros::Vision::set_zero_point(zero_point);
 
       return *this;
     }
@@ -470,7 +469,7 @@ class Vision : public pros::Vision, public AbstractDevice {
       const int &name,
       const pros::vision_signature_s_t &signature
     ) {
-      _signatures.insert({name, signature});
+      (void) _signatures.insert({name, signature});
 
       return *this;
     }
@@ -494,9 +493,9 @@ class Vision : public pros::Vision, public AbstractDevice {
       @return Self to chain
     */
     inline Vision& set_signature(const int &name) {
-      AbstractDevice::mutex_take();
+      (void) AbstractDevice::mutex_take();
 
-      pros::Vision::set_signature(name, &(get_signature(name)));
+      (void) pros::Vision::set_signature(name, &(get_signature(name)));
 
       return *this;
     }

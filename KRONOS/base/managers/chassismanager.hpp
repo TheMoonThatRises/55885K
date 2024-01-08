@@ -70,9 +70,9 @@ class ChassisManager: protected KExtender::PID {
         motor->set_max_speed(target_velocity);
 
         if (_use_pid) {
-          motor->move_velocity_pid(target_velocity);
+          (void) motor->move_velocity_pid(target_velocity);
         } else {
-          motor->move_velocity(target_velocity);
+          (void) motor->move_velocity(target_velocity);
         }
       }
     }
