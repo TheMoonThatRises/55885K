@@ -19,5 +19,5 @@ jobs:
       - name: Install cpplint
         run: pip install cpplint
 
-      - name: Run linter
-        run: cpplint --exclude=KRONOS/external --recursive KRONOS/
+      - name: Run cpplint
+        run: ./scripts/cpplint.sh
