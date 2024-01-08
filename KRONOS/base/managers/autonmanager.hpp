@@ -9,6 +9,7 @@
 #ifndef KRONOS_BASE_MANAGERS_AUTONMANAGER_HPP_
 #define KRONOS_BASE_MANAGERS_AUTONMANAGER_HPP_
 
+#include <cassert>
 #include <map>
 #include <memory>
 #include <string>
@@ -52,6 +53,8 @@ class AutonomousManager {
     inline static std::pair<std::string, std::function<void()>> autonByIndex(
       const int &index
     ) {
+      assert(index > 0);
+
       auto iter = _autons.begin();
       std::advance(iter, index);
       return {iter->first, iter->second};
@@ -125,9 +128,7 @@ class AutonomousManager {
       } else {
         KLog::Log::warn("Skipping auton...");
 
-        if (_controller) {
-          _controller->set_text("Skipping auton...");
-        }
+        _controller->set_text("Skipping auton...");
       }
     }
 
@@ -204,6 +205,9 @@ class AutonomousManager {
     inline explicit AutonomousManager(
       VarManager *varManager,
       TaskManager *taskManager) {
+      assert(varManager);
+      assert(taskManager);
+
       _varManager = varManager;
       _taskManager = taskManager;
     }

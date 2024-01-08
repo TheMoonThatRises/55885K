@@ -9,6 +9,7 @@
 #ifndef KRONOS_BASE_MANAGERS_SAFETYMANAGER_HPP_
 #define KRONOS_BASE_MANAGERS_SAFETYMANAGER_HPP_
 
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -74,6 +75,10 @@ class SafetyManager {
       _deviceManager(deviceManager),
       _taskManager(taskManager) {
       #ifdef KRONOS_SAFETY_CHECKS
+        assert(_controllerManager);
+        assert(_deviceManager);
+        assert(_taskManager);
+
         _init();
       #else
         this->~SafetyManager();

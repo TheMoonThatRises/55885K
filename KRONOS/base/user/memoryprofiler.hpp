@@ -13,6 +13,7 @@
   #define task_fn_t pros::task_fn_t
 #endif
 
+#include <cassert>
 #include <string>
 
 #include "base/managers/taskmanager.hpp"
@@ -87,6 +88,8 @@ class MemoryProfiler {
     : _taskManager(taskManager),
       _last_tick_free_heap(xPortGetFreeHeapSize()),
       _detailed_tick_info(detailed_tick_info) {
+      assert(_taskManager);
+
       _init();
     }
 
