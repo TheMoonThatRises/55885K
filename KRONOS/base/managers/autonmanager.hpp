@@ -138,48 +138,54 @@ class AutonomousManager {
       if (!_taskManager->get_task(_taskName)) {
         KLog::Log::info("Starting auton selection");
 
-        _taskManager->add_task(_taskName, pros::Task([&]() {
-          _currentAuton = autonByIndex(_currentAutonIndex).first;
+        _taskManager->add_task(
+          _taskName,
+          pros::Task([&]() {
+            _currentAuton = autonByIndex(_currentAutonIndex).first;
 
-          _controller->set_text("Auton << " + _currentAuton);
-          while (true) {
-            lv_obj_clean(lv_scr_act());
+            _controller->set_text("Auton << " + _currentAuton);
 
-            lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
-            lv_label_set_text(title, "Auton buttons");
-            lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
+            while (true) {
+              lv_obj_clean(lv_scr_act());
 
-            lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
-            // Enable resizing horizontally and vertically
-            lv_cont_set_fit(autonbtn, true, true);
-            lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
-            // Set a unique number for the button
-            lv_obj_set_free_num(autonbtn, 0);
-            lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
+              lv_label_set_text(title, "Auton buttons");
+              lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
 
-            lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
-            lv_label_set_text(autonlabel, _currentAuton.c_str());
+              lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
+              // Enable resizing horizontally and vertically
+              lv_cont_set_fit(autonbtn, true, true);
+              lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
+              // Set a unique number for the button
+              lv_obj_set_free_num(autonbtn, 0);
+              lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-            lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
-            // Enable resizing horizontally and vertically
-            lv_cont_set_fit(colorbtn, true, true);
-            lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
-            // Set a unique number for the button
-            lv_obj_set_free_num(colorbtn, 1);
-            lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
+              lv_label_set_text(autonlabel, _currentAuton.c_str());
 
-            auto current_colour =
-              *_varManager->global_get<KUtil::side_color>("side");
-            auto color_str = std::string(
-              current_colour == KUtil::S_BLUE
-                ? "BLUE"
-                : "RED");
-            lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
-            lv_label_set_text(colorlabel, color_str.c_str());
+              lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
+              // Enable resizing horizontally and vertically
+              lv_cont_set_fit(colorbtn, true, true);
+              lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
+              // Set a unique number for the button
+              lv_obj_set_free_num(colorbtn, 1);
+              lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-            pros::delay(200);
-          }
-        }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskName.c_str()));
+              auto current_colour =
+                *_varManager->global_get<KUtil::side_color>("side");
+              auto color_str = std::string(
+                current_colour == KUtil::S_BLUE
+                  ? "BLUE"
+                  : "RED");
+              lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
+              lv_label_set_text(colorlabel, color_str.c_str());
+
+              pros::delay(200);
+            }
+          },
+          TASK_PRIORITY_MAX,
+          TASK_STACK_DEPTH_DEFAULT,
+          _taskName.c_str()));
       } else {
         KLog::Log::warn("Auton selector already initialised");
       }
