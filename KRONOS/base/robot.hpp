@@ -130,7 +130,7 @@ class Robot
     */
     inline Robot& set_chassis_motors(
       const std::vector<AbstractDevice*> &devices) {
-      std::vector<Motor*> motors;
+      std::vector<Motor*> motors(devices.size());
 
       (void) std::transform(
         devices.begin(),

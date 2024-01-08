@@ -76,13 +76,14 @@ class DeviceManager {
       @return Vector of all devices in the form of an AbstractDevice pointer
     */
     inline std::vector<AbstractDevice*> get_all() {
-      std::vector<AbstractDevice*> devices;
+      std::vector<AbstractDevice*> devices(_devices.size());
+
       auto kv = std::views::values(_devices);
 
       (void) std::transform(
         kv.begin(),
         kv.end(),
-        back_inserter(devices),
+        devices.begin(),
         [](const auto &device) {
           return device.get();
         });
@@ -141,7 +142,7 @@ class DeviceManager {
     */
     inline std::vector<AbstractDevice*> get_multiple_devices(
       const std::vector<std::string> &devices) {
-      std::vector<AbstractDevice*> deviceVector;
+      std::vector<AbstractDevice*> deviceVector(devices.size());
 
       (void) std::transform(
         devices.begin(),
