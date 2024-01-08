@@ -22,13 +22,9 @@ class VarManager {
  public:
     template <class T>
     inline void global_set(const std::string &key, const T& value) {
-      if (_global.find(key) == _global.end()) {
-        _global.emplace(
-          key,
-          std::make_unique<std::any>(std::make_any<T>(value)));
-      } else {
-        *_global.at(key) = std::make_any<T>(value);
-      }
+      _global.insert_or_assign(
+        key,
+        std::make_unique<std::any>(std::make_any<T>(value)));
     }
 
     template<class T>
