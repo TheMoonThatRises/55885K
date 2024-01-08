@@ -62,7 +62,7 @@ class Robot
         " Connected: " + std::to_string(pros::competition::is_connected()) +
         " Disabled: " + std::to_string(pros::competition::is_disabled()));
 
-      std::set_terminate([]() {
+      (void) std::set_terminate([]() {
         try {
           std::rethrow_exception(std::current_exception());
         } catch (const AbstractKronosError &kronosexcept) {
@@ -132,8 +132,9 @@ class Robot
       const std::vector<AbstractDevice*> &devices) {
       std::vector<Motor*> motors;
 
-      for (AbstractDevice *device : devices)
+      for (AbstractDevice *device : devices) {
         motors.push_back(to_motor(device));
+      }
 
       ChassisManager::set(motors);
 
@@ -279,7 +280,7 @@ class Robot
     }
 
     inline Robot& load_auton_threads() {
-      kill_all_tasks();
+      (void) kill_all_tasks();
       AutonomousManager::load_auton_threads();
 
       return *this;
@@ -289,7 +290,7 @@ class Robot
       Runs selected auton
     */
     inline Robot& run_auton() {
-      kill_all_tasks();
+      (void) kill_all_tasks();
       AutonomousManager::run();
 
       return *this;
@@ -301,7 +302,7 @@ class Robot
       @return Reference to initial robot class
     */
     inline Robot& event_initialiser() {
-      kill_all_tasks();
+      (void) kill_all_tasks();
       ControllerManager::event_initialiser();
 
       return *this;

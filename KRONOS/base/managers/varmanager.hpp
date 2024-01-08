@@ -22,7 +22,7 @@ class VarManager {
  public:
     template <class T>
     inline void global_set(const std::string &key, const T& value) {
-      _global.insert_or_assign(
+      (void) _global.insert_or_assign(
         key,
         std::make_unique<std::any>(std::make_any<T>(value)));
     }

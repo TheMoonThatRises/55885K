@@ -116,7 +116,7 @@ class PID {
       _consistencyValues.push_back(value);
 
       if (_consistencyValues.size() > _consistencyconsts.maxvalues) {
-        _consistencyValues.erase(_consistencyValues.begin());
+        (void) _consistencyValues.erase(_consistencyValues.begin());
       }
     }
 

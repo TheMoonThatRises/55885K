@@ -27,7 +27,7 @@ class TaskManager {
 
     inline void add_task(const std::string &name, const pros::Task &task) {
       if (!get_task(name)) {
-        _tasks.insert({ name, std::make_unique<pros::Task>(task) });
+        (void) _tasks.insert({ name, std::make_unique<pros::Task>(task) });
       }
     }
 
@@ -58,7 +58,7 @@ class TaskManager {
         _tasks.at(name)->suspend();
         _tasks.at(name)->remove();
         _tasks.at(name).reset(nullptr);
-        _tasks.erase(name);
+        (void) _tasks.erase(name);
       }
     }
 

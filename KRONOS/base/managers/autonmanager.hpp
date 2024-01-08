@@ -99,7 +99,7 @@ class AutonomousManager {
       @param auton Auton vector
     */
     inline void add(const std::string &name, std::function<void()> auton) {
-      _autons.insert({name, auton});
+      (void) _autons.insert({name, auton});
     }
 
     /*
