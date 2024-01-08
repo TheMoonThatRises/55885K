@@ -412,14 +412,18 @@ class Piston : public pros::ADIDigitalOut, public AbstractDevice {
 
       @return Value of the piston's new state
     */
-    inline bool toggle() { return Piston::set_value(!_value); }
+    inline bool toggle() {
+      return Piston::set_value(!_value);
+    }
 
     /*
       Gets the piston's current value
 
       @return Piston's current state
     */
-    inline bool value() const { return _value; }
+    inline bool value() const {
+      return _value;
+    }
 };
 
 class Proximity : public pros::Distance, public AbstractDevice {

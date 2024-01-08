@@ -25,7 +25,7 @@ enum log_types {
 
 class Log {
  private:
-      inline static bool usd_installed = true;
+    inline static bool usd_installed = true;
 
  public:
     /*

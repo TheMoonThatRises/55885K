@@ -57,9 +57,11 @@ class DeviceManager {
       const std::vector<std::string> &dnames) {
       std::vector<std::pair<std::string, AbstractDevice*>> filtered;
 
-      for (const std::string &name : dnames)
-        if (get_device<AbstractDevice>(name))
+      for (const std::string &name : dnames) {
+        if (get_device<AbstractDevice>(name)) {
           filtered.emplace_back(name, get_device<AbstractDevice>(name));
+        }
+      }
 
       return filtered;
     }
@@ -114,9 +116,11 @@ class DeviceManager {
     */
     template <class Device = AbstractDevice>
     inline Device* get_device(const char &port) {
-      for (const auto &[name, device] : _devices)
-        if (device->port() == port)
+      for (const auto &[name, device] : _devices) {
+        if (device->port() == port) {
           return dynamic_cast<Device*>(device.get());
+        }
+      }
 
       #ifdef KRONOS_STRICT_DEVICE_GETTER
         throw new NoDeviceFoundError(port);
