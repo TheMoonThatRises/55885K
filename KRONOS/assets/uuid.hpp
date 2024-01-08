@@ -23,8 +23,9 @@ class UUIDGenerator {
     std::uniform_int_distribution<> _distr;  // define the range
 
  public:
-    inline UUIDGenerator() :
-      _gen(_rd()), _distr(0, static_cast<int>(_characters.size()) - 1) {}
+    inline UUIDGenerator()
+    : _gen(_rd()),
+      _distr(0, static_cast<int>(_characters.size()) - 1) {}
 
     inline std::string generate_uuid() {
       std::string id;
