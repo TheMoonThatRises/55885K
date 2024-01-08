@@ -1,91 +1,110 @@
 /*
+  Copyright 2024 Peter Duanmu
+
   @file base/managers/chassismanager.hpp
 
   Chassis manager for the KRONOS API
 */
 
-#ifndef _CHASSISMANAGER_HPP_
-#define _CHASSISMANAGER_HPP_
+#ifndef KRONOS_BASE_MANAGERS_CHASSISMANAGER_HPP_
+#define KRONOS_BASE_MANAGERS_CHASSISMANAGER_HPP_
+
+#include <algorithm>
+#include <vector>
 
 #include "assets/logger.hpp"
 
 #include "base/devices.hpp"
 
-#include <algorithm>
-#include <vector>
-
 namespace KRONOS {
-  class ChassisManager: protected KExtender::PID {
-    private:
-      std::vector<Motor*> _chassisMotors;
+class ChassisManager: protected KExtender::PID {
+ private:
+    std::vector<Motor*> _chassisMotors;
 
-      bool _use_pid = false;
-    protected:
-      /*
-        Set chassis motors
+    bool _use_pid = false;
 
-        @param motors Vector of motor pointers
-      */
-      inline void set(const std::vector<Motor*> &motors) {
-        _chassisMotors = motors;
-      }
+ protected:
+    /*
+      Set chassis motors
 
-      /*
-        Set whether to use pid for chassis
-      */
-      inline void use_pid(const bool &use) {
-        _use_pid = use;
-      }
-    public:
-      ChassisManager(): PID(KExtender::P_NONE, {}, {}) {}
+      @param motors Vector of motor pointers
+    */
+    inline void set(const std::vector<Motor*> &motors) {
+      _chassisMotors = motors;
+    }
 
-      /*
-        Move the chassis
+    /*
+      Set whether to use pid for chassis
+    */
+    inline void use_pid(const bool &use) {
+      _use_pid = use;
+    }
 
-        @param straight
-        @param strafe
-        @param turn
-      */
-      inline void move_chassis(const double &straight, const double &strafe, const double &turn) const {
-        for (Motor *motor : _chassisMotors) {
-          const double mstraight = (motor->facing() >= K_NORTHEAST && motor->facing() <= K_SOUTHEAST)  ? -straight : straight;
-          const double mstrafe = (motor->facing() >= K_SOUTHEAST && motor->facing() <= K_SOUTHWEST) ? -strafe : strafe;
+ public:
+    ChassisManager() : PID(KExtender::P_NONE, {}, {}) {}
 
-          const double target_velocity = (mstraight + mstrafe + turn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO;
+    /*
+      Move the chassis
 
-          motor->set_max_speed(target_velocity);
+      @param straight
+      @param strafe
+      @param turn
+    */
+    inline void move_chassis(
+      const double &straight,
+      const double &strafe,
+      const double &turn) const {
+      for (Motor *motor : _chassisMotors) {
+        const double mstraight =
+          (motor->facing() >= K_NORTHEAST && motor->facing() <= K_SOUTHEAST)
+            ? -straight
+            : straight;
+        const double mstrafe =
+          (motor->facing() >= K_SOUTHEAST && motor->facing() <= K_SOUTHWEST)
+            ? -strafe
+            : strafe;
 
-          if (_use_pid) {
-            motor->move_velocity_pid(target_velocity);
-          } else {
-            motor->move_velocity(target_velocity);
-          }
+        const double target_velocity =
+          (mstraight + mstrafe + turn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO;
+
+        motor->set_max_speed(target_velocity);
+
+        if (_use_pid) {
+          motor->move_velocity_pid(target_velocity);
+        } else {
+          motor->move_velocity(target_velocity);
         }
       }
+    }
 
-      /*
-        Move the chassis
+    /*
+      Move the chassis
 
-        @param straight
-        @param strafe
-        @param turn
-        @param sleep
-      */
-      inline void move_chassis(const double &straight, const double &strafe, const double &turn, const double &sleep) const {
-        this->move_chassis(straight, strafe, turn);
-        pros::delay(sleep);
-        this->move_chassis(0, 0, 0);
+      @param straight
+      @param strafe
+      @param turn
+      @param sleep
+    */
+    inline void move_chassis(
+      const double &straight,
+      const double &strafe,
+      const double &turn,
+      const double &sleep) const {
+      this->move_chassis(straight, strafe, turn);
+      pros::delay(sleep);
+      this->move_chassis(0, 0, 0);
+    }
+
+    /*
+
+    */
+    inline void set_pid_consts(
+      const KExtender::pid_consts &pidconsts) override {
+      for (Motor *motor : _chassisMotors) {
+        motor->set_pid_consts(pidconsts);
       }
+    }
+};
+}  // namespace KRONOS
 
-      /*
-
-      */
-      inline void set_pid_consts(const KExtender::pid_consts &pidconsts) override {
-        for (Motor *motor : _chassisMotors) {
-          motor->set_pid_consts(pidconsts);
-        }
-      }
-  };
-}
-
-#endif
+#endif  // KRONOS_BASE_MANAGERS_CHASSISMANAGER_HPP_
