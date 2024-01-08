@@ -20,4 +20,4 @@ jobs:
         run: pip install cpplint
 
       - name: Run linter
-        run: cpplint --exclude KRONOS/external --recursive KRONOS/
+        run: cpplint --exclude=KRONOS/external --recursive KRONOS/
