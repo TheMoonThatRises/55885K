@@ -355,7 +355,7 @@ class Robot
 
       @param milliseconds Length of sleep
     */
-    inline static void sleep(const int &milliseconds) {
+    inline static void sleep(const size_t &milliseconds) {
       pros::delay(milliseconds);
     }
 };
