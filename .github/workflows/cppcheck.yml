@@ -1,0 +1,17 @@
+name: cppcheck
+
+on: [push]
+
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install cppcheck
+        uses: deep5050/cppcheck-action@main
+        with:
+          std: c++17
+          other_options: --suppress=missingInclude --suppress=missingIncludeSystem -IKRONOS src/main.cpp
