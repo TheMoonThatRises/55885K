@@ -140,9 +140,13 @@ class DeviceManager {
       const std::vector<std::string> &devices) {
       std::vector<AbstractDevice*> deviceVector;
 
-      for (const std::string &device : devices) {
-        deviceVector.push_back(get_device<AbstractDevice>(device));
-      }
+      (void) std::transform(
+        devices.begin(),
+        devices.end(),
+        deviceVector.begin(),
+        [&](const std::string &device) {
+          return get_device<AbstractDevice>(device);
+        });
 
       return deviceVector;
     }

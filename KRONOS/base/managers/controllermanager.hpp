@@ -138,7 +138,7 @@ class ControllerManager {
     /*
       Initialises all robot controller listening tasks
     */
-    inline void event_initialiser() {
+    inline void initialise_all() {
       if (!_taskManager->get_task(_taskNames[C_ANALOG]) ||
           !_taskManager->get_task(_taskNames[C_DIGITAL]) ||
           !_taskManager->get_task(_taskNames[C_VOID])) {
@@ -153,10 +153,13 @@ class ControllerManager {
               for (const auto &[key, function] : _multiAnalogLink) {
                 std::vector<double> analogs;
 
-                for (const auto &analog : key.first) {
-                  analogs.push_back(
-                    _controllers[key.second]->get_analog(analog));
-                }
+                (void) std::transform(
+                  key.first.begin(),
+                  key.first.end(),
+                  analogs.begin(),
+                  [&](const pros::controller_analog_e_t &analog) {
+                    return _controllers[key.second]->get_analog(analog);
+                  });
 
                 function(analogs);
               }
@@ -179,10 +182,13 @@ class ControllerManager {
               for (const auto &[key, function] : _multiDigitalLink) {
                 std::vector<bool> digitals;
 
-                for (const auto &digital : key.first) {
-                  digitals.push_back(
-                    _controllers[key.second]->get_digital(digital));
-                }
+                (void) std::transform(
+                  key.first.begin(),
+                  key.first.end(),
+                  digitals.begin(),
+                  [&](const pros::controller_digital_e_t &digital) {
+                    return _controllers[key.second]->get_digital(digital);
+                  });
 
                 function(digitals);
               }

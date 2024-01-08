@@ -370,7 +370,7 @@ class PIDDevice : public KExtender::PID, public AbstractDevice {
     : KExtender::PID(exitcon, pidconsts, consistencyconsts),
       AbstractDevice(K_PID) {}
 
-    inline double tick(const double &target, const double &current) {
+    inline double tick(const double &target, const double &current) override {
       (void) AbstractDevice::mutex_take();
 
       return KExtender::PID::tick(target, current);

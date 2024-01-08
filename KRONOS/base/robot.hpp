@@ -132,9 +132,13 @@ class Robot
       const std::vector<AbstractDevice*> &devices) {
       std::vector<Motor*> motors;
 
-      for (AbstractDevice *device : devices) {
-        motors.push_back(to_motor(device));
-      }
+      (void) std::transform(
+        devices.begin(),
+        devices.end(),
+        motors.begin(),
+        [&](AbstractDevice *device) {
+          return to_motor(device);
+        });
 
       ChassisManager::set(motors);
 
@@ -279,9 +283,12 @@ class Robot
       return *this;
     }
 
+    /*
+      Kills all other threads and runs auton threads
+    */
     inline Robot& load_auton_threads() {
       (void) kill_all_tasks();
-      AutonomousManager::load_auton_threads();
+      AutonomousManager::load_auton();
 
       return *this;
     }
@@ -303,7 +310,7 @@ class Robot
     */
     inline Robot& event_initialiser() {
       (void) kill_all_tasks();
-      ControllerManager::event_initialiser();
+      ControllerManager::initialise_all();
 
       return *this;
     }
