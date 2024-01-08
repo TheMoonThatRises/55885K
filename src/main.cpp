@@ -1,6 +1,9 @@
 /*
   Define environmental variables that control how KRONOS works
 */
+// #define KRONOS_DEVICE_USE_MUTEX
+#define KRONOS_LOG_COUT
+#define KRONOS_LOG_FILE
 // #define KRONOS_SAFETY_CHECKS
 #define KRONOS_STRICT_DEVICE_GETTER
 // #define KRONOS_STRICT_MUTEX
