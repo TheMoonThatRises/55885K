@@ -55,7 +55,7 @@ class AutonomousManager {
     inline static std::pair<std::string, std::function<void()>> autonByIndex(
       const int &index
     ) {
-      assert(index > 0);
+      assert(index >= 0);
 
       auto iter = _autons.begin();
       std::advance(iter, index);
