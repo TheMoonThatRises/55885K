@@ -10,10 +10,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up brew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Install cppcheck
-        run: |
-          brew update \
-          brew install cppcheck
+        run: brew install cppcheck
 
       - name: Run cppcheck
         run: ./scripts/cppcheck.sh
