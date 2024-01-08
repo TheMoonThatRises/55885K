@@ -98,7 +98,9 @@ class AutonomousManager {
       @param name Name of auton
       @param auton Auton vector
     */
-    inline void add(const std::string &name, std::function<void()> auton) {
+    inline static void add(
+      const std::string &name,
+      std::function<void()> auton) {
       (void) _autons.insert({name, auton});
     }
 
@@ -107,14 +109,14 @@ class AutonomousManager {
 
       @param controller Main controller
     */
-    inline void set_assets(KRONOS::Controller* controller) {
+    inline static void set_assets(KRONOS::Controller* controller) {
       _controller = controller;
     }
 
     /*
       Runs the selected autonomous code
     */
-    inline void run() {
+    inline static void run() {
       if (!_currentAuton.empty() && _currentAuton != "noauton") {
         KLog::Log::info("Running auton '" + _currentAuton + "'");
         _controller->set_text("Rng auton '" + _currentAuton + "'");
