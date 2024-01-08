@@ -164,7 +164,7 @@ class ControllerManager {
 
                 assert_not_nullptr(controller, "KRONOS::Controller");
 
-                std::vector<double> analogs;
+                std::vector<double> analogs(key.first.size());
 
                 (void) std::transform(
                   key.first.begin(),
@@ -201,7 +201,7 @@ class ControllerManager {
 
                 assert_not_nullptr(controller, "KRONOS::Controller");
 
-                std::vector<bool> digitals;
+                std::vector<bool> digitals(key.first.size());
 
                 (void) std::transform(
                   key.first.begin(),
