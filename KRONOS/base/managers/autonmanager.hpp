@@ -31,7 +31,7 @@ namespace KRONOS {
 
       inline static Controller *_controller { nullptr };
 
-      inline static int _currentAutonIndex = 0;
+      inline static size_t _currentAutonIndex = 0;
 
       inline static std::string _currentAuton = "noauton";
 
