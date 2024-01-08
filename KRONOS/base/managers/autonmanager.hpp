@@ -1,177 +1,209 @@
 /*
+  Copyright 2024 Peter Duanmu
+
   @file base/managers/autonmanager.hpp
 
   Autonomous manager for KRONOS
 */
 
-#ifndef _AUTON_HPP_
-#define _AUTON_HPP_
+#ifndef KRONOS_BASE_MANAGERS_AUTONMANAGER_HPP_
+#define KRONOS_BASE_MANAGERS_AUTONMANAGER_HPP_
+
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "base/devices.hpp"
 #include "base/managers/taskmanager.hpp"
 #include "base/managers/varmanager.hpp"
 
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
-
 namespace KRONOS {
-  enum autonomous_events {
-    S_AUTON, S_COLOR
-  };
+enum autonomous_events {
+  S_AUTON, S_COLOR
+};
 
-  class AutonomousManager {
-    private:
-      TaskManager *_taskManager;
+class AutonomousManager {
+ private:
+    TaskManager *_taskManager;
 
-      const std::string _taskName = "autonselector";
+    const std::string _taskName = "autonselector";
 
-      inline static VarManager *_varManager { nullptr };
+    inline static VarManager *_varManager { nullptr };
 
-      inline static Controller *_controller { nullptr };
+    inline static Controller *_controller { nullptr };
 
-      inline static size_t _currentAutonIndex = 0;
+    inline static size_t _currentAutonIndex = 0;
 
-      inline static std::string _currentAuton = "noauton";
+    inline static std::string _currentAuton = "noauton";
 
-      inline static std::map<std::string, std::function<void()>> _autons {{"noauton", {}}};
+    inline static std::map<std::string, std::function<void()>> _autons {
+      {"noauton", {}}
+    };
 
-      /*
-        Get value from auton map by index
+    /*
+      Get value from auton map by index
 
-        @param index Index of value
+      @param index Index of value
 
-        @return Auton function
-      */
-      inline static std::pair<std::string, std::function<void()>> autonByIndex(const int &index) {
-        auto iter = _autons.begin();
-        std::advance(iter, index);
-        return {iter->first, iter->second};
+      @return Auton function
+    */
+    inline static std::pair<std::string, std::function<void()>> autonByIndex(
+      const int &index
+    ) {
+      auto iter = _autons.begin();
+      std::advance(iter, index);
+      return {iter->first, iter->second};
+    }
+
+    /*
+      LVGL Auton button listener
+    */
+    inline static lv_res_t button_listener(lv_obj_t* btn) {
+      uint8_t id = lv_obj_get_free_num(btn);
+
+      switch (id) {
+        case S_AUTON:
+          _currentAutonIndex = _currentAutonIndex == _autons.size() - 1
+            ? 0
+            : _currentAutonIndex + 1;
+
+          _currentAuton = autonByIndex(_currentAutonIndex).first;
+          _controller->set_text("Auton << " + _currentAuton);
+          break;
+        case S_COLOR:
+          KUtil::side_color newColor =
+            *_varManager->global_get<int>("side") == KUtil::S_BLUE
+              ? KUtil::S_RED
+              : KUtil::S_BLUE;
+
+          _varManager->global_set<int>("side", newColor);
+
+          auto color_text =
+            std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED");
+
+          _controller->set_text(
+            "Color << " + color_text);
+          break;
       }
 
-      /*
-        LVGL Auton button listener
-      */
-      inline static lv_res_t button_listener(lv_obj_t* btn) {
-        uint8_t id = lv_obj_get_free_num(btn);
+      return LV_RES_OK;
+    }
 
-        switch (id) {
-          case S_AUTON:
-            _currentAutonIndex = _currentAutonIndex == _autons.size() - 1 ? 0 : _currentAutonIndex + 1;
+ protected:
+    /*
+      Saves auton to auton map
 
-            _currentAuton = autonByIndex(_currentAutonIndex).first;
-            _controller->set_text("Auton << " + _currentAuton);
-            break;
-          case S_COLOR:
-            KUtil::side_color newColor = *_varManager->global_get<int>("side") == KUtil::S_BLUE ? KUtil::S_RED : KUtil::S_BLUE;
-            _varManager->global_set<int>("side", newColor);
-            _controller->set_text("Color << " + std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED"));
-            break;
+      @param name Name of auton
+      @param auton Auton vector
+    */
+    inline void add(const std::string &name, std::function<void()> auton) {
+      _autons.insert({name, auton});
+    }
+
+    /*
+      Sets peripheral select and lock button, and main controller for display
+
+      @param controller Main controller
+    */
+    inline void set_assets(KRONOS::Controller* controller) {
+      _controller = controller;
+    }
+
+    /*
+      Runs the selected autonomous code
+    */
+    inline void run() {
+      if (!_currentAuton.empty() && _currentAuton != "noauton") {
+        KLog::Log::info("Running auton '" + _currentAuton + "'");
+        _controller->set_text("Rng auton '" + _currentAuton + "'");
+
+        _autons.at(_currentAuton)();
+      } else {
+        KLog::Log::warn("Skipping auton...");
+
+        if (_controller) {
+          _controller->set_text("Skipping auton...");
         }
-
-        return LV_RES_OK;
       }
-    protected:
-      /*
-        Saves auton to auton map
+    }
 
-        @param name Name of auton
-        @param auton Auton vector
-      */
-      inline void add(const std::string &name, std::function<void()> auton) {
-        _autons.insert({name, auton});
-      }
+    /*
+      Load auton selector threads
+    */
+    inline void load_auton_threads() {
+      if (!_taskManager->get_task(_taskName)) {
+        KLog::Log::info("Starting auton selection");
 
-      /*
-        Sets peripheral select and lock button, and main controller for display
+        _taskManager->add_task(_taskName, pros::Task([&]() {
+          _currentAuton = autonByIndex(_currentAutonIndex).first;
 
-        @param controller Main controller
-      */
-      inline void set_assets(KRONOS::Controller* controller) {
-        _controller = controller;
-      }
+          _controller->set_text("Auton << " + _currentAuton);
+          while (true) {
+            lv_obj_clean(lv_scr_act());
 
-      /*
-        Runs the selected autonomous code
-      */
-      inline void run() {
-        if (!_currentAuton.empty() && _currentAuton != "noauton") {
-          KLog::Log::info("Running auton '" + _currentAuton + "'");
-          _controller->set_text("Rng auton '" + _currentAuton + "'");
+            lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
+            lv_label_set_text(title, "Auton buttons");
+            lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
 
-          _autons.at(_currentAuton)();
-        } else {
-          KLog::Log::warn("Skipping auton...");
+            lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
+            // Enable resizing horizontally and vertically
+            lv_cont_set_fit(autonbtn, true, true);
+            lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
+            // Set a unique number for the button
+            lv_obj_set_free_num(autonbtn, 0);
+            lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-          if (_controller) {
-            _controller->set_text("Skipping auton...");
+            lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
+            lv_label_set_text(autonlabel, _currentAuton.c_str());
+
+            lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
+            // Enable resizing horizontally and vertically
+            lv_cont_set_fit(colorbtn, true, true);
+            lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
+            // Set a unique number for the button
+            lv_obj_set_free_num(colorbtn, 1);
+            lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
+
+            auto current_colour =
+              *_varManager->global_get<KUtil::side_color>("side");
+            auto color_str = std::string(
+              current_colour == KUtil::S_BLUE
+                ? "BLUE"
+                : "RED");
+            lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
+            lv_label_set_text(colorlabel, color_str.c_str());
+
+            pros::delay(200);
           }
-        }
+        }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskName.c_str()));
+      } else {
+        KLog::Log::warn("Auton selector already initialised");
       }
+    }
 
-      /*
-        Load auton selector threads
-      */
-      inline void load_auton_threads() {
-        if (!_taskManager->get_task(_taskName)) {
-          KLog::Log::info("Starting auton selection");
+    inline void unload_auton_threads() {
+      KLog::Log::info("Unloading auton selector");
+      _taskManager->kill_task(_taskName);
+      lv_obj_clean(lv_scr_act());
+    }
 
-          _taskManager->add_task(_taskName, pros::Task([&]() {
-            _currentAuton = autonByIndex(_currentAutonIndex).first;
+ public:
+    /*
+      Variable manager. Should be robot's
+    */
+    inline explicit AutonomousManager(
+      VarManager *varManager,
+      TaskManager *taskManager) {
+      _varManager = varManager;
+      _taskManager = taskManager;
+    }
 
-            _controller->set_text("Auton << " + _currentAuton);
-            while (true) {
-              lv_obj_clean(lv_scr_act());
+    inline ~AutonomousManager() {
+      unload_auton_threads();
+    }
+};
+}  // namespace KRONOS
 
-              lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
-              lv_label_set_text(title, "Auton buttons");
-              lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
-
-              lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
-              lv_cont_set_fit(autonbtn, true, true); /*Enable resizing horizontally and vertically*/
-              lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
-              lv_obj_set_free_num(autonbtn, 0);   /*Set a unique number for the button*/
-              lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
-
-              lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
-              lv_label_set_text(autonlabel, _currentAuton.c_str());
-
-              lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
-              lv_cont_set_fit(colorbtn, true, true); /*Enable resizing horizontally and vertically*/
-              lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
-              lv_obj_set_free_num(colorbtn, 1);   /*Set a unique number for the button*/
-              lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
-
-              lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
-              lv_label_set_text(colorlabel, std::string(*_varManager->global_get<KUtil::side_color>("side") == KUtil::S_BLUE ? "BLUE" : "RED").c_str());
-
-              pros::delay(200);
-            }
-          }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskName.c_str()));
-        } else {
-          KLog::Log::warn("Auton selector already initialised");
-        }
-      }
-
-      inline void unload_auton_threads() {
-        KLog::Log::info("Unloading auton selector");
-        _taskManager->kill_task(_taskName);
-        lv_obj_clean(lv_scr_act());
-      }
-    public:
-      /*
-        Variable manager. Should be robot's
-      */
-      inline explicit AutonomousManager(VarManager *varManager, TaskManager *taskManager) {
-        _varManager = varManager;
-        _taskManager = taskManager;
-      }
-
-      inline ~AutonomousManager() {
-        unload_auton_threads();
-      }
-  };
-}
-
-#endif
+#endif  // KRONOS_BASE_MANAGERS_AUTONMANAGER_HPP_

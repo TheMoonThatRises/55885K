@@ -1,198 +1,260 @@
 /*
+  Copyright 2024 Peter Duanmu
+
   @file base/managers/controllermanager.hpp
 
   Stores robot controls and functions
 */
 
-#ifndef _CONTROLLERMANAGER_HPP_
-#define _CONTROLLERMANAGER_HPP_
+#ifndef KRONOS_BASE_MANAGERS_CONTROLLERMANAGER_HPP_
+#define KRONOS_BASE_MANAGERS_CONTROLLERMANAGER_HPP_
 
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace KRONOS {
-  enum controller_type {
-    C_MASTER, C_PARTNER
-  };
 
-  enum controller_events {
-    C_ANALOG, C_DIGITAL, C_VOID
-  };
+enum controller_type {
+  C_MASTER, C_PARTNER
+};
 
-  class ControllerManager {
-    private:
-      TaskManager *_taskManager;
-      const std::array<std::string, 3> _taskNames {"c_analog", "c_digital", "c_void"};
+enum controller_events {
+  C_ANALOG, C_DIGITAL, C_VOID
+};
 
-      std::array<std::unique_ptr<Controller>, 2> _controllers;
+typedef std::pair<
+  pros::controller_analog_e_t,
+  controller_type> analog_single_id;
+typedef std::pair<
+  std::vector<pros::controller_analog_e_t>,
+  controller_type> analog_multi_id;
+typedef std::pair<
+  pros::controller_digital_e_t,
+  controller_type> digital_single_id;
+typedef std::pair<
+  std::vector<pros::controller_digital_e_t>,
+  controller_type> digital_multi_id;
 
-      std::map<std::pair<pros::controller_analog_e_t, controller_type>, std::function<void(double)>> _analogLink;
-      std::map<std::pair<std::vector<pros::controller_analog_e_t>, controller_type>, std::function<void(std::vector<double>)>> _multiAnalogLink;
-      std::map<std::pair<pros::controller_digital_e_t, controller_type>, std::function<void(bool)>> _digitalLink;
-      std::map<std::pair<std::vector<pros::controller_digital_e_t>, controller_type>, std::function<void(std::vector<bool>)>> _multiDigitalLink;
-      std::vector<std::function<void()>> _voidLinks;
-    protected:
-      /*
-        Set controller
+typedef std::function<void(double)> single_analog_function;
+typedef std::function<void(std::vector<double>)> multi_analog_function;
+typedef std::function<void(bool)> single_digital_function;
+typedef std::function<void(std::vector<bool>)> multi_digital_function;
 
-        @param controller Controller as AbstractDevice pointer
-      */
-      inline void add(Controller *controller) {
-        _controllers[controller->id()] = std::unique_ptr<Controller>(controller);
-      }
+class ControllerManager {
+ private:
+    TaskManager *_taskManager;
+    const std::array<std::string, 3> _taskNames {
+      "c_analog",
+      "c_digital",
+      "c_void"};
 
-      /*
-        Sets analog link for listener to listen to
+    std::array<std::unique_ptr<Controller>, 2> _controllers;
 
-        @param method Controller analog input
-        @param function Function to run
-        @param controller Which controller input to read
-      */
-      inline void add(const pros::controller_analog_e_t &method, const std::function<void(double)>& function, const controller_type &controller=C_MASTER) {
-        _analogLink.insert({{method, controller}, function});
-      }
+    std::map<analog_single_id, single_analog_function> _analogLink;
+    std::map<analog_multi_id, multi_analog_function> _multiAnalogLink;
+    std::map<digital_single_id, single_digital_function> _digitalLink;
+    std::map<digital_multi_id, multi_digital_function> _multiDigitalLink;
+    std::vector<std::function<void()>> _voidLinks;
 
-      /*
-        Sets analog links for listener to listen to
+ protected:
+    /*
+      Set controller
 
-        @param methods Multiple controller analog input
-        @param function Function to run
-        @param controller Which controller input to read
-      */
-      inline void add(const std::vector<pros::controller_analog_e_t> &methods, const std::function<void(std::vector<double>)>& function, const controller_type &controller=C_MASTER) {
-        _multiAnalogLink.insert({{methods, controller}, function});
-      }
+      @param controller Controller as AbstractDevice pointer
+    */
+    inline void add(Controller *controller) {
+      _controllers[controller->id()] = std::unique_ptr<Controller>(controller);
+    }
 
-      /*
-        Sets digital link for listener to listen to
+    /*
+      Sets analog link for listener to listen to
 
-        @param method Controller analog input
-        @param function Function to run
-        @param controller Which controller input to read
-      */
-      inline void add(const pros::controller_digital_e_t &method, const std::function<void(bool)>& function, const controller_type &controller=C_MASTER) {
-        _digitalLink.insert({{method, controller}, function});
-      }
+      @param method Controller analog input
+      @param function Function to run
+      @param controller Which controller input to read
+    */
+    inline void add(
+      const pros::controller_analog_e_t &method,
+      const single_analog_function& function,
+      const controller_type &controller = C_MASTER) {
+      _analogLink.insert({{method, controller}, function});
+    }
 
-      /*
-        Sets digital links for listener to listen to
+    /*
+      Sets analog links for listener to listen to
 
-        @param method Controller analog inputs
-        @param function Function to run
-        @param controller Which controller input to read
-      */
-      inline void add(const std::vector<pros::controller_digital_e_t> &method, const std::function<void(std::vector<bool>)>& function, const controller_type &controller=C_MASTER) {
-        _multiDigitalLink.insert({{method, controller}, function});
-      }
+      @param methods Multiple controller analog input
+      @param function Function to run
+      @param controller Which controller input to read
+    */
+    inline void add(
+      const std::vector<pros::controller_analog_e_t> &methods,
+      const multi_analog_function& function,
+      const controller_type &controller = C_MASTER) {
+      _multiAnalogLink.insert({{methods, controller}, function});
+    }
 
-      /*
-        Runs a function every loop in the listener
+    /*
+      Sets digital link for listener to listen to
 
-        @param function Function to run
-      */
-      inline void add(const std::function<void()>& function) {
-        _voidLinks.push_back(function);
-      }
+      @param method Controller analog input
+      @param function Function to run
+      @param controller Which controller input to read
+    */
+    inline void add(
+      const pros::controller_digital_e_t &method,
+      const single_digital_function& function,
+      const controller_type &controller = C_MASTER) {
+      _digitalLink.insert({{method, controller}, function});
+    }
 
-      /*
-        Initialises all robot controller listening tasks
-      */
-      inline void event_initialiser() {
-        if (!_taskManager->get_task(_taskNames[C_ANALOG]) || !_taskManager->get_task(_taskNames[C_DIGITAL]) || !_taskManager->get_task(_taskNames[C_VOID])) {
-          _taskManager->add_task(_taskNames[C_ANALOG], pros::Task([&]() {
-              while (true) {
-                for (const auto &[key, function] : _analogLink)
-                  function(_controllers[key.second]->get_analog(key.first));
+    /*
+      Sets digital links for listener to listen to
 
-                for (const auto &[key, function] : _multiAnalogLink) {
-                  std::vector<double> analogs;
+      @param method Controller analog inputs
+      @param function Function to run
+      @param controller Which controller input to read
+    */
+    inline void add(
+      const std::vector<pros::controller_digital_e_t> &method,
+      const multi_digital_function& function,
+      const controller_type &controller = C_MASTER) {
+      _multiDigitalLink.insert({{method, controller}, function});
+    }
 
-                  for (const auto &analog : key.first)
-                    analogs.push_back(_controllers[key.second]->get_analog(analog));
+    /*
+      Runs a function every loop in the listener
 
-                  function(analogs);
-                }
+      @param function Function to run
+    */
+    inline void add(const std::function<void()>& function) {
+      _voidLinks.push_back(function);
+    }
 
-                pros::delay(KUtil::KRONOS_MSDELAY);
+    /*
+      Initialises all robot controller listening tasks
+    */
+    inline void event_initialiser() {
+      if (!_taskManager->get_task(_taskNames[C_ANALOG]) ||
+          !_taskManager->get_task(_taskNames[C_DIGITAL]) ||
+          !_taskManager->get_task(_taskNames[C_VOID])) {
+        _taskManager->add_task(
+          _taskNames[C_ANALOG],
+          pros::Task([&]() {
+            while (true) {
+              for (const auto &[key, function] : _analogLink) {
+                function(_controllers[key.second]->get_analog(key.first));
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_ANALOG].c_str()
-          ));
 
-          _taskManager->add_task(_taskNames[C_DIGITAL], pros::Task([&]() {
-                while (true) {
-                  for (const auto &[key, function] : _digitalLink)
-                    function(_controllers[key.second]->get_digital(key.first));
+              for (const auto &[key, function] : _multiAnalogLink) {
+                std::vector<double> analogs;
 
-                  for (const auto &[key, function] : _multiDigitalLink) {
-                    std::vector<bool> digitals;
-
-                    for (const auto &digital : key.first)
-                      digitals.push_back(_controllers[key.second]->get_digital(digital));
-
-                    function(digitals);
-                  }
-
-                  pros::delay(KUtil::KRONOS_MSDELAY);
-                }
-              }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_DIGITAL].c_str()
-            ));
-
-          _taskManager->add_task(_taskNames[C_VOID], pros::Task([&]() {
-              while (true) {
-                for (const auto &function : _voidLinks) {
-                  function();
+                for (const auto &analog : key.first) {
+                  analogs.push_back(
+                    _controllers[key.second]->get_analog(analog));
                 }
 
-                pros::delay(KUtil::KRONOS_MSDELAY);
+                function(analogs);
               }
-            }, TASK_PRIORITY_MAX, TASK_STACK_DEPTH_DEFAULT, _taskNames[C_VOID].c_str()
-          ));
-        } else {
-          KLog::Log::warn("Event listeners already initialised");
-        }
+
+              pros::delay(KUtil::KRONOS_MSDELAY);
+            }
+          },
+          TASK_PRIORITY_MAX,
+          TASK_STACK_DEPTH_DEFAULT,
+          _taskNames[C_ANALOG].c_str()));
+
+        _taskManager->add_task(
+          _taskNames[C_DIGITAL],
+          pros::Task([&]() {
+            while (true) {
+              for (const auto &[key, function] : _digitalLink) {
+                function(_controllers[key.second]->get_digital(key.first));
+              }
+
+              for (const auto &[key, function] : _multiDigitalLink) {
+                std::vector<bool> digitals;
+
+                for (const auto &digital : key.first) {
+                  digitals.push_back(
+                    _controllers[key.second]->get_digital(digital));
+                }
+
+                function(digitals);
+              }
+
+              pros::delay(KUtil::KRONOS_MSDELAY);
+            }
+          },
+          TASK_PRIORITY_MAX,
+          TASK_STACK_DEPTH_DEFAULT,
+          _taskNames[C_DIGITAL].c_str()));
+
+        _taskManager->add_task(
+          _taskNames[C_VOID],
+          pros::Task([&]() {
+            while (true) {
+              for (const auto &function : _voidLinks) {
+                function();
+              }
+
+              pros::delay(KUtil::KRONOS_MSDELAY);
+            }
+          },
+          TASK_PRIORITY_MAX,
+          TASK_STACK_DEPTH_DEFAULT,
+          _taskNames[C_VOID].c_str()));
+      } else {
+        KLog::Log::warn("Event listeners already initialised");
       }
+    }
 
-      inline void event_deinitialize() {
-        KLog::Log::info("Unloading analog event");
-        _taskManager->kill_task(_taskNames[C_ANALOG]);
+    inline void event_deinitialize() {
+      KLog::Log::info("Unloading analog event");
+      _taskManager->kill_task(_taskNames[C_ANALOG]);
 
-        KLog::Log::info("Unloading digital event");
-        _taskManager->kill_task(_taskNames[C_DIGITAL]);
+      KLog::Log::info("Unloading digital event");
+      _taskManager->kill_task(_taskNames[C_DIGITAL]);
 
-        KLog::Log::info("Unloading void event");
-        _taskManager->kill_task(_taskNames[C_VOID]);
-      }
-    public:
-      inline explicit ControllerManager(TaskManager *taskManager) {
-        _taskManager = taskManager;
-      }
+      KLog::Log::info("Unloading void event");
+      _taskManager->kill_task(_taskNames[C_VOID]);
+    }
 
-      inline ~ControllerManager() {
-        event_deinitialize();
-      }
+ public:
+    inline explicit ControllerManager(TaskManager *taskManager) {
+      _taskManager = taskManager;
+    }
 
-      /*
-        Gets controller pointer stored
+    inline ~ControllerManager() {
+      event_deinitialize();
+    }
 
-        @param type Controller type
+    /*
+      Gets controller pointer stored
 
-        @return Controller pointer
-      */
-      inline Controller* get_controller(const controller_type &type) {
-        return _controllers[type].get();
-      }
+      @param type Controller type
 
-      /*
-        Queries if has specific controller
+      @return Controller pointer
+    */
+    inline Controller* get_controller(const controller_type &type) {
+      return _controllers[type].get();
+    }
 
-        @param type Controller type
+    /*
+      Queries if has specific controller
 
-        @returns If the controller manager contains the specific controller
-      */
-      inline bool has_controller(const controller_type &type) {
-        return _controllers[type].get();
-      }
-  };
-}
+      @param type Controller type
 
-#endif
+      @returns If the controller manager contains the specific controller
+    */
+    inline bool has_controller(const controller_type &type) {
+      return _controllers[type].get();
+    }
+};
+}  // namespace KRONOS
+
+#endif  // KRONOS_BASE_MANAGERS_CONTROLLERMANAGER_HPP_
