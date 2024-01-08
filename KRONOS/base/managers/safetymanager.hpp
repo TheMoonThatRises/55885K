@@ -13,11 +13,12 @@
 #include <string>
 #include <vector>
 
+#include "assets/asserts.hpp"
+#include "assets/statics.hpp"
+
 #include "base/managers/controllermanager.hpp"
 #include "base/managers/devicemanager.hpp"
 #include "base/managers/taskmanager.hpp"
-
-#include "assets/statics.hpp"
 
 namespace KRONOS {
 class SafetyManager {
@@ -38,10 +39,17 @@ class SafetyManager {
               this->_controllerManager->has_controller(C_PARTNER)
               ? C_PARTNER
               : C_MASTER);
+
+          assert_not_nullptr(controller, "KRONOS::Controller");
+
           std::vector<Motor*> motor_list =
             this->_deviceManager->get_all_device_type<Motor>(K_MOTOR);
 
           while (true) {
+            if (motor_list.size() < 1) {
+              return;
+            }
+
             for (Motor *motor : motor_list) {
               if (motor->is_over_current()) {
                 KLog::Log::warn(
@@ -83,10 +91,6 @@ class SafetyManager {
       #else
         this->~SafetyManager();
       #endif
-    }
-
-    inline ~SafetyManager() {
-      _taskManager->kill_task(_task_name);
     }
 };
 }  // namespace KRONOS

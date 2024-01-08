@@ -9,17 +9,11 @@
 #ifndef KRONOS_BASE_USER_CASTER_HPP_
 #define KRONOS_BASE_USER_CASTER_HPP_
 
+#include "assets/asserts.hpp"
+
 #include "base/devices.hpp"
 
 namespace KRONOS {
-void assert_same_device(
-  const AbstractDevice* device,
-  const device_types &type) {
-  if (device->type() != type) {
-    throw new UnexpectedDeviceTypeError(device->type(), type);
-  }
-}
-
 /*
   Casts AbstractDevice pointer to Button pointer
 

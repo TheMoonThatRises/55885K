@@ -13,6 +13,8 @@
 #include <memory>
 #include <string>
 
+#include "assets/asserts.hpp"
+
 #include "pros/rtos.hpp"
 
 namespace KRONOS {
@@ -40,30 +42,32 @@ class TaskManager {
     inline void suspend_task(const std::string &name) {
       pros::Task *task = get_task(name);
 
-      if (task) {
-        task->suspend();
-      }
+      assert_not_nullptr(task, "pros::Task");
+
+      task->suspend();
     }
 
     inline void resume_task(const std::string &name) {
       pros::Task *task = get_task(name);
 
-      if (task) {
-        task->resume();
-      }
+      assert_not_nullptr(task, "pros::Task");
+
+      task->resume();
     }
 
     inline void kill_task(const std::string &name) {
-      if (get_task(name)) {
-        _tasks.at(name)->suspend();
-        _tasks.at(name)->remove();
-        _tasks.at(name).reset(nullptr);
-        (void) _tasks.erase(name);
-      }
+      assert_not_nullptr(get_task(name), "pros::Task");
+
+      _tasks.at(name)->suspend();
+      _tasks.at(name)->remove();
+      _tasks.at(name).reset(nullptr);
+      (void) _tasks.erase(name);
     }
 
     inline void kill_all() {
       for (const auto &[name, task] : _tasks) {
+        assert(task.get());
+
         kill_task(name);
       }
     }

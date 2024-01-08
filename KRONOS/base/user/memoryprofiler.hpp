@@ -16,10 +16,10 @@
 #include <cassert>
 #include <string>
 
-#include "base/managers/taskmanager.hpp"
-
 #include "assets/logger.hpp"
 #include "assets/statics.hpp"
+
+#include "base/managers/taskmanager.hpp"
 
 // #include "pros/misc.h" // TODO: Add battery info
 #include "pros/rtos.h"
@@ -75,6 +75,7 @@ class MemoryProfiler {
           TASK_STACK_DEPTH_MIN,
           _task_name.c_str()));
 
+        assert(_taskManager->get_task(_task_name));
         _taskManager->suspend_task(_task_name);
       } else {
         KLog::Log::warn("Memory profiler thread already initialized");
@@ -128,10 +129,12 @@ class MemoryProfiler {
     }
 
     inline void enable_memory_profiler() {
+      assert(_taskManager->get_task(_task_name));
       _taskManager->resume_task(_task_name);
     }
 
     inline void disable_memory_profiler() {
+      assert(_taskManager->get_task(_task_name));
       _taskManager->suspend_task(_task_name);
     }
 };

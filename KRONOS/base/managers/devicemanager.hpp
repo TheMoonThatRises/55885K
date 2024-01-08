@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "assets/asserts.hpp"
 #include "assets/logger.hpp"
 
 #include "base/devices.hpp"
@@ -35,6 +36,8 @@ class DeviceManager {
       @param device Device to set
     */
     inline void set(const std::string &name, AbstractDevice *device) {
+      assert_not_nullptr(device, "unknown (" + name + ")");
+
       (void) _devices.emplace(name, std::move(device));
 
       auto port_name = _devices.at(name)->port().has_value()

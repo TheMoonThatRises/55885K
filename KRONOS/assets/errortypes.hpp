@@ -46,6 +46,14 @@ class NoDeviceFoundError : public AbstractKronosError {
     ) {}
 };
 
+class NullPointerError : public AbstractKronosError {
+ public:
+    explicit NullPointerError(const std::string &expected)
+    : AbstractKronosError(
+      "Expected pointer of '" + expected + "' but found nullptr"
+    ) {}
+};
+
 class PortOccupiedError : public AbstractKronosError {
  public:
     explicit PortOccupiedError(const char &port)

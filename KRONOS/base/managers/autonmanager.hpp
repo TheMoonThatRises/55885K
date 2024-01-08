@@ -16,6 +16,8 @@
 #include <utility>
 #include <vector>
 
+#include "assets/asserts.hpp"
+
 #include "base/devices.hpp"
 #include "base/managers/taskmanager.hpp"
 #include "base/managers/varmanager.hpp"
@@ -64,6 +66,9 @@ class AutonomousManager {
       LVGL Auton button listener
     */
     inline static lv_res_t button_listener(lv_obj_t* btn) {
+      assert_not_nullptr(_controller, "KRONOS::Controller");
+      assert_not_nullptr(_varManager, "KRONOS::VarManager");
+
       uint8_t id = lv_obj_get_free_num(btn);
 
       switch (id) {
@@ -76,8 +81,11 @@ class AutonomousManager {
           _controller->set_text("Auton << " + _currentAuton);
           break;
         case S_COLOR:
-          KUtil::side_color newColor =
-            *_varManager->global_get<int>("side") == KUtil::S_BLUE
+          auto *side = _varManager->global_get<KUtil::side_color>("side");
+
+          assert(side);
+
+          auto newColor = *side == KUtil::S_BLUE
               ? KUtil::S_RED
               : KUtil::S_BLUE;
 
@@ -86,8 +94,7 @@ class AutonomousManager {
           auto color_text =
             std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED");
 
-          _controller->set_text(
-            "Color << " + color_text);
+          _controller->set_text("Color << " + color_text);
           break;
       }
 
@@ -113,6 +120,8 @@ class AutonomousManager {
       @param controller Main controller
     */
     inline static void set_assets(KRONOS::Controller* controller) {
+      assert_not_nullptr(controller, "KRONOS::Controller");
+
       _controller = controller;
     }
 
@@ -120,6 +129,8 @@ class AutonomousManager {
       Runs the selected autonomous code
     */
     inline static void run() {
+      assert_not_nullptr(_controller, "KRONOS::Controller");
+
       if (!_currentAuton.empty() && _currentAuton != "noauton") {
         KLog::Log::info("Running auton '" + _currentAuton + "'");
         _controller->set_text("Rng auton '" + _currentAuton + "'");
@@ -136,6 +147,9 @@ class AutonomousManager {
       Load auton selector threads
     */
     inline void load_auton() {
+      assert_not_nullptr(_taskManager, "KRONOS::TaskManager");
+      assert_not_nullptr(_controller, "KRONOS::Controller");
+
       if (!_taskManager->get_task(_taskName)) {
         KLog::Log::info("Starting auton selection");
 
@@ -172,10 +186,13 @@ class AutonomousManager {
               lv_obj_set_free_num(colorbtn, 1);
               lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-              auto current_colour =
-                *_varManager->global_get<KUtil::side_color>("side");
+              auto *current_colour =
+                _varManager->global_get<KUtil::side_color>("side");
+
+              assert(current_colour);
+
               auto color_str = std::string(
-                current_colour == KUtil::S_BLUE
+                *current_colour == KUtil::S_BLUE
                   ? "BLUE"
                   : "RED");
               lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
@@ -194,6 +211,7 @@ class AutonomousManager {
 
     inline void unload_auton_threads() {
       KLog::Log::info("Unloading auton selector");
+      assert(_taskManager->get_task(_taskName));
       _taskManager->kill_task(_taskName);
       lv_obj_clean(lv_scr_act());
     }
