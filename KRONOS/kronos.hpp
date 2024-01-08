@@ -8,6 +8,16 @@
 
 #ifndef KRONOS_KRONOS_HPP_
 #define KRONOS_KRONOS_HPP_
+  // Set macros for production code
+  #ifdef KRONOS_PRODUCTION
+    #define NDEBUG
+
+    #define KRONOS_NOASSERTS
+
+    #undef KRONOS_SAFETY_CHECKS
+    #undef KRONOS_STRICT_DEVICE_GETTER
+  #endif
+
   /*
     Include KRONOS libraries
   */

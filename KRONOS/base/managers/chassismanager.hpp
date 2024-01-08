@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "assets/asserts.hpp"
 #include "assets/logger.hpp"
 
 #include "base/devices.hpp"
@@ -55,6 +56,8 @@ class ChassisManager: protected KExtender::PID {
       const double &strafe,
       const double &turn) const {
       for (Motor *motor : _chassisMotors) {
+        assert_not_nullptr(motor, "KRONOS::Motor");
+
         const double mstraight =
           (motor->facing() >= K_NORTHEAST && motor->facing() <= K_SOUTHEAST)
             ? -straight
@@ -101,6 +104,8 @@ class ChassisManager: protected KExtender::PID {
     inline void set_pid_consts(
       const KExtender::pid_consts &pidconsts) override {
       for (Motor *motor : _chassisMotors) {
+        assert_not_nullptr(motor, "KRONOS::Motor");
+
         motor->set_pid_consts(pidconsts);
       }
     }

@@ -17,6 +17,8 @@
 #include <utility>
 #include <vector>
 
+#include "assets/asserts.hpp"
+
 namespace KRONOS {
 
 enum controller_type {
@@ -68,6 +70,8 @@ class ControllerManager {
       @param controller Controller as AbstractDevice pointer
     */
     inline void add(Controller *controller) {
+      assert_not_nullptr(controller, "KRONOS::Controller");
+
       _controllers[controller->id()] = std::unique_ptr<Controller>(controller);
     }
 
@@ -148,10 +152,18 @@ class ControllerManager {
           pros::Task([&]() {
             while (true) {
               for (const auto &[key, function] : _analogLink) {
-                function(_controllers[key.second]->get_analog(key.first));
+                KRONOS::Controller *controller = _controllers[key.second].get();
+
+                assert_not_nullptr(controller, "KRONOS::Controller");
+
+                function(controller->get_analog(key.first));
               }
 
               for (const auto &[key, function] : _multiAnalogLink) {
+                KRONOS::Controller *controller = _controllers[key.second].get();
+
+                assert_not_nullptr(controller, "KRONOS::Controller");
+
                 std::vector<double> analogs;
 
                 (void) std::transform(
@@ -159,7 +171,7 @@ class ControllerManager {
                   key.first.end(),
                   analogs.begin(),
                   [&](const pros::controller_analog_e_t &analog) {
-                    return _controllers[key.second]->get_analog(analog);
+                    return controller->get_analog(analog);
                   });
 
                 function(analogs);
@@ -177,10 +189,18 @@ class ControllerManager {
           pros::Task([&]() {
             while (true) {
               for (const auto &[key, function] : _digitalLink) {
-                function(_controllers[key.second]->get_digital(key.first));
+                KRONOS::Controller *controller = _controllers[key.second].get();
+
+                assert_not_nullptr(controller, "KRONOS::Controller");
+
+                function(controller->get_digital(key.first));
               }
 
               for (const auto &[key, function] : _multiDigitalLink) {
+                KRONOS::Controller *controller = _controllers[key.second].get();
+
+                assert_not_nullptr(controller, "KRONOS::Controller");
+
                 std::vector<bool> digitals;
 
                 (void) std::transform(
@@ -188,7 +208,7 @@ class ControllerManager {
                   key.first.end(),
                   digitals.begin(),
                   [&](const pros::controller_digital_e_t &digital) {
-                    return _controllers[key.second]->get_digital(digital);
+                    return controller->get_digital(digital);
                   });
 
                 function(digitals);
@@ -221,12 +241,15 @@ class ControllerManager {
     }
 
     inline void event_deinitialize() {
+      assert(_taskManager->get_task(_taskNames[C_ANALOG]));
       KLog::Log::info("Unloading analog event");
       _taskManager->kill_task(_taskNames[C_ANALOG]);
 
+      assert(_taskManager->get_task(_taskNames[C_DIGITAL]));
       KLog::Log::info("Unloading digital event");
       _taskManager->kill_task(_taskNames[C_DIGITAL]);
 
+      assert(_taskManager->get_task(_taskNames[C_VOID]));
       KLog::Log::info("Unloading void event");
       _taskManager->kill_task(_taskNames[C_VOID]);
     }
