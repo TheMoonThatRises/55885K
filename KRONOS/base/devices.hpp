@@ -176,22 +176,23 @@ class AbstractDevice : public pros::Mutex {
     inline virtual bool mutex_take(
       const uint32_t &delay = KUtil::KRONOS_MSDELAY
     ) {
-      // #ifdef KRONOS_DEVICE_USE_MUTEX
-      //   if (!Mutex::take(delay)) {
-      //     #ifdef KRONOS_STRICT_MUTEX
-      //       throw new UnsuccessfulMutexTake();
-      //     #else
-      //       KLog::Log::warn(
-      //         "Unable to take mutex for device '" +
-      //         std::to_string(_type) + "' on port '" +
-      //         std::to_string(port().value()) +
-      //         "'. This may cause unexpected device functionality. Errno: " +
-      //         std::to_string(errno)
-      //       );
-      //       return false;
-      //     #endif
-      //   }
-      // #endif
+      #ifdef KRONOS_DEVICE_USE_MUTEX
+        if (!Mutex::take(delay)) {
+          #ifdef KRONOS_STRICT_MUTEX
+            throw new UnsuccessfulMutexTake();
+          #else
+            KLog::Log::warn(
+              "Unable to take mutex for device '" +
+              std::to_string(_type) + "' on port '" +
+              std::to_string(port().value()) +
+              "'. This may cause unexpected device functionality. Errno: " +
+              std::to_string(errno));
+            return false;
+          #endif
+        }
+      #else
+        (void) delay;
+      #endif
 
       return true;
     }

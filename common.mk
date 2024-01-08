@@ -5,7 +5,7 @@ MFLAGS=-mcpu=cortex-a9 -mfpu=neon-fp16 -mfloat-abi=softfp -O3 -g -flto=auto
 CPPFLAGS=-D_POSIX_THREADS -D_UNIX98_THREAD_MUTEX_ATTRIBUTES -D_POSIX_TIMERS -D_POSIX_MONOTONIC_CLOCK -IKRONOS
 GCCFLAGS=-ffunction-sections -fdata-sections -fdiagnostics-color -funwind-tables
 
-WARNFLAGS+=-Wno-psabi -Wall -Werror -Wpedantic
+WARNFLAGS+=-Wno-psabi -Wall -Werror -Wpedantic -Wextra
 
 SPACE := $() $()
 COMMA := ,
