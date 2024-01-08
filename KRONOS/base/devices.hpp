@@ -66,7 +66,7 @@ namespace KRONOS {
         @param face
         @param port
       */
-      inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : _type(device), _face(face), _port(port), Mutex() {
+      inline AbstractDevice(const device_types &device, const device_face &face, const char &port) : Mutex(), _type(device), _face(face), _port(port) {
         _init();
       };
 
