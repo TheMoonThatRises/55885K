@@ -144,6 +144,7 @@ class ControllerManager {
       Initialises all robot controller listening tasks
     */
     inline void initialise_all() {
+      KLog::Log::info("Attempting to load analog event");
       (void) _taskManager->add_task(
         _taskNames[C_ANALOG],
         pros::Task([&]() {
@@ -181,6 +182,7 @@ class ControllerManager {
         TASK_STACK_DEPTH_DEFAULT,
         _taskNames[C_ANALOG].c_str()));
 
+      KLog::Log::info("Attempting to load digital event");
       (void) _taskManager->add_task(
         _taskNames[C_DIGITAL],
         pros::Task([&]() {
@@ -218,6 +220,7 @@ class ControllerManager {
         TASK_STACK_DEPTH_DEFAULT,
         _taskNames[C_DIGITAL].c_str()));
 
+      KLog::Log::info("Attempting to load void event");
       (void) _taskManager->add_task(
         _taskNames[C_VOID],
         pros::Task([&]() {
@@ -235,13 +238,13 @@ class ControllerManager {
     }
 
     inline void event_deinitialize() {
-      KLog::Log::info("Attempting to unloading analog event");
+      KLog::Log::info("Attempting to unload analog event");
       (void) _taskManager->kill_task(_taskNames[C_ANALOG]);
 
-      KLog::Log::info("Attempting to loading digital event");
+      KLog::Log::info("Attempting to unload digital event");
       (void) _taskManager->kill_task(_taskNames[C_DIGITAL]);
 
-      KLog::Log::info("Attempting unloading void event");
+      KLog::Log::info("Attempting to unload void event");
       (void) _taskManager->kill_task(_taskNames[C_VOID]);
     }
 

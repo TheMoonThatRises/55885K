@@ -44,7 +44,7 @@ class MemoryProfiler {
 
  protected:
     inline void _init() {
-      if (!_taskManager->get_task(_task_name)) {
+        KLog::Log::info("Attempting to load memory profiler event");
         (void) _taskManager->add_task(
           _task_name,
           pros::Task([&]() {
@@ -75,11 +75,13 @@ class MemoryProfiler {
           TASK_STACK_DEPTH_MIN,
           _task_name.c_str()));
 
-        assert(_taskManager->get_task(_task_name));
-        (void) _taskManager->suspend_task(_task_name);
-      } else {
-        KLog::Log::warn("Memory profiler thread already initialized");
-      }
+      assert(_taskManager->get_task(_task_name));
+      (void) _taskManager->suspend_task(_task_name);
+    }
+
+    inline void unload_thread() {
+      KLog::Log::info("Attempting to unload memory profiler event");
+      _taskManager->kill_task(_task_name);
     }
 
  public:
@@ -136,6 +138,10 @@ class MemoryProfiler {
     inline void disable_memory_profiler() {
       assert(_taskManager->get_task(_task_name));
       (void) _taskManager->suspend_task(_task_name);
+    }
+
+    ~MemoryProfiler() {
+      unload_thread();
     }
 };
 }  // namespace KMemoryProfiler

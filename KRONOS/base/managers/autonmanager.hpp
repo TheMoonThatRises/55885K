@@ -153,6 +153,7 @@ class AutonomousManager {
       if (!_taskManager->get_task(_taskName)) {
         KLog::Log::info("Starting auton selection");
 
+        KLog::Log::info("Attempting to load auton event");
         (void) _taskManager->add_task(
           _taskName,
           pros::Task([&]() {
@@ -210,7 +211,7 @@ class AutonomousManager {
     }
 
     inline void unload_auton_threads() {
-      KLog::Log::info("Attempting to unloading auton selector");
+      KLog::Log::info("Attempting to unload auton selector");
       (void) _taskManager->kill_task(_taskName);
       lv_obj_clean(lv_scr_act());
     }
