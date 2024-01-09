@@ -326,7 +326,7 @@ class Robot
       Manipulate groups of devices at the same time with the same command
 
       @param dnames Vector of names for devices
-      @param manip_func Function call that controls the device
+      @param func Function call that controls the device
       @param delay Delay after the manipDevices has ran
     */
     inline void manipulate_devices(
