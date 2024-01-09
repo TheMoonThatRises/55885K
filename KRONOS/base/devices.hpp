@@ -50,7 +50,7 @@ class AbstractDevice : public pros::Mutex {
 
       if (_port.has_value()) {
         const pros::c::v5_device_e_t port_info =
-          pros::c::registry_get_plugged_type(_port.value());
+          pros::c::registry_get_plugged_type(_port.value() - 1);
 
         int port_index = isdigit(_port.value())
           ? _port.value() - '0'

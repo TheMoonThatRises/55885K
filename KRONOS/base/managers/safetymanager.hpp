@@ -31,6 +31,7 @@ class SafetyManager {
 
  protected:
     inline void _init() {
+      KLog::Log::info("Attempting to load safety manager event");
       (void) _taskManager->add_task(
         _task_name,
         pros::Task([&]() {
@@ -74,6 +75,11 @@ class SafetyManager {
         _task_name.c_str()));
     }
 
+    inline void unload_threads() {
+      KLog::Log::info("Attempting to unload safety manager event");
+      (void) _taskManager->kill_task(_task_name);
+    }
+
  public:
     inline explicit SafetyManager(
       ControllerManager *controllerManager,
@@ -91,6 +97,10 @@ class SafetyManager {
       #else
         this->~SafetyManager();
       #endif
+    }
+
+    ~SafetyManager() {
+      unload_threads();
     }
 };
 }  // namespace KRONOS
