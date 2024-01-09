@@ -144,114 +144,105 @@ class ControllerManager {
       Initialises all robot controller listening tasks
     */
     inline void initialise_all() {
-      if (!_taskManager->get_task(_taskNames[C_ANALOG]) ||
-          !_taskManager->get_task(_taskNames[C_DIGITAL]) ||
-          !_taskManager->get_task(_taskNames[C_VOID])) {
-        _taskManager->add_task(
-          _taskNames[C_ANALOG],
-          pros::Task([&]() {
-            while (true) {
-              for (const auto &[key, function] : _analogLink) {
-                KRONOS::Controller *controller = _controllers[key.second].get();
+      (void) _taskManager->add_task(
+        _taskNames[C_ANALOG],
+        pros::Task([&]() {
+          while (true) {
+            for (const auto &[key, function] : _analogLink) {
+              KRONOS::Controller *controller = _controllers[key.second].get();
 
-                assert_not_nullptr(controller, "KRONOS::Controller");
+              assert_not_nullptr(controller, "KRONOS::Controller");
 
-                function(controller->get_analog(key.first));
-              }
-
-              for (const auto &[key, function] : _multiAnalogLink) {
-                KRONOS::Controller *controller = _controllers[key.second].get();
-
-                assert_not_nullptr(controller, "KRONOS::Controller");
-
-                std::vector<double> analogs(key.first.size());
-
-                (void) std::transform(
-                  key.first.begin(),
-                  key.first.end(),
-                  analogs.begin(),
-                  [&](const pros::controller_analog_e_t &analog) {
-                    return controller->get_analog(analog);
-                  });
-
-                function(analogs);
-              }
-
-              pros::delay(KUtil::KRONOS_MSDELAY);
+              function(controller->get_analog(key.first));
             }
-          },
-          TASK_PRIORITY_MAX,
-          TASK_STACK_DEPTH_DEFAULT,
-          _taskNames[C_ANALOG].c_str()));
 
-        _taskManager->add_task(
-          _taskNames[C_DIGITAL],
-          pros::Task([&]() {
-            while (true) {
-              for (const auto &[key, function] : _digitalLink) {
-                KRONOS::Controller *controller = _controllers[key.second].get();
+            for (const auto &[key, function] : _multiAnalogLink) {
+              KRONOS::Controller *controller = _controllers[key.second].get();
 
-                assert_not_nullptr(controller, "KRONOS::Controller");
+              assert_not_nullptr(controller, "KRONOS::Controller");
 
-                function(controller->get_digital(key.first));
-              }
+              std::vector<double> analogs(key.first.size());
 
-              for (const auto &[key, function] : _multiDigitalLink) {
-                KRONOS::Controller *controller = _controllers[key.second].get();
+              (void) std::transform(
+                key.first.begin(),
+                key.first.end(),
+                analogs.begin(),
+                [&](const pros::controller_analog_e_t &analog) {
+                  return controller->get_analog(analog);
+                });
 
-                assert_not_nullptr(controller, "KRONOS::Controller");
-
-                std::vector<bool> digitals(key.first.size());
-
-                (void) std::transform(
-                  key.first.begin(),
-                  key.first.end(),
-                  digitals.begin(),
-                  [&](const pros::controller_digital_e_t &digital) {
-                    return controller->get_digital(digital);
-                  });
-
-                function(digitals);
-              }
-
-              pros::delay(KUtil::KRONOS_MSDELAY);
+              function(analogs);
             }
-          },
-          TASK_PRIORITY_MAX,
-          TASK_STACK_DEPTH_DEFAULT,
-          _taskNames[C_DIGITAL].c_str()));
 
-        _taskManager->add_task(
-          _taskNames[C_VOID],
-          pros::Task([&]() {
-            while (true) {
-              for (const auto &function : _voidLinks) {
-                function();
-              }
+            pros::delay(KUtil::KRONOS_MSDELAY);
+          }
+        },
+        TASK_PRIORITY_MAX,
+        TASK_STACK_DEPTH_DEFAULT,
+        _taskNames[C_ANALOG].c_str()));
 
-              pros::delay(KUtil::KRONOS_MSDELAY);
+      (void) _taskManager->add_task(
+        _taskNames[C_DIGITAL],
+        pros::Task([&]() {
+          while (true) {
+            for (const auto &[key, function] : _digitalLink) {
+              KRONOS::Controller *controller = _controllers[key.second].get();
+
+              assert_not_nullptr(controller, "KRONOS::Controller");
+
+              function(controller->get_digital(key.first));
             }
-          },
-          TASK_PRIORITY_MAX,
-          TASK_STACK_DEPTH_DEFAULT,
-          _taskNames[C_VOID].c_str()));
-      } else {
-        KLog::Log::warn("Event listeners already initialised");
-      }
+
+            for (const auto &[key, function] : _multiDigitalLink) {
+              KRONOS::Controller *controller = _controllers[key.second].get();
+
+              assert_not_nullptr(controller, "KRONOS::Controller");
+
+              std::vector<bool> digitals(key.first.size());
+
+              (void) std::transform(
+                key.first.begin(),
+                key.first.end(),
+                digitals.begin(),
+                [&](const pros::controller_digital_e_t &digital) {
+                  return controller->get_digital(digital);
+                });
+
+              function(digitals);
+            }
+
+            pros::delay(KUtil::KRONOS_MSDELAY);
+          }
+        },
+        TASK_PRIORITY_MAX,
+        TASK_STACK_DEPTH_DEFAULT,
+        _taskNames[C_DIGITAL].c_str()));
+
+      (void) _taskManager->add_task(
+        _taskNames[C_VOID],
+        pros::Task([&]() {
+          while (true) {
+            for (const auto &function : _voidLinks) {
+              function();
+            }
+
+            pros::delay(KUtil::KRONOS_MSDELAY);
+          }
+        },
+        TASK_PRIORITY_MAX,
+        TASK_STACK_DEPTH_DEFAULT,
+        _taskNames[C_VOID].c_str()));
     }
 
     inline void event_deinitialize() {
-      assert(_taskManager->get_task(_taskNames[C_ANALOG]));
-      KLog::Log::info("Unloading analog event");
-      _taskManager->kill_task(_taskNames[C_ANALOG]);
+      KLog::Log::info("Attempting to unloading analog event");
+      (void) _taskManager->kill_task(_taskNames[C_ANALOG]);
 
-      assert(_taskManager->get_task(_taskNames[C_DIGITAL]));
-      KLog::Log::info("Unloading digital event");
-      _taskManager->kill_task(_taskNames[C_DIGITAL]);
+      KLog::Log::info("Attempting to loading digital event");
+      (void) _taskManager->kill_task(_taskNames[C_DIGITAL]);
 
-      assert(_taskManager->get_task(_taskNames[C_VOID]));
-      KLog::Log::info("Unloading void event");
-      _taskManager->kill_task(_taskNames[C_VOID]);
+      KLog::Log::info("Attempting unloading void event");
+      (void) _taskManager->kill_task(_taskNames[C_VOID]);
     }
 
  public:

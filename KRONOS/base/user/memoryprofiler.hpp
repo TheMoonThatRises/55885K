@@ -45,7 +45,7 @@ class MemoryProfiler {
  protected:
     inline void _init() {
       if (!_taskManager->get_task(_task_name)) {
-        _taskManager->add_task(
+        (void) _taskManager->add_task(
           _task_name,
           pros::Task([&]() {
             while (true) {
@@ -76,7 +76,7 @@ class MemoryProfiler {
           _task_name.c_str()));
 
         assert(_taskManager->get_task(_task_name));
-        _taskManager->suspend_task(_task_name);
+        (void) _taskManager->suspend_task(_task_name);
       } else {
         KLog::Log::warn("Memory profiler thread already initialized");
       }
@@ -130,12 +130,12 @@ class MemoryProfiler {
 
     inline void enable_memory_profiler() {
       assert(_taskManager->get_task(_task_name));
-      _taskManager->resume_task(_task_name);
+      (void) _taskManager->resume_task(_task_name);
     }
 
     inline void disable_memory_profiler() {
       assert(_taskManager->get_task(_task_name));
-      _taskManager->suspend_task(_task_name);
+      (void) _taskManager->suspend_task(_task_name);
     }
 };
 }  // namespace KMemoryProfiler

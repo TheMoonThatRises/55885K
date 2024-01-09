@@ -31,7 +31,7 @@ class SafetyManager {
 
  protected:
     inline void _init() {
-      _taskManager->add_task(
+      (void) _taskManager->add_task(
         _task_name,
         pros::Task([&]() {
           Controller *controller =

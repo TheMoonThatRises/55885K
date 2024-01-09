@@ -27,48 +27,64 @@ class TaskManager {
       kill_all();
     }
 
-    inline void add_task(const std::string &name, const pros::Task &task) {
-      if (!get_task(name)) {
-        (void) _tasks.insert({ name, std::make_unique<pros::Task>(task) });
-      }
-    }
-
     inline pros::Task* get_task(const std::string& name) {
       return _tasks.find(name) != _tasks.end()
         ? _tasks.at(name).get()
         : nullptr;
     }
 
-    inline void suspend_task(const std::string &name) {
-      pros::Task *task = get_task(name);
+    inline bool add_task(const std::string &name, const pros::Task &task) {
+      if (!get_task(name)) {
+        (void) _tasks.insert({ name, std::make_unique<pros::Task>(task) });
 
-      assert_not_nullptr(task, "pros::Task");
-
-      task->suspend();
+        return true;
+      } else {
+        return false;
+      }
     }
 
-    inline void resume_task(const std::string &name) {
+    inline bool suspend_task(const std::string &name) {
       pros::Task *task = get_task(name);
 
-      assert_not_nullptr(task, "pros::Task");
+      if (task) {
+        task->suspend();
 
-      task->resume();
+        return true;
+      } else {
+        return false;
+      }
     }
 
-    inline void kill_task(const std::string &name) {
-      assert_not_nullptr(get_task(name), "pros::Task");
+    inline bool resume_task(const std::string &name) {
+      pros::Task *task = get_task(name);
 
-      _tasks.at(name)->suspend();
-      _tasks.at(name)->remove();
-      _tasks.at(name).reset(nullptr);
-      (void) _tasks.erase(name);
+      if (task) {
+        task->resume();
+
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    inline bool kill_task(const std::string &name) {
+      pros::Task *task = get_task(name);
+
+      if (task) {
+        task->suspend();
+        task->remove();
+        _tasks.at(name).reset(nullptr);
+        (void) _tasks.erase(name);
+
+        return true;
+      } else {
+        return false;
+      }
     }
 
     inline void kill_all() {
       for (const auto &[name, task] : _tasks) {
-        assert(task.get());
-
-        kill_task(name);
+        assert(kill_task(name));
       }
     }
 };
