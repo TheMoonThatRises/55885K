@@ -34,6 +34,14 @@ class ColorAlreadySetError : public AbstractKronosError {
     ) {}
 };
 
+class InvalidElevatedVariableAccess : public AbstractKronosError {
+ public:
+  explicit InvalidElevatedVariableAccess(const std::string &key)
+  : AbstractKronosError(
+    "Attempted to access variable '" + key + "' with improper verification"
+  ) {}
+};
+
 class NoDeviceFoundError : public AbstractKronosError {
  public:
     explicit NoDeviceFoundError(const std::string &devicename)

@@ -22,6 +22,8 @@
 #include "base/managers/taskmanager.hpp"
 #include "base/managers/varmanager.hpp"
 
+#include "internal/hotp.hpp"
+
 namespace KRONOS {
 enum autonomous_events {
   S_AUTON, S_COLOR
@@ -36,6 +38,8 @@ class AutonomousManager {
     inline static VarManager *_varManager { nullptr };
 
     inline static Controller *_controller { nullptr };
+
+    inline static KOTP::HOTP _hotp;
 
     inline static size_t _currentAutonIndex = 0;
 
@@ -68,6 +72,7 @@ class AutonomousManager {
     inline static lv_res_t button_listener(lv_obj_t* btn) {
       assert_not_nullptr(_controller, "KRONOS::Controller");
       assert_not_nullptr(_varManager, "KRONOS::VarManager");
+      assert_not_nullptr(_hotp, "KOTP::HOTP");
 
       uint8_t id = lv_obj_get_free_num(btn);
 
@@ -89,7 +94,7 @@ class AutonomousManager {
               ? KUtil::S_RED
               : KUtil::S_BLUE;
 
-          _varManager->global_set<int>("side", newColor);
+          _varManager->global_set<int>("side", newColor, _hotp->next_code());
 
           auto color_text =
             std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED");
@@ -222,12 +227,15 @@ class AutonomousManager {
     */
     inline explicit AutonomousManager(
       VarManager *varManager,
-      TaskManager *taskManager) {
+      TaskManager *taskManager,
+      KOTP::HOTP *hotp) {
       assert(varManager);
       assert(taskManager);
+      assert(hotp);
 
       _varManager = varManager;
       _taskManager = taskManager;
+      _hotp = hotp;
     }
 
     inline ~AutonomousManager() {

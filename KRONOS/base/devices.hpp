@@ -137,7 +137,7 @@ class AbstractDevice : public pros::Mutex {
     */
     inline virtual device_types type() const {
       return _type;
-      }
+    }
 
     /*
       Get direction device is facing
