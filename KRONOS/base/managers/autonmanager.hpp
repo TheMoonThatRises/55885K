@@ -39,7 +39,7 @@ class AutonomousManager {
 
     inline static Controller *_controller { nullptr };
 
-    inline static KOTP::HOTP _hotp;
+    inline static KOTP::HOTP *_hotp { nullptr };
 
     inline static size_t _currentAutonIndex = 0;
 
