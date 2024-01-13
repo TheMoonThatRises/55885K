@@ -64,7 +64,11 @@ void initialize() {
     .add_device("catapult", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED,}))
 
     // intake device
-    .add_device("intake", new KRONOS::Motor({.port=8, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("intake", new KRONOS::Motor({.port=8, .gearset=pros::E_MOTOR_GEAR_GREEN}))
+
+    // lift bar
+    .add_device("rightlift", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("leftlift", new KRONOS::Motor({.port=10, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
     // launcher distance trigger
     .add_device("ltrigger", new KRONOS::Button({.port='A'}))
@@ -97,7 +101,13 @@ void initialize() {
 
     // intake controls
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &pressed) {
-      robot.get_device<KRONOS::Motor>("intake")->move_velocity(pressed[0] ? -30 : pressed[1] ? 30 : 0);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(pressed[0] ? -600 : pressed[1] ? 600 : 0);
+    })
+
+    // lift controls
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_UP, pros::E_CONTROLLER_DIGITAL_DOWN}, [&](const std::vector<bool> &pressed) {
+      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(pressed[0] ? -50 : pressed[1] ? 50 : 0);
+      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(pressed[0] ? -50 : pressed[1] ? 50 : 0);
     })
 
     // expansion controls
