@@ -61,7 +61,7 @@ class Robot
         _memory_profiler.enable_memory_profiler();
       }
 
-      VarManager::global_set("side", KUtil::S_RED, _htop.next_code());
+      VarManager::global_set<KUtil::side_color>("side", KUtil::S_RED, _htop.next_code());
 
       KLog::Log::info("Constructing robot");
       KLog::Log::info(
