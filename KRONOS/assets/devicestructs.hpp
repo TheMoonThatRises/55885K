@@ -57,8 +57,8 @@ struct controller_struct {
 
 struct motor_struct {
   int8_t port = 1;
-  pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_GREEN;
   bool reverse = false;
+  pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_GREEN;
   pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
   pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
   device_face face = K_NA;
