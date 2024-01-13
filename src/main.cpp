@@ -68,7 +68,7 @@ void initialize() {
 
     // lift bar
     .add_device("rightlift", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
-    .add_device("leftlift", new KRONOS::Motor({.port=10, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("leftlift", new KRONOS::Motor({.port=10, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
     // launcher distance trigger
     .add_device("ltrigger", new KRONOS::Button({.port='A'}))
