@@ -27,17 +27,23 @@
 #include "user/caster.hpp"
 #include "user/memoryprofiler.hpp"
 
+#include "internal/hotp.hpp"
+
 #include "pros/rtos.hpp"
 
 namespace KRONOS {
 class Robot
-: public AutonomousManager,
+: protected AutonomousManager,
   public DeviceManager,
   public ChassisManager,
   public ControllerManager,
-  public SafetyManager,
+  protected SafetyManager,
   public TaskManager,
   public VarManager {
+ private:
+  const std::string _secret_key = KUUID::UUIDGenerator().generate_uuid();
+  KOTP::HOTP _htop;
+
  protected:
     KMemoryProfiler::MemoryProfiler _memory_profiler;
 
@@ -45,15 +51,17 @@ class Robot
     inline explicit Robot(
       bool use_memory_profiler = false,
       bool detailed_memory_profiler = true)
-    : AutonomousManager(this, this),
+    : AutonomousManager(this, this, &_htop),
       ControllerManager(this),
       SafetyManager(this, this, this),
+      VarManager(_secret_key),
+      _htop(_secret_key),
       _memory_profiler(this, detailed_memory_profiler) {
       if (use_memory_profiler) {
         _memory_profiler.enable_memory_profiler();
       }
 
-      VarManager::global_set("side", KUtil::S_RED);
+      VarManager::global_set("side", KUtil::S_RED, _htop.next_code());
 
       KLog::Log::info("Constructing robot");
       KLog::Log::info(

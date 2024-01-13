@@ -42,7 +42,9 @@ class ChassisManager: protected KExtender::PID {
     }
 
  public:
-    ChassisManager() : PID(KExtender::P_NONE, {}, {}) {}
+    ChassisManager() : PID(KExtender::P_NONE, {}, {}) {
+      _chassisMotors.reserve(8);
+    }
 
     /*
       Move the chassis
