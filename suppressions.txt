@@ -4,3 +4,5 @@ missingIncludeSystem
 unusedFunction
 
 checkersReport
+
+*:KRONOS/external*
