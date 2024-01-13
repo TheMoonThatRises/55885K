@@ -94,7 +94,10 @@ class AutonomousManager {
               ? KUtil::S_RED
               : KUtil::S_BLUE;
 
-          _varManager->global_set<KUtil::side_color>("side", newColor, _hotp->get_code());
+          _varManager->global_set<KUtil::side_color>(
+            "side",
+            newColor,
+            _hotp->get_code());
 
           auto color_text =
             std::string(newColor == KUtil::S_BLUE ? "BLUE" : "RED");

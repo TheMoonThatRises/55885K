@@ -75,8 +75,7 @@ class VarManager {
       } else {
         (void) _global.insert(std::make_pair(
           key,
-          std::make_unique<Variable>(value, is_verified)
-        ));
+          std::make_unique<Variable>(value, is_verified)));
       }
     }
 
