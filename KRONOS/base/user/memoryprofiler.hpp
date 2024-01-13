@@ -24,8 +24,8 @@
 // #include "pros/misc.h" // TODO: Add battery info
 #include "pros/rtos.h"
 
-#include "external/FreeRTOSConfig.h"
-#include "external/portable.h"
+#include "external/FreeRTOS/FreeRTOSConfig.h"
+#include "external/FreeRTOS/portable.h"
 
 namespace KMemoryProfiler {
 class MemoryProfiler {
