@@ -37,9 +37,13 @@ class VarManager {
     explicit Variable(const T& value, const bool &is_elevated)
     : _value(std::make_unique<std::any>(std::make_any<T>(value))),
       _is_elevated(is_elevated) {}
+
+    ~Variable() {
+      _value.reset(nullptr);
+    }
   };
 
-  std::map<std::string, Variable> _global {};
+  std::map<std::string, std::unique_ptr<Variable>> _global {};
   KOTP::HOTP _htop;
 
   inline bool var_exists(const std::string &key) {
@@ -47,7 +51,7 @@ class VarManager {
   }
 
   inline bool is_elevated(const std::string &key) {
-    return var_exists(key) && _global.at(key)._is_elevated;
+    return _global.at(key)->_is_elevated;
   }
 
  public:
@@ -65,28 +69,34 @@ class VarManager {
           throw new InvalidElevatedVariableAccess(key);
         }
 
-        _global.at(key).update_value(value);
+        KLog::Log::info("setting elevated variable '" + key + "'");
+
+        _global.at(key)->update_value(value);
       } else {
-        (void) _global.try_emplace(
+        (void) _global.insert(std::make_pair(
           key,
-          value,
-          is_verified);
+          std::make_unique<Variable>(value, is_verified)
+        ));
       }
     }
 
     template<class T>
     inline T* global_get(const std::string &key) {
-      return _global.find(key) == _global.end()
-        ? nullptr
-        : std::any_cast<T>(_global.at(key)._value.get());
+      return var_exists(key)
+        ? std::any_cast<T>(_global.at(key)->_value.get())
+        : nullptr;
     }
 
     inline void global_delete(const std::string &key, const int &otp = 0) {
-      if (_global.at(key)._is_elevated && !_htop.verify(otp)) {
+      if (is_elevated(key) && !_htop.verify(otp)) {
         throw new InvalidElevatedVariableAccess(key);
       }
 
-      _global.erase(key);
+      KLog::Log::info("deleting elevated variable '" + key + "'");
+
+      _global.at(key)->~Variable();
+      _global.at(key).reset(nullptr);
+      (void) _global.erase(key);
     }
 };
 }  // namespace KRONOS
