@@ -24,7 +24,7 @@ class HOTP {
   explicit HOTP(const std::string &secret_key)
   : _secret_key(secret_key) {}
 
-  inline int next_code() const {
+  inline int get_code() const {
     std::string hash = hmac<SHA256>(std::to_string(_counter), _secret_key);
 
     size_t offset = hash[19] & 0xf;
@@ -39,7 +39,7 @@ class HOTP {
   }
 
   inline bool verify(const int &code) const {
-    bool verified = code == next_code();
+    bool verified = code == get_code();
 
     ++_counter;
 

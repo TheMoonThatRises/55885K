@@ -41,7 +41,7 @@ class Robot
   public TaskManager,
   public VarManager {
  private:
-  const std::string _secret_key = KUUID::UUIDGenerator().generate_uuid();
+  inline static const std::string _secret_key = KUUID::UUIDGenerator().generate_uuid();
   KOTP::HOTP _htop;
 
  protected:
@@ -61,7 +61,7 @@ class Robot
         _memory_profiler.enable_memory_profiler();
       }
 
-      VarManager::global_set<KUtil::side_color>("side", KUtil::S_RED, _htop.next_code());
+      VarManager::global_set<KUtil::side_color>("side", KUtil::S_RED, _htop.get_code());
 
       KLog::Log::info("Constructing robot");
       KLog::Log::info(
