@@ -34,51 +34,30 @@ void initialize() {
   robot
     // Device initialisers
     .add_device(new KRONOS::Controller({}))
-    .global_set<std::function<void()>>("full_launch_rotate", [&]() {
-      KRONOS::Motor *catapult = robot.get_device<KRONOS::Motor>("catapult");
-      KRONOS::Button *ltrigger = robot.get_device<KRONOS::Button>("ltrigger");
-
+    .global_set<std::function<void(KRONOS::Motor*)>>("full_launch_rotate", [&](KRONOS::Motor *catapult) {
       catapult->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-      while (ltrigger->get_value()/* || catapult->get_voltage()*/) {
-        catapult->move_velocity(100, 500);
-      }
-
-      while (!ltrigger->get_value()) {
-        catapult->move_velocity(90, 20);
-      }
-
-      robot.sleep(100);
+      catapult->move_velocity(-90);
     })
 
     // chassis devices
     .add_device("leftone", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_NORTHWEST}))
-    .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_WEST}))
-    .add_device("leftthree", new KRONOS::Motor({.port=3, .face=KRONOS::K_SOUTHWEST}))
+    .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
 
-    .add_device("rightone", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_NORTHEAST}))
-    .add_device("righttwo", new KRONOS::Motor({.port=5, .reverse=true, .face=KRONOS::K_EAST}))
-    .add_device("rightthree", new KRONOS::Motor({.port=6, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("rightone", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_NORTHEAST}))
+    .add_device("righttwo", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
-    .add_device("catapult", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED,}))
-
-    // intake device
-    .add_device("intake", new KRONOS::Motor({.port=8, .gearset=pros::E_MOTOR_GEAR_GREEN}))
+    .add_device("catapult", new KRONOS::Motor({.port=5, .gearset=pros::E_MOTOR_GEAR_RED}))
 
     // lift bar
-    .add_device("rightlift", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
-    .add_device("leftlift", new KRONOS::Motor({.port=10, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("leftlift", new KRONOS::Motor({.port=6, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("rightlift", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
-    // launcher distance trigger
-    .add_device("ltrigger", new KRONOS::Button({.port='A'}))
+    // intake device
+    .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_GREEN}))
 
-    // transmission
-    .add_device("transmission", new KRONOS::Piston({.port='B'}))
-
-    // new device
-    // .add_device("new device", new KRONOS::Motor({.port=8}))
-
+    // set chassis settings
     .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "rightone", "righttwo"}))
     .set_chassis_use_pid(false)
     .set_chassis_pid({.kP=0.0, .kI=0.0, .kD=10.0})
@@ -95,7 +74,9 @@ void initialize() {
       if (pressed[1]) {
         catapult->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else if (pressed[0]) {
-        robot.global_get<std::function<void()>>("full_launch_rotate")->operator()();
+        robot.global_get<std::function<void(KRONOS::Motor*)>>("full_launch_rotate")->operator()(catapult);
+      } else {
+        catapult->move_velocity(0);
       }
     })
 
