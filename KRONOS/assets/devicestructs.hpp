@@ -31,6 +31,7 @@ enum device_types {
   K_PID = 1 << 10,
   K_PISTON = pros::c::E_DEVICE_ADI,
   K_PROXIMITY = pros::c::E_DEVICE_DISTANCE,
+  K_ROTATION = pros::c::E_DEVICE_ROTATION,
   K_VISION = pros::c::E_DEVICE_VISION
 };
 
@@ -49,6 +50,7 @@ enum device_face {
 struct abstract_device_struct {
   int8_t port = 1;
   device_face face = K_NA;
+  bool reverse = false;
 };
 
 struct controller_struct {

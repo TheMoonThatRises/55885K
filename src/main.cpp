@@ -57,6 +57,9 @@ void initialize() {
     // intake device
     // .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_GREEN}))
 
+    // rotation device
+    .add_device("launcher_rotation", new KRONOS::Rotation({.port=10}))
+
     // set chassis settings
     .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "rightone", "righttwo"}))
     .set_chassis_use_pid(false)
