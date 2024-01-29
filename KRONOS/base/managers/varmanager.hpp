@@ -32,6 +32,10 @@ class VarManager {
       _value = std::make_unique<std::any>(std::make_any<T>(value));
     }
 
+    inline std::any* get_value() {
+      return _value.get();
+    }
+
    public:
     template <class T>
     explicit Variable(const T& value, const bool &is_elevated)
@@ -82,7 +86,7 @@ class VarManager {
     template<class T>
     inline T* global_get(const std::string &key) {
       return var_exists(key)
-        ? std::any_cast<T>(_global.at(key)->_value.get())
+        ? std::any_cast<T>(_global.at(key)->get_value())
         : nullptr;
     }
 
