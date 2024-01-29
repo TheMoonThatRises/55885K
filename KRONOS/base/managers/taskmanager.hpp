@@ -84,7 +84,9 @@ class TaskManager {
 
     inline void kill_all() {
       for (const auto &[name, task] : _tasks) {
-        assert(kill_task(name));
+        bool result = kill_task(name);
+        (void) result;
+        assert(result);
       }
     }
 };
