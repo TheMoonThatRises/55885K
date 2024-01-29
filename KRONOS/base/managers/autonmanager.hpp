@@ -195,18 +195,17 @@ class AutonomousManager {
               lv_obj_set_free_num(colorbtn, 1);
               lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
 
-              // auto current_colour =
-              //   _varManager->global_get<KUtil::side_color>("side");
+              auto current_colour =
+                _varManager->global_get<KUtil::side_color>("side");
 
-              // (void) current_colour;
-              // assert(current_colour);
+              assert(current_colour);
 
-              // auto color_str = std::string(
-              //   *current_colour == KUtil::S_BLUE
-              //     ? "BLUE"
-              //     : "RED");
-              // lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
-              // lv_label_set_text(colorlabel, color_str.c_str());
+              auto color_str = std::string(
+                *current_colour == KUtil::S_BLUE
+                  ? "BLUE"
+                  : "RED");
+              lv_obj_t* colorlabel = lv_label_create(colorbtn, nullptr);
+              lv_label_set_text(colorlabel, color_str.c_str());
 
               pros::delay(200);
             }
