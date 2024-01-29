@@ -435,6 +435,16 @@ class Proximity : public pros::Distance, public AbstractDevice {
       AbstractDevice(K_PROXIMITY, device.face, device.port) {}
 };
 
+class Rotation : public pros::Rotation, public AbstractDevice {
+ public:
+  /*
+    @param device
+  */
+  inline explicit Rotation(const abstract_device_struct &device)
+  : pros::Rotation(device.port, device.reverse),
+    AbstractDevice(K_ROTATION, device.face, device.port) {}
+};
+
 class Vision : public pros::Vision, public AbstractDevice {
  private:
     std::map<int, pros::vision_signature_s_t> _signatures;
