@@ -34,59 +34,80 @@ void initialize() {
   robot
     // Device initialisers
     .add_device(new KRONOS::Controller({}))
-    .global_set<std::function<void(KRONOS::Motor*)>>("full_launch_rotate", [&](KRONOS::Motor *catapult) {
+    .global_set<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>(
+      "full_launch_rotate",
+      [&](KRONOS::Motor *catapult, KRONOS::Rotation *rotation) {
       catapult->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-      catapult->move_velocity(-50);
+      if (rotation->get_angle() >= 90) {
+        catapult->move_velocity(100, 800);
+      }
+
+      while (rotation->get_angle() <= 90) {
+        catapult->move_velocity(50);
+
+        robot.sleep(15);
+      }
+
+      catapult->move_velocity(0);
     })
 
     // chassis devices
     .add_device("leftone", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_NORTHWEST}))
     .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
 
-    .add_device("rightone", new KRONOS::Motor({.port=3, .reverse=true, .face=KRONOS::K_NORTHEAST}))
+    .add_device("rightone", new KRONOS::Motor({.port=8, .reverse=true, .face=KRONOS::K_NORTHEAST}))
     .add_device("righttwo", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
     .add_device("catapult", new KRONOS::Motor({.port=5, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
     // lift bar
-    .add_device("leftlift", new KRONOS::Motor({.port=6, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
-    .add_device("rightlift", new KRONOS::Motor({.port=7, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("leftlift", new KRONOS::Motor({.port=6, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("rightlift", new KRONOS::Motor({.port=7, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
 
     // intake device
-    // .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_GREEN}))
+    .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_GREEN}))
 
-    // rotation device
+    // rotation devices
     .add_device("launcher_rotation", new KRONOS::Rotation({.port=10}))
+    .add_device("odom_left", new KRONOS::Rotation({.port=11, .face=KRONOS::K_WEST}))
+    .add_device("odom_right", new KRONOS::Rotation({.port=13, .face=KRONOS::K_EAST}))
+    // .add_device("odom_cross", new KRONOS::Rotation({.port=13, .face=KRONOS::K_SOUTH}))
+
+    // set wings
+    .add_device("front_wings", new KRONOS::Piston({.port='A'}))
+    .add_device("back_wings", new KRONOS::Piston({.port='B'}))
 
     // set chassis settings
     .set_chassis_motors(robot.get_multiple_devices({"leftone", "lefttwo", "rightone", "righttwo"}))
+    .set_chassis_odoms(robot.get_multiple_devices({"odom_left", "odom_right", "odom_cross"}))
     .set_chassis_use_pid(false)
     .set_chassis_pid({.kP=0.0, .kI=0.0, .kD=10.0})
 
     // chassis controls
     .add_controller_link({pros::E_CONTROLLER_ANALOG_LEFT_Y, pros::E_CONTROLLER_ANALOG_LEFT_X, pros::E_CONTROLLER_ANALOG_RIGHT_X}, [&](const std::vector<double> &velocity) {
-      robot.move_chassis(-velocity[0], velocity[1], velocity[2] / 1.8);
+      robot.move_chassis(velocity[0], -velocity[1], velocity[2] / 1.8);
     })
 
     // launcher controls
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_UP, pros::E_CONTROLLER_DIGITAL_DOWN}, [&](const std::vector<bool> &pressed) {
       KRONOS::Motor *catapult = robot.get_device<KRONOS::Motor>("catapult");
+      KRONOS::Rotation *rotation = robot.get_device<KRONOS::Rotation>("launcher_rotation");
 
       if (pressed[1]) {
         catapult->set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
       } else if (pressed[0]) {
-        robot.global_get<std::function<void(KRONOS::Motor*)>>("full_launch_rotate")->operator()(catapult);
+        robot.global_get<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>("full_launch_rotate")->operator()(catapult, rotation);
       } else {
         catapult->move_velocity(0);
       }
     })
 
     // intake controls
-    // .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &pressed) {
-    //   robot.get_device<KRONOS::Motor>("intake")->move_velocity(pressed[0] ? 600 : pressed[1] ? -600 : 0);
-    // })
+    .add_controller_link({pros::E_CONTROLLER_DIGITAL_L1, pros::E_CONTROLLER_DIGITAL_L2}, [&](const std::vector<bool> &pressed) {
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(pressed[0] ? 600 : pressed[1] ? -600 : 0);
+    })
 
     // lift controls
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &pressed) {
@@ -95,12 +116,19 @@ void initialize() {
     })
 
     // expansion controls
-    // .add_controller_link(pros::E_CONTROLLER_DIGITAL_A, [&](const bool &pressed) {
-    //   if (pressed) {
-    //     robot.get_device<KRONOS::Piston>("expansion")->toggle();
-    //     robot.sleep(500);
-    //   }
-    // })
+    .add_controller_link(pros::E_CONTROLLER_DIGITAL_A, [&](const bool &pressed) {
+      if (pressed) {
+        robot.get_device<KRONOS::Piston>("front_wings")->toggle();
+        robot.sleep(500);
+      }
+    })
+
+    .add_controller_link(pros::E_CONTROLLER_DIGITAL_B, [&](const bool &pressed) {
+      if (pressed) {
+        robot.get_device<KRONOS::Piston>("back_wings")->toggle();
+        robot.sleep(500);
+      }
+    })
 
     .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
 
