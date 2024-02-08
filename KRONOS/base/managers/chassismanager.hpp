@@ -21,6 +21,7 @@ namespace KRONOS {
 class ChassisManager: protected KExtender::PID {
  private:
     std::vector<Motor*> _chassisMotors;
+    std::vector<Rotation*> _odomSensors;
 
     bool _use_pid = false;
 
@@ -30,8 +31,17 @@ class ChassisManager: protected KExtender::PID {
 
       @param motors Vector of motor pointers
     */
-    inline void set(const std::vector<Motor*> &motors) {
+    inline void set_motors(const std::vector<Motor*> &motors) {
       _chassisMotors = motors;
+    }
+
+    /*
+      Set odom sensors
+
+      @param odoms
+    */
+    inline void set_odoms(const std::vector<Rotation*> &odoms) {
+      _odomSensors = odoms;
     }
 
     /*
@@ -44,6 +54,7 @@ class ChassisManager: protected KExtender::PID {
  public:
     ChassisManager() : PID(KExtender::P_NONE, {}, {}) {
       _chassisMotors.reserve(8);
+      _odomSensors.reserve(8);
     }
 
     /*
@@ -72,7 +83,7 @@ class ChassisManager: protected KExtender::PID {
         const double target_velocity =
           (mstraight + mstrafe + turn) * KUtil::KRONOS_JOYSTICK_MOTOR_RATIO;
 
-        motor->set_max_speed(target_velocity);
+        // motor->set_max_speed(target_velocity);
 
         if (_use_pid) {
           (void) motor->move_velocity_pid(target_velocity);
