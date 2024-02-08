@@ -106,6 +106,19 @@ Proximity* to_proximity(AbstractDevice* device) {
 }
 
 /*
+  Casts AbstractDevice pointer to Rotation pointer
+
+  @param device AbstractDevice pointer
+
+  @return Rotation pointer
+*/
+Rotation* to_rotation(AbstractDevice* device) {
+  assert_same_device(device, K_ROTATION);
+
+  return dynamic_cast<Rotation*>(device);
+}
+
+/*
   Casts AbstractDevice pointer to Vision pointer
 
   @param device AbstractDevice pointer

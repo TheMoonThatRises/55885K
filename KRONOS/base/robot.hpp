@@ -128,7 +128,7 @@ class Robot
       @return Reference to initial robot class
     */
     inline Robot& set_chassis_motors(const std::vector<Motor*> &motors) {
-      ChassisManager::set(motors);
+      ChassisManager::set_motors(motors);
 
       return *this;
     }
@@ -152,7 +152,44 @@ class Robot
           return to_motor(device);
         });
 
-      ChassisManager::set(motors);
+      ChassisManager::set_motors(motors);
+
+      return *this;
+    }
+
+    /*
+      Set chassis odoms
+
+      @param odoms
+
+      @return Reference to initial robot class
+    */
+    inline Robot& set_chassis_odoms(const std::vector<Rotation*> &odoms) {
+      ChassisManager::set_odoms(odoms);
+
+      return *this;
+    }
+
+    /*
+      Set chassis odoms
+
+      @param odoms
+
+      @return Reference to initial robot class
+    */
+    inline Robot& set_chassis_odoms(
+      const std::vector<AbstractDevice*> &devices) {
+      std::vector<Rotation*> motors(devices.size());
+
+      (void) std::transform(
+        devices.begin(),
+        devices.end(),
+        motors.begin(),
+        [&](AbstractDevice *device) {
+          return to_rotation(device);
+        });
+
+      ChassisManager::set_odoms(motors);
 
       return *this;
     }
