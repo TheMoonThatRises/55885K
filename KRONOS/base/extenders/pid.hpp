@@ -72,19 +72,18 @@ class PID {
     inline virtual double tick(const double &target, const double &current) {
       if (_exitcondition == P_TIME && !_starttime.has_value()) {
         _starttime = pros::millis();
-      }
-
-      if (!_previousTime.has_value()) {
         _previousTime = pros::millis();
-        return 0;
       }
 
       const double error = target - current;
 
-      _integral += (error + _previousError) / 2;
+      _integral += error;
 
-      const double _derivative =
-        (error - _previousError) / (pros::millis() - _previousTime.value());
+      if (error == 0 || error > target) {
+        _integral = 0;
+      }
+
+      const double _derivative = error - _previousError;
 
       const double output =
         (_pidconsts.kP * error) +
