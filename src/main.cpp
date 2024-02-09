@@ -39,11 +39,11 @@ void initialize() {
       [&](KRONOS::Motor *catapult, KRONOS::Rotation *rotation) {
       catapult->set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-      if (rotation->get_angle() >= 90) {
-        catapult->move_velocity(100, 800);
+      if (rotation->get_angle_degrees() >= 98) {
+        catapult->move_velocity(100, 400);
       }
 
-      while (rotation->get_angle() <= 90) {
+      while (rotation->get_angle_degrees() <= 98) {
         catapult->move_velocity(50);
 
         robot.sleep(15);
@@ -53,10 +53,10 @@ void initialize() {
     })
 
     // chassis devices
-    .add_device("leftone", new KRONOS::Motor({.port=1, .reverse=true, .face=KRONOS::K_NORTHWEST}))
+    .add_device("leftone", new KRONOS::Motor({.port=18, .reverse=true, .face=KRONOS::K_NORTHWEST}))
     .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
 
-    .add_device("rightone", new KRONOS::Motor({.port=8, .reverse=true, .face=KRONOS::K_NORTHEAST}))
+    .add_device("rightone", new KRONOS::Motor({.port=14, .reverse=true, .face=KRONOS::K_NORTHEAST}))
     .add_device("righttwo", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
@@ -135,30 +135,50 @@ void initialize() {
     .add_auton("offense", [&]() {
       robot.move_chassis(50, 0, 0, 2000);
 
+      robot.move_chassis(-50, 0, 0, 1000);
+      robot.move_chassis(0, 0, -20, 770);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(600);
+
+      robot.move_chassis(50, 0, 0, 2300);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+
+      robot.move_chassis(0, 0, 50, 750);
+
+      robot.move_chassis(50, 0, 0, 2000);
+
+      // robot.move_chassis(0, 0, 20, 1800);
     })
     .add_auton("defensive", [&]() {
-      robot.get_device<KRONOS::Motor>("catapult")->move_velocity(-50, 600);
+      // KRONOS::Motor *catapult = robot.get_device<KRONOS::Motor>("catapult");
+      // KRONOS::Rotation *rotation = robot.get_device<KRONOS::Rotation>("launcher_rotation");
+
+      // robot.global_get<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>("full_launch_rotate")->operator()(catapult, rotation);
 
       robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(-50);
       robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(-50);
 
-      robot.sleep(1600);
+      robot.sleep(2700);
 
-      robot.get_device<KRONOS::Motor>("catapult")->move_velocity(-50, 1000);
+      // robot.global_get<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>("full_launch_rotate")->operator()(catapult, rotation);
 
       robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(50);
       robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(50);
 
-      robot.sleep(1700);
+      robot.move_chassis(10, 0, 13, 1000);
+      robot.move_chassis(0, 0, 20, 1700);
 
       robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(0);
       robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(0);
 
-      robot.move_chassis(10, 0, 13, 1000);
-      robot.move_chassis(0, 0, 20, 2300);
-      robot.move_chassis(-50, 0, -3, 2000);
+      robot.move_chassis(0, 0, 20, 600);
+      robot.move_chassis(-50, 0, 0, 1800);
 
-      robot.move_chassis(50, 0, 3, 1000);
+      robot.move_chassis(50, 0, 0, 1000);
+
+      robot.move_chassis(50, 0, 0, 800);
+      robot.move_chassis(0, 0, 20, 2300);
     })
     .add_auton("skills", [&]() {
 
