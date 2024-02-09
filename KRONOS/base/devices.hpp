@@ -443,6 +443,13 @@ class Rotation : public pros::Rotation, public AbstractDevice {
   inline explicit Rotation(const abstract_device_struct &device)
   : pros::Rotation(device.port, device.reverse),
     AbstractDevice(K_ROTATION, device.face, device.port) {}
+
+  /*
+    Gets position in degrees
+  */
+   inline double get_angle_degrees() {
+    return get_angle() / 100.0;
+   }
 };
 
 class Vision : public pros::Vision, public AbstractDevice {
