@@ -61,13 +61,7 @@ class AutonomousManager {
     ) {
       assert(index <= _autons.size());
 
-      // auto iter = _autons.begin();
-      // std::advance(iter, index);
-      // return {iter->first, iter->second};
-      KLog::Log::info(std::to_string(index));
-      std::pair<std::string, std::function<void()>> item = *std::next(_autons.begin(), index);
-      KLog::Log::info(item.first);
-      return item;
+      return *std::next(_autons.begin(), index);
     }
 
     /*
