@@ -447,9 +447,9 @@ class Rotation : public pros::Rotation, public AbstractDevice {
   /*
     Gets position in degrees
   */
-   inline double get_angle_degrees() {
+  inline double get_angle_degrees() {
     return get_angle() / 100.0;
-   }
+  }
 };
 
 class Vision : public pros::Vision, public AbstractDevice {
