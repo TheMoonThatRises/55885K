@@ -192,7 +192,37 @@ void initialize() {
       robot.move_chassis(-50, 0, 0, 1400);
     })
     .add_auton("skills", [&]() {
+      robot.move_chassis(50, 0, 0, 2000);
 
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
+
+      robot.move_chassis(-50, 0, 0, 1000);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+
+      robot.move_chassis(0, 0, -20, 770);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(600);
+
+      robot.move_chassis(50, 0, 0, 2000);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+
+      robot.move_chassis(0, 0, 50, 750);
+
+      robot.move_chassis(50, 0, 0, 2000);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600, 1000);
+
+      robot.move_chassis(-50, 0, 0, 800);
+
+      robot.move_chassis(0, 0, -20, 770);
+
+      robot.move_chassis(-50, 0, 0, 800);
+
+      robot.move_chassis(-10, 0, 0);
+
+      robot.get_device<KRONOS::Motor>("catapult")->move_velocity(50);
     });
 
 
