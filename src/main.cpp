@@ -135,12 +135,17 @@ void initialize() {
     .add_auton("offense", [&]() {
       robot.move_chassis(50, 0, 0, 2000);
 
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
+
       robot.move_chassis(-50, 0, 0, 1000);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
+
       robot.move_chassis(0, 0, -20, 770);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(600);
 
-      robot.move_chassis(50, 0, 0, 2300);
+      robot.move_chassis(50, 0, 0, 2000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
@@ -148,7 +153,7 @@ void initialize() {
 
       robot.move_chassis(50, 0, 0, 2000);
 
-      // robot.move_chassis(0, 0, 20, 1800);
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600, 1000);
     })
     .add_auton("defensive", [&]() {
       // KRONOS::Motor *catapult = robot.get_device<KRONOS::Motor>("catapult");
@@ -156,29 +161,35 @@ void initialize() {
 
       // robot.global_get<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>("full_launch_rotate")->operator()(catapult, rotation);
 
-      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(-50);
-      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(-50);
+      // robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(-50);
+      // robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(-50);
 
-      robot.sleep(2700);
+      // robot.sleep(2700);
 
       // robot.global_get<std::function<void(KRONOS::Motor*, KRONOS::Rotation*)>>("full_launch_rotate")->operator()(catapult, rotation);
 
-      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(50);
-      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(50);
+      // robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(50);
+      // robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(50);
 
-      robot.move_chassis(10, 0, 13, 1000);
-      robot.move_chassis(0, 0, 20, 1700);
+      // robot.move_chassis(10, 0, 13, 1000);
+      // robot.move_chassis(0, 0, 20, 1700);
 
-      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(0);
-      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(0);
+      // robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(0);
+      // robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(0);
 
-      robot.move_chassis(0, 0, 20, 600);
-      robot.move_chassis(-50, 0, 0, 1800);
+      // robot.move_chassis(0, 0, 20, 600);
+      // robot.move_chassis(-50, 0, 0, 1800);
 
-      robot.move_chassis(50, 0, 0, 1000);
+      // robot.move_chassis(50, 0, 0, 1000);
 
-      robot.move_chassis(50, 0, 0, 800);
-      robot.move_chassis(0, 0, 20, 2300);
+      // robot.move_chassis(50, 0, 0, 800);
+      // robot.move_chassis(0, 0, 20, 2300);
+
+      robot.move_chassis(50, 0, 0, 1400);
+
+      robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
+
+      robot.move_chassis(-50, 0, 0, 1400);
     })
     .add_auton("skills", [&]() {
 
