@@ -222,6 +222,14 @@ void initialize() {
 
       robot.move_chassis(-10, 0, 0);
 
+      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(-50);
+      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(-50);
+
+      robot.sleep(2700);
+
+      robot.get_device<KRONOS::Motor>("leftlift")->move_velocity(0);
+      robot.get_device<KRONOS::Motor>("rightlift")->move_velocity(0);
+
       robot.get_device<KRONOS::Motor>("catapult")->move_velocity(50);
     });
 
