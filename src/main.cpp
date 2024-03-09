@@ -53,11 +53,11 @@ void initialize() {
     })
 
     // chassis devices
-    .add_device("leftone", new KRONOS::Motor({.port=18, .reverse=true, .face=KRONOS::K_NORTHWEST}))
-    .add_device("lefttwo", new KRONOS::Motor({.port=2, .reverse=true, .face=KRONOS::K_SOUTHWEST}))
+    .add_device("leftone", new KRONOS::Motor({.port=18, .face=KRONOS::K_NORTHWEST}))
+    .add_device("lefttwo", new KRONOS::Motor({.port=2, .face=KRONOS::K_SOUTHWEST}))
 
-    .add_device("rightone", new KRONOS::Motor({.port=14, .reverse=true, .face=KRONOS::K_NORTHEAST}))
-    .add_device("righttwo", new KRONOS::Motor({.port=4, .reverse=true, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("rightone", new KRONOS::Motor({.port=14, .face=KRONOS::K_NORTHEAST}))
+    .add_device("righttwo", new KRONOS::Motor({.port=4, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
     .add_device("catapult", new KRONOS::Motor({.port=5, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
@@ -133,25 +133,25 @@ void initialize() {
     .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
 
     .add_auton("offense", [&]() {
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
 
-      robot.move_chassis(-50, 0, 0, 1000);
+      robot.move_chassis(-50, 0, 0, 1500);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      robot.move_chassis(0, 0, -20, 770);
+      robot.move_chassis(0, 0, -20, 1150);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(600);
 
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      robot.move_chassis(0, 0, 50, 750);
+      robot.move_chassis(0, 0, 50, 1125);
 
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600, 1000);
     })
@@ -192,33 +192,33 @@ void initialize() {
       robot.move_chassis(-50, 0, 0, 1400);
     })
     .add_auton("skills", [&]() {
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600);
 
-      robot.move_chassis(-50, 0, 0, 1000);
+      robot.move_chassis(-50, 0, 0, 1500);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      robot.move_chassis(0, 0, -20, 770);
+      robot.move_chassis(0, 0, -20, 1155);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(600);
 
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(0);
 
-      robot.move_chassis(0, 0, 50, 750);
+      robot.move_chassis(0, 0, 50, 1125);
 
-      robot.move_chassis(50, 0, 0, 2000);
+      robot.move_chassis(50, 0, 0, 3000);
 
       robot.get_device<KRONOS::Motor>("intake")->move_velocity(-600, 1000);
 
-      robot.move_chassis(-50, 0, 0, 800);
+      robot.move_chassis(-50, 0, 0, 1200);
 
-      robot.move_chassis(0, 0, -20, 770);
+      robot.move_chassis(0, 0, -20, 1155);
 
-      robot.move_chassis(-50, 0, 0, 800);
+      robot.move_chassis(-50, 0, 0, 1200);
 
       robot.move_chassis(-10, 0, 0);
 
