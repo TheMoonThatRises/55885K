@@ -9,6 +9,7 @@
 #ifndef KRONOS_ASSETS_STATICS_HPP_
 #define KRONOS_ASSETS_STATICS_HPP_
 
+#include <cstdint>
 #include <string>
 
 namespace KUtil {

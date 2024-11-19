@@ -19,8 +19,10 @@ jobs:
       - name: Install pros-cli
         run: pip install pros-cli
 
-      - name: Install arm-none-eabi-gcc
-        run: curl -Ls "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2" -o gcc-arm-none-eabi.tar.bz2 && tar -xjf gcc-arm-none-eabi.tar.bz2 && echo "$PWD/gcc-arm-none-eabi-10.3-2021.10/bin" >> $GITHUB_PATH
+      - name: Install arm GNU toolchain
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '13.2.Rel1'
 
       - name: Compile
         run: pros make

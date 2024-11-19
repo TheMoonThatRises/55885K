@@ -30,7 +30,7 @@
 #include "pros/rtos.hpp"
 
 namespace KRONOS {
-class AbstractDevice : public pros::Mutex {
+class AbstractDevice : public pros::rtos::Mutex {
  private:
     inline std::string _get_info() {
       std::string facing_msg = _face.has_value()
@@ -78,7 +78,7 @@ class AbstractDevice : public pros::Mutex {
 
     const device_types _type;
     const std::optional<device_face> _face;
-    const std::optional<char> _port;
+    const std::optional<int8_t> _port;
 
     inline static char _occupied_ports[29] {};
 
@@ -91,7 +91,7 @@ class AbstractDevice : public pros::Mutex {
     inline AbstractDevice(
       const device_types &device,
       const device_face &face,
-      const char &port)
+      const int8_t &port)
     : Mutex(), _type(device), _face(face), _port(port) {
       _init();
     }
@@ -153,7 +153,7 @@ class AbstractDevice : public pros::Mutex {
 
       @return Port the device is on
     */
-    inline virtual std::optional<char> port() const {
+    inline virtual std::optional<int8_t> port() const {
       return _port;
     }
 
@@ -198,13 +198,13 @@ class AbstractDevice : public pros::Mutex {
     }
 };
 
-class Button : public pros::ADIDigitalIn, public AbstractDevice {
+class Button : public pros::adi::Button, public AbstractDevice {
  public:
     /*
       @param device
     */
     inline explicit Button(const abstract_device_struct &device)
-    : pros::ADIDigitalIn(device.port),
+    : pros::adi::Button(device.port),
       AbstractDevice(K_BUTTON, device.face, device.port) {}
 };
 
@@ -294,7 +294,7 @@ class Motor
       @param device
     */
     inline explicit Motor(const motor_struct &device)
-    : pros::Motor(device.port, device.gearset, device.reverse, device.encoder),
+    : pros::Motor(device.port, device.gearset, device.encoder),
       KExtender::PID(device.pidexit, device.pidmods, device.consistencymods),
       AbstractDevice(K_MOTOR, device.face, device.port) {
       (void) pros::Motor::set_brake_mode(device.brakemode);
@@ -377,52 +377,14 @@ class PIDDevice : public KExtender::PID, public AbstractDevice {
     }
 };
 
-class Piston : public pros::ADIDigitalOut, public AbstractDevice {
- private:
-    bool _value;
-
+class Piston : public pros::adi::Pneumatics, public AbstractDevice {
  public:
     /*
       @param device
     */
     inline explicit Piston(const abstract_device_struct &device)
-    : pros::ADIDigitalOut(device.port),
-      AbstractDevice(K_PISTON, device.face, device.port),
-      _value(false) {}
-
-    /*
-      Sets the value of the piston
-
-      @param setValue State to set the piston to
-
-      @return The value that the piston is set to
-    */
-    inline bool set_value(const bool &setValue) {
-      (void) AbstractDevice::mutex_take();
-
-      (void) pros::ADIDigitalOut::set_value(setValue);
-      _value = setValue;
-
-      return _value;
-    }
-
-    /*
-      Toggles the piston
-
-      @return Value of the piston's new state
-    */
-    inline bool toggle() {
-      return Piston::set_value(!_value);
-    }
-
-    /*
-      Gets the piston's current value
-
-      @return Piston's current state
-    */
-    inline bool value() const {
-      return _value;
-    }
+    : pros::adi::Pneumatics(device.port, device.start_retracted, device.reverse),
+      AbstractDevice(K_PISTON, device.face, device.port) {}
 };
 
 class Proximity : public pros::Distance, public AbstractDevice {
@@ -441,7 +403,7 @@ class Rotation : public pros::Rotation, public AbstractDevice {
     @param device
   */
   inline explicit Rotation(const abstract_device_struct &device)
-  : pros::Rotation(device.port, device.reverse),
+  : pros::Rotation(device.port),
     AbstractDevice(K_ROTATION, device.face, device.port) {}
 
   /*

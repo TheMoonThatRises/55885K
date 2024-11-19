@@ -60,14 +60,14 @@ void initialize() {
     .add_device("righttwo", new KRONOS::Motor({.port=4, .face=KRONOS::K_SOUTHEAST}))
 
     // launcher device
-    .add_device("catapult", new KRONOS::Motor({.port=5, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("catapult", new KRONOS::Motor({.port=5, .gearset=pros::MotorGear::red, .brakemode=pros::MotorBrake::hold}))
 
     // lift bar
-    .add_device("leftlift", new KRONOS::Motor({.port=6, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
-    .add_device("rightlift", new KRONOS::Motor({.port=7, .reverse=true, .gearset=pros::E_MOTOR_GEAR_RED, .brakemode=pros::E_MOTOR_BRAKE_HOLD}))
+    .add_device("leftlift", new KRONOS::Motor({.port=6, .gearset=pros::MotorGear::red, .brakemode=pros::MotorBrake::hold}))
+    .add_device("rightlift", new KRONOS::Motor({.port=-7, .gearset=pros::MotorGear::red, .brakemode=pros::MotorBrake::hold}))
 
     // intake device
-    .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::E_MOTOR_GEAR_GREEN}))
+    .add_device("intake", new KRONOS::Motor({.port=9, .gearset=pros::MotorGear::green}))
 
     // rotation devices
     .add_device("launcher_rotation", new KRONOS::Rotation({.port=10}))

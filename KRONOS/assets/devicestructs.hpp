@@ -51,6 +51,7 @@ struct abstract_device_struct {
   int8_t port = 1;
   device_face face = K_NA;
   bool reverse = false;
+  bool start_retracted = true;
 };
 
 struct controller_struct {
@@ -59,10 +60,9 @@ struct controller_struct {
 
 struct motor_struct {
   int8_t port = 1;
-  bool reverse = false;
-  pros::motor_gearset_e_t gearset = pros::E_MOTOR_GEAR_GREEN;
-  pros::motor_encoder_units_e_t encoder = pros::E_MOTOR_ENCODER_DEGREES;
-  pros::motor_brake_mode_e_t brakemode = pros::E_MOTOR_BRAKE_COAST;
+  pros::MotorGears gearset = pros::v5::MotorGear::green;
+  pros::MotorEncoderUnits encoder = pros::v5::MotorEncoderUnits::degrees;
+  pros::MotorBrake brakemode = pros::v5::MotorBrake::coast;
   device_face face = K_NA;
 
   pid_exit_conditions pidexit = pid_exit_conditions::P_ERROR;
