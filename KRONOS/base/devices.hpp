@@ -383,7 +383,10 @@ class Piston : public pros::adi::Pneumatics, public AbstractDevice {
       @param device
     */
     inline explicit Piston(const abstract_device_struct &device)
-    : pros::adi::Pneumatics(device.port, device.start_retracted, device.reverse),
+    : pros::adi::Pneumatics(
+        device.port,
+        device.start_retracted,
+        device.reverse),
       AbstractDevice(K_PISTON, device.face, device.port) {}
 };
 
