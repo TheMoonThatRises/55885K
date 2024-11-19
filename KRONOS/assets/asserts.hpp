@@ -33,8 +33,8 @@ void assert_not_nullptr(const T* ptr, const std::string &expected) {
 }
 
 void assert_same_device(
-  const AbstractDevice* device,
-  const device_types &type) {
+const AbstractDevice* device,
+const device_types &type) {
   #ifdef KRONOS_NOASSERTS
     (void) device;
     (void) type;

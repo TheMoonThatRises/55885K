@@ -10,14 +10,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install python3.11
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          architecture: 'x64'
+      - name: Set up brew
+        uses: Homebrew/actions/setup-homebrew@master
 
-      - name: Install cpplint
-        run: pip install cpplint
+      - name: Install cppcheck
+        run: brew install cpplint
 
       - name: Run cpplint
         run: ./scripts/cpplint.sh

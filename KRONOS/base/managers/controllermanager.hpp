@@ -30,17 +30,17 @@ enum controller_events {
 };
 
 typedef std::pair<
-  pros::controller_analog_e_t,
-  controller_type> analog_single_id;
+pros::controller_analog_e_t,
+controller_type> analog_single_id;
 typedef std::pair<
-  std::vector<pros::controller_analog_e_t>,
-  controller_type> analog_multi_id;
+std::vector<pros::controller_analog_e_t>,
+controller_type> analog_multi_id;
 typedef std::pair<
-  pros::controller_digital_e_t,
-  controller_type> digital_single_id;
+pros::controller_digital_e_t,
+controller_type> digital_single_id;
 typedef std::pair<
-  std::vector<pros::controller_digital_e_t>,
-  controller_type> digital_multi_id;
+std::vector<pros::controller_digital_e_t>,
+controller_type> digital_multi_id;
 
 typedef std::function<void(double)> single_analog_function;
 typedef std::function<void(std::vector<double>)> multi_analog_function;
