@@ -289,6 +289,9 @@ class Motor
 : public pros::Motor,
   public KExtender::PID,
   public AbstractDevice {
+ private:
+  using pros::Motor::move_velocity;
+
  public:
     /*
       @param device

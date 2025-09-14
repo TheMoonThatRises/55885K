@@ -16,6 +16,8 @@
 #include <utility>
 #include <vector>
 
+#include "liblvgl/lvgl.h"
+
 #include "assets/asserts.hpp"
 
 #include "base/devices.hpp"
@@ -67,12 +69,12 @@ class AutonomousManager {
     /*
       LVGL Auton button listener
     */
-    inline static lv_res_t button_listener(lv_obj_t* btn) {
+    inline static void button_listener(lv_event_t* e) {
       assert_not_nullptr(_controller, "KRONOS::Controller");
       assert_not_nullptr(_varManager, "KRONOS::VarManager");
       assert_not_nullptr(_hotp, "KOTP::HOTP");
 
-      uint8_t id = lv_obj_get_free_num(btn);
+      int id = reinterpret_cast<intptr_t>(lv_event_get_user_data(e));
 
       switch (id) {
         case S_AUTON:
@@ -101,8 +103,6 @@ class AutonomousManager {
           _controller->set_text("Color << " + color_text);
           break;
       }
-
-      return LV_RES_OK;
     }
 
  protected:
@@ -166,30 +166,28 @@ class AutonomousManager {
             _controller->set_text("Auton << " + _currentAuton);
 
             while (true) {
-              lv_obj_clean(lv_scr_act());
+              lv_obj_clean(lv_screen_active());
 
-              lv_obj_t* title = lv_label_create(lv_scr_act(), NULL);
+              lv_obj_t* title = lv_label_create(lv_screen_active());
               lv_label_set_text(title, "Auton buttons");
-              lv_obj_align(title, nullptr, LV_ALIGN_IN_TOP_MID, 0, 5);
+              lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 5);
 
-              lv_obj_t* autonbtn = lv_btn_create(lv_scr_act(), nullptr);
+              lv_obj_t* autonbtn = lv_button_create(lv_screen_active());
               // Enable resizing horizontally and vertically
-              lv_cont_set_fit(autonbtn, true, true);
-              lv_obj_align(autonbtn, title, LV_ALIGN_IN_TOP_MID, 0, 10);
+              lv_obj_set_size(autonbtn, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+              lv_obj_align(autonbtn, LV_ALIGN_TOP_MID, 0, 10);
               // Set a unique number for the button
-              lv_obj_set_free_num(autonbtn, 0);
-              lv_btn_set_action(autonbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_add_event_cb(autonbtn, button_listener, LV_EVENT_CLICKED, (void*) S_AUTON);
 
-              lv_obj_t* autonlabel = lv_label_create(autonbtn, nullptr);
+              lv_obj_t* autonlabel = lv_label_create(autonbtn);
               lv_label_set_text(autonlabel, _currentAuton.c_str());
 
-              lv_obj_t* colorbtn = lv_btn_create(lv_scr_act(), nullptr);
+              lv_obj_t* colorbtn = lv_button_create(lv_screen_active());
               // Enable resizing horizontally and vertically
-              lv_cont_set_fit(colorbtn, true, true);
-              lv_obj_align(colorbtn, title, LV_ALIGN_IN_TOP_MID, 0, 80);
+              lv_obj_set_size(colorbtn, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+              lv_obj_align(colorbtn, LV_ALIGN_TOP_MID, 0, 80);
               // Set a unique number for the button
-              lv_obj_set_free_num(colorbtn, 1);
-              lv_btn_set_action(colorbtn, LV_BTN_ACTION_CLICK, button_listener);
+              lv_obj_add_event_cb(colorbtn, button_listener, LV_EVENT_CLICKED, (void*) S_COLOR);
 
               // auto current_colour =
               //   _varManager->global_get<KUtil::side_color>("side");
@@ -217,7 +215,7 @@ class AutonomousManager {
     inline void unload_auton_threads() {
       KLog::Log::info("Attempting to unload auton selector");
       (void) _taskManager->kill_task(_taskName);
-      lv_obj_clean(lv_scr_act());
+      lv_obj_clean(lv_screen_active());
     }
 
  public:
