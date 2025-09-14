@@ -485,6 +485,20 @@ class Vision : public pros::Vision, public AbstractDevice {
       return *this;
     }
 };
+
+class GPS : public pros::GPS, public AbstractDevice {
+ public:
+    inline explicit GPS(const abstract_device_struct &device)
+    : pros::GPS(device.port),
+      AbstractDevice(K_GPS, device.port) {}
+};
+
+class LineTracker : public pros::ADIAnalogIn, public AbstractDevice {
+ public:
+  inline explicit LineTracker(const abstract_device_struct &device)
+  : pros::ADIAnalogIn(device.port),
+    AbstractDevice(K_LINE_TRACKER, device.port) {}
+};
 }  // namespace KRONOS
 
 #endif  // KRONOS_BASE_DEVICES_HPP_

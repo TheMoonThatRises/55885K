@@ -32,7 +32,9 @@ enum device_types {
   K_PISTON = pros::c::E_DEVICE_ADI,
   K_PROXIMITY = pros::c::E_DEVICE_DISTANCE,
   K_ROTATION = pros::c::E_DEVICE_ROTATION,
-  K_VISION = pros::c::E_DEVICE_VISION
+  K_VISION = pros::c::E_DEVICE_VISION,
+  K_GPS = pros::c::E_DEVICE_GPS,
+  K_LINE_TRACKER = 1 << 11
 };
 
 enum device_face {
