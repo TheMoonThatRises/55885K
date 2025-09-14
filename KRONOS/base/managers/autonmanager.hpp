@@ -177,7 +177,10 @@ class AutonomousManager {
               lv_obj_set_size(autonbtn, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
               lv_obj_align(autonbtn, LV_ALIGN_TOP_MID, 0, 10);
               // Set a unique number for the button
-              lv_obj_add_event_cb(autonbtn, button_listener, LV_EVENT_CLICKED, (void*) S_AUTON);
+              lv_obj_add_event_cb(autonbtn,
+                button_listener,
+                LV_EVENT_CLICKED,
+                reinterpret_cast<void*>(S_AUTON));
 
               lv_obj_t* autonlabel = lv_label_create(autonbtn);
               lv_label_set_text(autonlabel, _currentAuton.c_str());
@@ -187,7 +190,11 @@ class AutonomousManager {
               lv_obj_set_size(colorbtn, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
               lv_obj_align(colorbtn, LV_ALIGN_TOP_MID, 0, 80);
               // Set a unique number for the button
-              lv_obj_add_event_cb(colorbtn, button_listener, LV_EVENT_CLICKED, (void*) S_COLOR);
+              lv_obj_add_event_cb(
+                colorbtn,
+                button_listener,
+                LV_EVENT_CLICKED,
+                reinterpret_cast<void*>(S_COLOR));
 
               // auto current_colour =
               //   _varManager->global_get<KUtil::side_color>("side");
