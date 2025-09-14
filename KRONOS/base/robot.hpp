@@ -353,6 +353,15 @@ class Robot
     }
 
     /*
+      Select default auton
+    */
+    inline Robot& set_current_auton(const std::string& name) {
+      (void) AutonomousManager::set_current_auton(name);
+
+      return *this;
+    }
+
+    /*
       Listens to controller events
 
       @return Reference to initial robot class

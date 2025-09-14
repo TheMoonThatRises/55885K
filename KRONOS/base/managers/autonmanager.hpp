@@ -225,6 +225,14 @@ class AutonomousManager {
       lv_obj_clean(lv_screen_active());
     }
 
+    /*
+      Select default auton
+    */
+    inline void set_current_auton(const std::string& name) {
+      _currentAuton = name;
+      _currentAutonIndex = std::distance(_autons.begin(), _autons.find(name));
+    }
+
  public:
     /*
       Variable manager. Should be robot's
