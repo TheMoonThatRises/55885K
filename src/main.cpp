@@ -176,6 +176,8 @@ void opcontrol() {
   double last_time = 0;
   double curr_time = pros::millis();
 
+  (void) curr_value, (void) curr_time; // lint hack
+
   while (true) {
     curr_value = tracker->get_value();
     curr_time = pros::millis();
