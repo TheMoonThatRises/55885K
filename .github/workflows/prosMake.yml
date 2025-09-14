@@ -22,18 +22,17 @@ jobs:
       - name: Install arm GNU toolchain
         uses: carlosperate/arm-none-eabi-gcc-action@v1
         with:
-          release: '13.2.Rel1'
+          release: '14.2.Rel1'
 
       - name: Compile
         run: pros make
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 55885K_${{ github.run_number }}
           path: |
                 .
-                !./gcc-arm-none-eabi.tar.bz2
-                !./gcc-arm-none-eabi-10.3-2021.10
+                !./gcc-arm-none-eabi*
                 !./.git/objects
           retention-days: 20
