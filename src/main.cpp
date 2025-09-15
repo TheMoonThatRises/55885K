@@ -1,23 +1,35 @@
-// Ensure debug compile options turned off for production
-#define KRONOS_PRODUCTION
-
 /*
-  Define environmental variables that control how KRONOS works
+List of compile macros
+
+KRONOS_NOASSERTS
+KRONOS_LOG_COUT
+KRONOS_LOG_FILE
+KRONOS_STRICT_DEVICE_GETTER
+KRONOS_SAFETY_CHECKS
+KRONOS_DEVICE_USE_MUTEX
+KRONOS_STRICT_MUTEX
+KRONOS_PRODUCTION
 */
-// #define KRONOS_DEVICE_USE_MUTEX
-#define KRONOS_LOG_COUT
-#define KRONOS_LOG_FILE
-// #define KRONOS_SAFETY_CHECKS
-#define KRONOS_STRICT_DEVICE_GETTER
-// #define KRONOS_STRICT_MUTEX
 
 /*
   Include main libraries
 */
-#include "kronos.hpp" // Include KRONOS library
+#include "KRONOS/kronos.hpp" // Include KRONOS library
 #include "main.h" // Include run header file
 
-KRONOS::Robot robot;
+using kronos::base::Robot;
+using kronos::assets::device_face;
+using kronos::assets::controller_type;
+using kronos::assets::KRONOS_MSDELAY;
+
+using kronos::assets::Logger;
+
+using kronos::base::Motor;
+using kronos::base::Vision;
+using kronos::base::Controller;
+using kronos::base::LineTracker;
+
+Robot robot;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -33,24 +45,24 @@ void initialize() {
 
   robot
     // Device initialisers
-    .add_device(new KRONOS::Controller({}))
+    .add_device(new Controller({}))
 
     // chassis devices
-    .add_device("top_left", new KRONOS::Motor({.port=17, .face=KRONOS::K_NORTHWEST}))
-    .add_device("top_right", new KRONOS::Motor({.port=18, .face=KRONOS::K_NORTHEAST}))
+    .add_device("top_left", new Motor({.port=17, .face=device_face::K_NORTHWEST}))
+    .add_device("top_right", new Motor({.port=18, .face=device_face::K_NORTHEAST}))
 
-    .add_device("bottom_left", new KRONOS::Motor({.port=20, .face=KRONOS::K_SOUTHWEST}))
-    .add_device("bottom_right", new KRONOS::Motor({.port=19, .face=KRONOS::K_SOUTHEAST}))
+    .add_device("bottom_left", new Motor({.port=20, .face=device_face::K_SOUTHWEST}))
+    .add_device("bottom_right", new Motor({.port=19, .face=device_face::K_SOUTHEAST}))
 
     // flywheel intake
-    .add_device("flywheel_left", new KRONOS::Motor({.port=11, .gearset=pros::MotorGear::blue}))
-    .add_device("flywheel_right", new KRONOS::Motor({.port=12, .gearset=pros::MotorGear::blue}))
+    .add_device("flywheel_left", new Motor({.port=11, .gearset=pros::MotorGear::blue}))
+    .add_device("flywheel_right", new Motor({.port=12, .gearset=pros::MotorGear::blue}))
 
     // sensors
-    // .add_device("vision", new KRONOS::Vision({.port=9}))
+    .add_device("vision", new Vision({.port=9}))
     // .add_device("imu", new KRONOS::Imu({.port=10}))
     // .add_device("gps", new KRONOS::GPS({.port=8}))
-    .add_device("line", new KRONOS::LineTracker({.port='C'}))
+    // .add_device("line", new KRONOS::LineTracker({.port='C'}))
 
     // set chassis settings
     .set_chassis_motors(robot.get_multiple_devices({"top_left", "top_right", "bottom_left", "bottom_right"}))
@@ -62,31 +74,15 @@ void initialize() {
 
     // flywheel controls
     .add_controller_link({pros::E_CONTROLLER_DIGITAL_R1, pros::E_CONTROLLER_DIGITAL_R2}, [&](const std::vector<bool> &pressed) {
-      robot.get_device<KRONOS::Motor>("flywheel_left")->move_velocity(pressed[0] ? 600. : pressed[1] ? -600. : 0.);
-      robot.get_device<KRONOS::Motor>("flywheel_right")->move_velocity(pressed[0] ? -600. : pressed[1] ? 600. : 0.);
-    })
-
-    // auton settings
-    .set_auton_assets(robot.get_controller(KRONOS::C_MASTER))
-
-    // auton modes
-    .add_auton("game", [&]() {
-      KRONOS::LineTracker* tracker = robot.get_device<KRONOS::LineTracker>("line");
-
-      double strafe = 50;
-
-      while (true) {
-        if (tracker->get_value() >= 2500) {
-          strafe = -strafe;
-        }
-
-        robot.move_chassis(50, tracker->get_value() >= 2500 ? strafe : 0, 0);
-
-        robot.sleep(20);
-      }
+      robot.get_device<Motor>("flywheel_left")->move_velocity(pressed[0] ? 50. : pressed[1] ? -50. : 0.);
+      robot.get_device<Motor>("flywheel_right")->move_velocity(pressed[0] ? -50. : pressed[1] ? 50. : 0.);
     });
 
-  KLog::Log::info("Finish initializing Robot...");
+  Vision* vision = robot.get_device<Vision>("vision");
+  vision->add_signature(1, Vision::signature_from_utility(1, -1, 1, 0, -1, 1, 0, 3.000, 0));
+  vision->set_exposure(40);
+
+  Logger::info("Finish initializing Robot...");
 }
 
 /**
@@ -156,44 +152,44 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  // robot.event_initialiser();
   robot.kill_all_tasks();
 
-  KRONOS::Vision* vision = robot.get_device<KRONOS::Vision>("vision");
-  KRONOS::LineTracker* tracker = robot.get_device<KRONOS::LineTracker>("line");
-  tracker->calibrate();
-
-  vision->add_signature(1, KRONOS::Vision::signature_from_utility(1, -1, 1, 0, -1, 1, 0, 3.000, 0));
+  Vision* vision = robot.get_device<Vision>("vision");
+  vision->set_signature(1);
 
   robot.sleep(1000);
 
-  int prev_value = tracker->get_value();
-  int curr_value = tracker->get_value();
+  pros::vision_object_s_t line_object {};
+  pros::vision_object_s_t tmp_object {};
 
-  double speed = 50;
-  double strafe_fwd = speed * sin(45);
-  double strafe = -speed * cos(45);
-  double last_time = 0;
-  double curr_time = pros::millis();
+  while (!robot.get_controller(controller_type::C_MASTER)->get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    double speed = 50;
+    double angle = 0;
 
-  (void) curr_value, (void) curr_time; // lint hack
+    int count = vision->get_object_count();
 
-  while (true) {
-    curr_value = tracker->get_value();
-    curr_time = pros::millis();
+    for (int i = 0; i < count; ++i) {
+      tmp_object = vision->get_by_sig(i, 1);
 
-    if (curr_value >= 2500 && (curr_value - prev_value > 50 || curr_value >= 2700) && curr_time - last_time > 100) {
-      strafe = -strafe;
-      last_time = curr_time;
+      if (
+        tmp_object.top_coord - tmp_object.height < 20 &&
+        abs(VISION_FOV_WIDTH / 2 - tmp_object.x_middle_coord) < 40
+      ) {
+        line_object = tmp_object;
+
+        break;
+      }
     }
 
-    prev_value = curr_value;
+    angle = std::min(std::max(-(VISION_FOV_WIDTH / 2 - line_object.x_middle_coord) / 2, -45), 45);
 
     robot.move_chassis(
-      curr_value >= 2500 ? strafe_fwd : speed,
-      curr_value >= 2500 ? strafe : 0,
+      abs(speed * sin(angle)),
+      speed * cos(angle),
       0);
 
-    robot.sleep(KUtil::KRONOS_MSDELAY);
+    robot.sleep(KRONOS_MSDELAY);
   }
+
+  robot.event_initialiser();
 }

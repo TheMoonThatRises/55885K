@@ -1,1 +1,1 @@
-cpplint --exclude=KRONOS/external --recursive KRONOS/
+cpplint --exclude=include/KRONOS/external --root include/ --recursive include/KRONOS/ src/KRONOS

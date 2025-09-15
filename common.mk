@@ -2,7 +2,7 @@ ARCHTUPLE=arm-none-eabi-
 DEVICE=VEX EDR V5
 
 MFLAGS=-mcpu=cortex-a9 -mfpu=neon-fp16 -mfloat-abi=hard -Os -g -mthumb
-CPPFLAGS=-D_POSIX_THREADS -D_UNIX98_THREAD_MUTEX_ATTRIBUTES -D_POSIX_TIMERS -D_POSIX_MONOTONIC_CLOCK -IKRONOS
+CPPFLAGS=-D_POSIX_THREADS -D_UNIX98_THREAD_MUTEX_ATTRIBUTES -D_POSIX_TIMERS -D_POSIX_MONOTONIC_CLOCK
 GCCFLAGS=-ffunction-sections -fdata-sections -fdiagnostics-color -funwind-tables
 
 # Check if the llemu files in libvgl exist. If they do, define macros that the
@@ -15,7 +15,7 @@ ifneq (,$(wildcard ./include/liblvgl/llemu.hpp))
 	CPPFLAGS += -D_PROS_INCLUDE_LIBLVGL_LLEMU_HPP
 endif
 
-WARNFLAGS+=-Wno-psabi -Wall -Werror -Wpedantic -Wextra
+WARNFLAGS+=-Wno-psabi
 
 SPACE := $() $()
 COMMA := ,
