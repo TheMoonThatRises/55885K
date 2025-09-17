@@ -28,6 +28,7 @@ using kronos::base::Motor;
 using kronos::base::Vision;
 using kronos::base::Controller;
 using kronos::base::LineTracker;
+using kronos::base::Imu;
 
 Robot robot;
 
@@ -60,7 +61,7 @@ void initialize() {
 
     // sensors
     .add_device("vision", new Vision({.port=9}))
-    // .add_device("imu", new KRONOS::Imu({.port=10}))
+    .add_device("imu", new Imu({.port=10}))
     // .add_device("gps", new KRONOS::GPS({.port=8}))
     // .add_device("line", new KRONOS::LineTracker({.port='C'}))
 
@@ -80,7 +81,7 @@ void initialize() {
 
   Vision* vision = robot.get_device<Vision>("vision");
   vision->add_signature(1, Vision::signature_from_utility(1, -1, 1, 0, -1, 1, 0, 3.000, 0));
-  vision->set_exposure(40);
+  vision->set_exposure(42);
 
   Logger::info("Finish initializing Robot...");
 }
@@ -157,14 +158,15 @@ void opcontrol() {
   Vision* vision = robot.get_device<Vision>("vision");
   vision->set_signature(1);
 
-  robot.sleep(1000);
+  Imu* imu = robot.get_device<Imu>("imu");
+  imu->reset();
 
-  pros::vision_object_s_t line_object {};
-  pros::vision_object_s_t tmp_object {};
+  robot.sleep(3000);
 
   while (!robot.get_controller(controller_type::C_MASTER)->get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-    double speed = 50;
-    double angle = 0;
+    pros::vision_object_s_t tmp_object {};
+
+    double speed = 150;
 
     int count = vision->get_object_count();
 
@@ -173,20 +175,31 @@ void opcontrol() {
 
       if (
         tmp_object.top_coord - tmp_object.height < 20 &&
-        abs(VISION_FOV_WIDTH / 2 - tmp_object.x_middle_coord) < 40
+        tmp_object.x_middle_coord > 0 &&
+        tmp_object.x_middle_coord < VISION_FOV_WIDTH
       ) {
-        line_object = tmp_object;
+        double distance = VISION_FOV_WIDTH / 2. - tmp_object.x_middle_coord;
+        distance -= 19 * (distance / abs(distance));
+        distance *= 0.9;
 
-        break;
+        robot.move_chassis(
+          abs(speed * sin(distance)),
+          speed * cos(distance),
+          0);
+
+          break;
       }
     }
 
-    angle = std::min(std::max(-(VISION_FOV_WIDTH / 2 - line_object.x_middle_coord) / 2, -45), 45);
+    double rotation = imu->get_rotation();
 
-    robot.move_chassis(
-      abs(speed * sin(angle)),
-      speed * cos(angle),
-      0);
+    while (abs(rotation) >= 20) {
+      robot.move_chassis(0, 0, -rotation);
+
+      robot.sleep(KRONOS_MSDELAY);
+
+      rotation = imu->get_rotation();
+    }
 
     robot.sleep(KRONOS_MSDELAY);
   }
